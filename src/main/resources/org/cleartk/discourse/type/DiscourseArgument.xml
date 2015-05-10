@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>DiscourseArg</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <imports>
+    <import name="org.cleartk.discourse.type.TokenList"/>
+  </imports>
+  <types>
+    <typeDescription>
+      <name>org.cleartk.discourse.type.DiscourseArgument</name>
+      <description/>
+      <supertypeName>org.cleartk.discourse.type.TokenList</supertypeName>
+      <features>
+        <featureDescription>
+          <name>argumentType</name>
+          <description>Label's of the argumen, (i.e. arg1 or arg2)</description>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>

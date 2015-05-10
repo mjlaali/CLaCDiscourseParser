@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>DiscourseRelation</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <imports>
+    <import name="org.cleartk.discourse.type.DiscourseArgument"/>
+    <import name="org.cleartk.discourse.type.DiscourseConnective"/>
+    <import name="org.cleartk.discourse.type.TokenList"/>
+  </imports>
+  <types>
+    <typeDescription>
+      <name>org.cleartk.discourse.type.DiscourseRelation</name>
+      <description/>
+      <supertypeName>org.cleartk.discourse.type.TokenList</supertypeName>
+      <features>
+        <featureDescription>
+          <name>arguments</name>
+          <description/>
+          <rangeTypeName>uima.cas.FSArray</rangeTypeName>
+          <elementType>org.cleartk.discourse.type.DiscourseArgument</elementType>
+        </featureDescription>
+        <featureDescription>
+          <name>sense</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+        <featureDescription>
+          <name>relationType</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+        <featureDescription>
+          <name>discourseConnectiveText</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      <featureDescription>
+          <name>discourseConnective</name>
+          <description/>
+          <rangeTypeName>org.cleartk.discourse.type.DiscourseConnective</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>

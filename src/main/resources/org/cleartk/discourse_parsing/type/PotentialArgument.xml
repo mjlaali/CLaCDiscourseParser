@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>PotentialArgument</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <imports>
+    <import name="org.cleartk.syntax.constituent.type.TreebankNode"/>
+  </imports>
+  <types>
+    <typeDescription>
+      <name>org.cleartk.discourse_parsing.type.PotentialArgument</name>
+      <description/>
+      <supertypeName>uima.tcas.Annotation</supertypeName>
+      <features>
+        <featureDescription>
+          <name>treebankNode</name>
+          <description/>
+          <rangeTypeName>org.cleartk.syntax.constituent.type.TreebankNode</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>

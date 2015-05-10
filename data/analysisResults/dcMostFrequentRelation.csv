@@ -1,0 +1,101 @@
+accordingly,Contingency.Cause.Result
+additionally,Expansion.Conjunction
+after,Temporal.Asynchronous.Succession
+afterward,Temporal.Asynchronous.Precedence
+afterwards,Temporal.Asynchronous.Precedence
+also,Expansion.Conjunction
+alternatively,Expansion.Alternative
+although,Comparison.Concession
+and,Expansion.Conjunction
+as,Temporal.Synchrony
+as a result,Contingency.Cause.Result
+as an alternative,Expansion.Alternative
+as if,Expansion.Conjunction
+as long as,Contingency.Condition
+as soon as,Temporal.Synchrony
+as though,Comparison.Contrast
+as well,Expansion.Conjunction
+because,Contingency.Cause.Reason
+before,Temporal.Asynchronous.Precedence
+before and after,Temporal.Asynchronous.Succession
+besides,Expansion.Conjunction
+but,Comparison.Contrast
+by comparison,Comparison.Contrast
+by contrast,Comparison.Contrast
+by then,Temporal.Asynchronous.Precedence
+consequently,Contingency.Cause.Result
+conversely,Comparison.Contrast
+earlier,Temporal.Asynchronous.Succession
+either or,Expansion.Alternative
+else,Expansion.Alternative
+except,Expansion.Exception
+finally,Expansion.Conjunction
+for,Contingency.Cause.Reason
+for example,Expansion.Instantiation
+for instance,Expansion.Instantiation
+further,Expansion.Conjunction
+furthermore,Expansion.Conjunction
+hence,Contingency.Cause.Result
+however,Comparison.Contrast
+if,Contingency.Condition
+if and when,Contingency.Condition
+if then,Contingency.Condition
+in addition,Expansion.Conjunction
+in contrast,Comparison.Contrast
+in fact,Expansion.Conjunction
+in other words,Expansion.Restatement
+in particular,Expansion.Restatement
+in short,Expansion.Restatement
+in sum,Expansion.Restatement
+in the end,Expansion.Restatement
+in turn,Temporal.Asynchronous.Precedence
+indeed,Expansion.Conjunction
+insofar as,Contingency.Cause.Reason
+instead,Expansion.Alternative.Chosen alternative
+later,Temporal.Asynchronous.Precedence
+lest,Contingency.Condition
+likewise,Expansion.Conjunction
+meantime,Temporal.Synchrony
+meanwhile,Temporal.Synchrony
+moreover,Expansion.Conjunction
+much as,Comparison.Contrast
+neither nor,Comparison.Contrast
+nevertheless,Comparison.Contrast
+next,Temporal.Asynchronous.Precedence
+nonetheless,Comparison.Concession
+nor,Expansion.Conjunction
+now that,Contingency.Cause.Reason
+on the contrary,Comparison.Contrast
+on the other hand,Comparison.Contrast
+once,Temporal.Asynchronous.Succession
+or,Expansion.Alternative
+otherwise,Expansion.Alternative
+overall,Expansion.Restatement
+particularly,Contingency.Cause.Reason
+plus,Expansion.Conjunction
+previously,Temporal.Asynchronous.Succession
+rather,Expansion.Restatement
+regardless,Comparison.Concession
+separately,Expansion.Conjunction
+similarly,Expansion.Conjunction
+simultaneously,Temporal.Synchrony
+since,Contingency.Cause.Reason
+so,Contingency.Cause.Result
+so that,Contingency.Cause.Result
+specifically,Expansion.Restatement
+still,Comparison.Concession
+then,Temporal.Asynchronous.Precedence
+thereafter,Temporal.Asynchronous.Precedence
+thereby,Contingency.Cause.Result
+therefore,Contingency.Cause.Result
+though,Comparison.Concession
+thus,Contingency.Cause.Result
+till,Temporal.Asynchronous.Precedence
+ultimately,Temporal.Asynchronous.Precedence
+unless,Expansion.Alternative
+until,Temporal.Asynchronous.Precedence
+when,Temporal.Synchrony
+when and if,Contingency.Condition
+whereas,Comparison.Contrast
+while,Comparison.Contrast
+yet,Comparison.Contrast
