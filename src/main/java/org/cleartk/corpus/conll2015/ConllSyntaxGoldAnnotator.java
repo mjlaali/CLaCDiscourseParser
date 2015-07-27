@@ -22,6 +22,7 @@ import org.cleartk.corpus.conll2015.type.SentenceWithSyntax;
 import org.cleartk.syntax.dependency.type.DependencyNode;
 import org.cleartk.syntax.dependency.type.DependencyRelation;
 import org.cleartk.syntax.dependency.type.TopDependencyNode;
+import org.cleartk.token.type.Token;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,7 +92,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 		JSONArray jsonWords = jsonSent.getJSONArray("words");
 		int sentBegin = Integer.MAX_VALUE;
 		int sentEnd = -1;
-		List<ConllToken> sentTokens = new ArrayList<>();
+		List<Token> sentTokens = new ArrayList<>();
 
 		for (int i = 0; i < jsonWords.length(); i++){
 			JSONArray jsonWord = jsonWords.getJSONArray(i);
@@ -118,7 +119,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 		syntaxReader.addSyntacticConstituents(aJCas, sentTokens, parseTree);
 	}
 
-	private void addDependencies(JSONObject jsonSent, List<ConllToken> sentTokens, JCas aJCas, int sentBegin, int sentEnd) throws JSONException, AnalysisEngineProcessException {
+	private void addDependencies(JSONObject jsonSent, List<Token> sentTokens, JCas aJCas, int sentBegin, int sentEnd) throws JSONException, AnalysisEngineProcessException {
 		JSONArray dependencies = jsonSent.getJSONArray("dependencies");
 
 		ArrayListMultimap<DependencyNode, DependencyRelation> headRelations = ArrayListMultimap.create();

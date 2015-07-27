@@ -17,13 +17,15 @@ public class TrainModel {
 		DiscourseParser discourseParser = new DiscourseParser(outDir.getAbsolutePath());
 		
 		DatasetStatistics datasetStatistics = new DatasetStatistics(dataset, String.format(DatasetStatistics.XMI_DIR, dataset.getMode()));
-		datasetStatistics.readDataset();
+//		datasetStatistics.readDataset();
 		datasetStatistics.getStatistics(discourseParser.getWriterDescription());
 		
-		String wekaOptions = "weka.classifiers.trees.J48 -C 0.25 -M 2";
+//		String options = "weka.classifiers.trees.J48 -C 0.25 -M 2";
+		String[] options = new String[]{"100", "5"};
 		if (args.length > 0)
-			wekaOptions = args[0];
-		discourseParser.trainAndPackage(wekaOptions);
+			options = args;
+//			options = args[0];
+		discourseParser.trainAndPackage(options);
 		
 		System.out.println("TrainModel.main(): Done.");
 

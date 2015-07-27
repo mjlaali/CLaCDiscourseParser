@@ -51,10 +51,8 @@ import org.cleartk.ml.feature.function.FeatureFunctionExtractor.BaseFeatures;
 import org.cleartk.ml.feature.function.FeatureNameChanger2;
 import org.cleartk.ml.feature.function.FeatureNameChangerFunc;
 import org.cleartk.ml.feature.function.LowerCaseFeatureFunction;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.jar.JarClassifierBuilder;
-import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.cleartk.syntax.constituent.type.TreebankNode;
 import org.cleartk.token.type.Token;
 
@@ -119,14 +117,7 @@ public class DCScopDetector extends ClassifierLabeler<String, ScopeInstance>{
 	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
 				DCScopDetector.class,
-				CleartkAnnotator.PARAM_IS_TRAINING,
-			    true,
-		        DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-		        WekaStringOutcomeDataWriter.class.getName(),
-		        DefaultDataWriterFactory.PARAM_DATA_WRITER_CONSTRUCTOR_INPUTS,
-		        "arguments 10",
-		        DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
-		        outputDirectory);
+				DiscourseParser.getMachineLearningParameters(outputDirectory));
 	}
 	
 	@SuppressWarnings("unchecked")

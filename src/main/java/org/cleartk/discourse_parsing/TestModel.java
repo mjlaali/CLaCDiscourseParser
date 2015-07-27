@@ -99,7 +99,7 @@ public class TestModel {
 		if (args.length > 0){
 			
 		} else {
-			testDataset = new ConllDataset();
+			testDataset = new ConllDataset("dev");
 			trainDatasetPath = new ConllDataset("train");
 		}
 		

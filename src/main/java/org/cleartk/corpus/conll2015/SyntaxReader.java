@@ -46,7 +46,7 @@ public class SyntaxReader{
 		
 		int offset = 0;
 		
-		List<ConllToken> conllTokens = new ArrayList<ConllToken>();
+		List<Token> conllTokens = new ArrayList<Token>();
 		int idx = 0;
 		String[] split = tokens.split(" ");
 		
@@ -69,7 +69,7 @@ public class SyntaxReader{
 
 	}
 	
-	private void addPoses(List<ConllToken> conllTokens, String poses) {
+	private void addPoses(List<Token> conllTokens, String poses) {
 		String[] arPoses = poses.split(" ");
 		if (conllTokens.size() != arPoses.length)
 			throw new RuntimeException(conllTokens.size() + "<>" + poses.length());
@@ -88,15 +88,18 @@ public class SyntaxReader{
 	
 	}
 
-	public void addSyntacticConstituents(JCas aJCas, List<ConllToken> sentTokens, String parseTree){
+	public void addSyntacticConstituents(JCas aJCas, List<Token> sentTokens, String parseTree){
 		//create fragment parser if there is no parser. It makes the program simpler
 		if (parseTree.trim().equals(ConllSyntaxGoldAnnotator.NO_PARSE)){
 			StringBuilder buffer = new StringBuilder();
 			if (sentTokens.size() != 0){
 				buffer.append("(TOP");
 				for (int i = 0; i < sentTokens.size(); i++){
-					ConllToken jsonWord = sentTokens.get(i);
-					buffer.append(String.format(" (%s %s)", jsonWord.getPos(), jsonWord.getCoveredText()));
+					Token jsonWord = sentTokens.get(i);
+					String coveredText = jsonWord.getCoveredText();
+					if (coveredText.equals("(") || coveredText.equals(")"))
+						coveredText = jsonWord.getPos();
+					buffer.append(String.format(" (%s %s)", jsonWord.getPos(), coveredText));
 				}
 				buffer.append(")\n");
 			}
@@ -112,9 +115,16 @@ public class SyntaxReader{
 				true);
 	}
 
-	private void syncPosition(TreebankNode node, Iterator<ConllToken> tokensIter) {
+	private void syncPosition(TreebankNode node, Iterator<Token> tokensIter) {
 		if (node.isLeaf()){
-			Token token = tokensIter.next();
+			Token token;
+			try {
+				token = tokensIter.next();
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			if (!token.getCoveredText().equals(node.getText()))
+				System.err.println("SyntaxReader.syncPosition():" + token.getCoveredText() + "<>" + node.getText());
 			node.setTextBegin(token.getBegin());
 			node.setTextEnd(token.getEnd());
 			if (token.getPos() == null)
@@ -135,4 +145,6 @@ public class SyntaxReader{
 
 		}
 	}
+	
+	
 }

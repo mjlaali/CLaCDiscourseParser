@@ -148,7 +148,7 @@ public class DiscourseRelationsExporter extends JCasAnnotator_ImplBase{
 	}
 	
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
-		DatasetPath dataSet = new ConllDataset();
+		DatasetPath dataSet = new ConllDataset("dev");
 		String fileNameFormat = "outputs/parser/" + FILE_NAME_CONVENTION;
 		
 		String goldKey = "gold";

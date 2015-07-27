@@ -29,6 +29,8 @@ public class ConllDataset implements DatasetPath{
 			if (f.getName().contains(mode))
 				this.setBaseFld(f.getAbsolutePath());
 		}
+		if (getBaseFld() == null)
+			throw new RuntimeException("The base fld is not valid folder for the CoNLL dataset: " + baseFld);
 		this.setMode(mode);
 		setRawTextsFld(findFile("raw"));
 		setDiscourseGoldAnnotationFile(findFile("data"));

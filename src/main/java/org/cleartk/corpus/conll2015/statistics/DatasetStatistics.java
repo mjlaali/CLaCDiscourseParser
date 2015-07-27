@@ -29,7 +29,7 @@ public class DatasetStatistics {
 	public static final String OUTPUT_DIR = "outputs/statistics";
 	public static final String XMI_DIR = OUTPUT_DIR + "/xmi_%s";
 	
-	private DatasetPath dataset;
+	protected DatasetPath dataset;
 	private File xmiDir;
 	
 	public DatasetStatistics(DatasetPath dataset) {
@@ -98,7 +98,8 @@ public class DatasetStatistics {
 	
 	public static void main(String[] args) throws UIMAException, IOException {
 		System.out.println("DatasetStatistics.main()");
-		DatasetPath dataset = new ConllDataset("train");
+//		DatasetPath dataset = new ConllDataset("train");
+		DatasetPath dataset = new ConllDataset();
 		DatasetStatistics datasetStatistics = new DatasetStatistics(dataset, String.format(XMI_DIR, dataset.getMode()));
 		datasetStatistics.readDataset();
 //		datasetStatistics.getStatistics(DCRelationCounter.getDescription("data/analysisResults/dcRelationCnt.txt"));

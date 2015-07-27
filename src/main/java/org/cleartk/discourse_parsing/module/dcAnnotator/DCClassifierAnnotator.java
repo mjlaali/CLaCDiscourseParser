@@ -1,34 +1,33 @@
-package org.cleartk.discourse_parsing.module;
+package org.cleartk.discourse_parsing.module.dcAnnotator;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.TokenListTools;
-import org.cleartk.corpus.conll2015.Tools;
-import org.cleartk.corpus.conll2015.statistics.DiscourseConnectivesList;
 import org.cleartk.discourse.type.DiscourseConnective;
+import org.cleartk.discourse_parsing.DiscourseParser;
+import org.cleartk.discourse_parsing.module.ClassifierLabeler;
 import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.feature.extractor.CleartkExtractorException;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.jar.JarClassifierBuilder;
-import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.cleartk.syntax.constituent.type.TreebankNode;
+import org.cleartk.token.type.Sentence;
 import org.cleartk.token.type.Token;
+
+import ir.laali.tools.str.StringUtils;
 
 class DcInstance{
 	public DcInstance(String dc, List<TreebankNode> poses,
@@ -45,9 +44,17 @@ class DcInstance{
 	List<TreebankNode> parents;
 }
 
-public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcInstance>{
-	private List<String> dcList;
-	private TreeMap<Integer, Integer> dcIntervals;
+public class DCClassifierAnnotator extends ClassifierLabeler<String, DcInstance>{
+	public static final String PARAM_DC_LIST_FILE = "PARAM_DC_LIST_FILE";
+
+	private DCLookup dcLookup = new DCLookup();
+	
+	@ConfigurationParameter(
+			name = PARAM_DC_LIST_FILE,
+			description = "A file containg a list of discourse connectives",
+			mandatory = true)
+	private String dcFile;
+
 	
 //TODO: Update the name of features and how they are calculated
 //	private FeatureExtractor1<TokenList> connectiveFeatureExtractor = new FeatureFunctionExtractor<TokenList>(new CoveredTextExtractor<TokenList>(), BaseFeatures.EXCLUDE, 
@@ -55,26 +62,23 @@ public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcIn
 //			new FeatureNameChangerFunc(new LowerCaseFeatureFunction(), "CON-LStr"));
 
 
-	public static AnalysisEngineDescription getClassifierDescription(String packageDirectory) throws ResourceInitializationException {
+	public static AnalysisEngineDescription getClassifierDescription(String packageDirectory, String dcFile) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
-				DiscourseConnectiveAnnotator.class,
+				DCClassifierAnnotator.class,
 				CleartkAnnotator.PARAM_IS_TRAINING,
 				false,
 				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH,
-				JarClassifierBuilder.getModelJarFile(packageDirectory));
+				JarClassifierBuilder.getModelJarFile(packageDirectory), 
+				PARAM_DC_LIST_FILE,
+				dcFile);
 	}
 	
-	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
+	public static AnalysisEngineDescription getWriterDescription(String outputDirectory, String dcFile) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
-				DiscourseConnectiveAnnotator.class,
-				CleartkAnnotator.PARAM_IS_TRAINING,
-			    true,
-		        DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-		        WekaStringOutcomeDataWriter.class.getName(),
-		        DefaultDataWriterFactory.PARAM_DATA_WRITER_CONSTRUCTOR_INPUTS,
-		        "arguments 10",
-		        DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
-		        outputDirectory);
+				DCClassifierAnnotator.class,
+				DiscourseParser.getMachineLearningParameters(outputDirectory,
+						PARAM_DC_LIST_FILE,
+						dcFile));
 	}
 	
 	
@@ -84,19 +88,7 @@ public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcIn
 		super.initialize(context);
 		
 		try {
-			dcList = FileUtils.readLines(new File(DiscourseConnectivesList.DISCOURSE_CONNECTIVES_LIST_FILE));
-			Collections.sort(dcList, new Comparator<String>() {
-
-				@Override
-				public int compare(String o1, String o2) {
-					return o2.length() - o1.length();
-				}
-			});
-			String smallestDc = dcList.get(dcList.size() - 1);
-			int smallestDcLength = smallestDc.length();
-			if (smallestDcLength == 0 || smallestDcLength > 3){
-				throw new RuntimeException("Are you sure the content of the discourse connective list is correct: " + smallestDc);
-			}
+			dcLookup.loadDC(dcFile);
 		} catch (IOException e) {
 			throw new ResourceInitializationException(e);
 		}
@@ -104,7 +96,6 @@ public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcIn
 
 	@Override
 	public void init() {
-		dcIntervals = new TreeMap<Integer, Integer>();
 	}
 
 	@Override
@@ -130,14 +121,58 @@ public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcIn
 			throws CleartkExtractorException {
 		List<Feature> features = new ArrayList<Feature>();
 		features.addAll(syntacticFeature(instance.parents));
+//		features.addAll(localContexFeatures(instance.offset, instance.offset + instance.text.length()));
 		features.addAll(lexicalFeature(instance.text));
+		return features;
+	}
+
+	private List<Feature> localContexFeatures(
+			int start, int end) {
+		Sentence sentences = JCasUtil.selectCovering(aJCas, Sentence.class, start, end).get(0);
+		List<TreebankNode> constituents = JCasUtil.selectCovered(TreebankNode.class, sentences);
+		List<TreebankNode> poses = new ArrayList<TreebankNode>();
+
+		int dcIdx = -1;
+		for (TreebankNode constituent: constituents){
+			if (constituent.getChildren().size() == 0){
+				poses.add(constituent);
+				if (constituent.getBegin() == start){
+					dcIdx = poses.size() - 1;
+				}
+			}
+		}
+		
+		int windowSize = 2;
+		List<Feature> features = new ArrayList<Feature>();
+		
+		for (int i = 0; i <= windowSize; i++){
+			for (int coefficient: new int[]{1, -1}){
+				int idx = dcIdx + coefficient * i;
+				if (idx >= 0 && idx < poses.size()){
+					String word = StringUtils.decompose(poses.get(idx).getCoveredText()).toLowerCase();
+					String pos = poses.get(idx).getNodeType();
+					
+					features.add(new Feature("word_" + coefficient * i, word));
+					features.add(new Feature("pos_" + coefficient * i, pos));
+					features.add(new Feature("wordPos_" + coefficient * i, word + "_" + pos));
+				}
+				if (i == 0)
+					break;
+			}
+		}
 		return features;
 	}
 
 	private List<Feature> lexicalFeature(String text) {
 		List<Feature> lexicalFeatures = new ArrayList<Feature>();
 		lexicalFeatures.add(new Feature("CON-LStr", text.toLowerCase()));
-		lexicalFeatures.add(new Feature("connTxt", text.toLowerCase()));
+		
+		if (text.toLowerCase().equals(text)){
+			lexicalFeatures.add(new Feature("CON-POS", "not-at-begining"));
+		} else {
+			lexicalFeatures.add(new Feature("CON-POS", "at-begining"));
+		}
+		
 		return lexicalFeatures;
 	}
 
@@ -179,55 +214,25 @@ public class DiscourseConnectiveAnnotator extends ClassifierLabeler<String, DcIn
 	@Override
 	public List<DcInstance> getInstances(JCas defView)
 			throws AnalysisEngineProcessException {
-		if (Tools.getDocName(aJCas).equals("wsj_2200"))
-			System.out.println("DiscourseConnectiveAnnotator.getInstances()");
-		String documentText = aJCas.getDocumentText().toLowerCase();
+		String documentText = aJCas.getDocumentText();
 		
 		List<DcInstance> dcInstances = new ArrayList<DcInstance>();
-		for (String dc: dcList){
-			int indexOfDC = documentText.indexOf(dc);
-			int endOfDc = indexOfDC + dc.length();
-			while (indexOfDC != -1){
-				if (!containedInPrevCandid(indexOfDC, endOfDc) && checkBoundray(indexOfDC, endOfDc)){
-					List<TreebankNode> poses = JCasUtil.selectCovered(aJCas, TreebankNode.class, indexOfDC, endOfDc);
-					List<TreebankNode> parents = JCasUtil.selectCovering(aJCas, TreebankNode.class, indexOfDC, endOfDc);
-					if (poses.size() == 0 || parents.size() == 0){
-						System.err.println("DiscourseConnectiveAnnotator.getInstances(): can not cover or find poses of the DC <" + dc + ">");
-						continue;
-					}
-					dcInstances.add(new DcInstance(dc, poses, parents, indexOfDC));
-				}
-				
-				indexOfDC = documentText.indexOf(dc, endOfDc);
-				endOfDc = indexOfDC + dc.length();
+		Map<Integer, Integer> occurrences = dcLookup.getOccurrence(documentText.toLowerCase(), DCLookup.coverToTokens(defView, Token.class));
+		for (Entry<Integer, Integer> occurence: occurrences.entrySet()){
+			int indexOfDC = occurence.getKey();
+			int endOfDc = occurence.getValue();
+			String dc = documentText.substring(occurence.getKey(), occurence.getValue());
+			dc = StringUtils.decompose(dc);
+			
+			List<TreebankNode> poses = JCasUtil.selectCovered(aJCas, TreebankNode.class, indexOfDC, endOfDc);
+			List<TreebankNode> parents = JCasUtil.selectCovering(aJCas, TreebankNode.class, indexOfDC, endOfDc);
+			if (poses.size() == 0 || parents.size() == 0 || dc == null || dc.equals("null")){
+				System.err.println("DiscourseConnectiveAnnotator.getInstances(): can not cover or find poses of the DC <" + dc + ">");
+				continue;
 			}
+			dcInstances.add(new DcInstance(dc, poses, parents, indexOfDC));
 		}
 		return dcInstances;
 	}
-
-	
-	private boolean checkBoundray(int indexOfDC, int endOfDc) throws AnalysisEngineProcessException {
-		List<Token> selectCovered = JCasUtil.selectCovered(aJCas, Token.class, indexOfDC, endOfDc);
-		if (selectCovered.size() > 0){
-			Token token = selectCovered.get(0);
-			boolean validBegin = token.getBegin() == indexOfDC;
-			boolean validEnd = selectCovered.get(selectCovered.size() - 1).getEnd() == endOfDc;
-			
-			return validBegin && validEnd;
-		}
-		
-		return false;
-	}
-
-	private boolean containedInPrevCandid(int indexOfDC, int endOfDc) {
-		Integer floorKey = dcIntervals.floorKey(indexOfDC);
-		if (floorKey == null || dcIntervals.get(floorKey) < indexOfDC){
-			dcIntervals.put(indexOfDC, endOfDc);
-			return false;
-		}
-		return true;
-	}
-	
-
 
 }

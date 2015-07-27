@@ -17,7 +17,7 @@ import org.cleartk.corpus.conll2015.DatasetPath;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.corpus.conll2015.statistics.DiscourseConnectivesList;
 import org.cleartk.discourse.type.DiscourseConnective;
-import org.cleartk.discourse_parsing.module.DiscourseConnectiveAnnotator;
+import org.cleartk.discourse_parsing.module.dcAnnotator.DCClassifierAnnotator;
 import org.junit.Test;
 
 public class NaiveDiscourseConnectiveAnnotatorTest extends DiscourseParserComponentBaseTest{
@@ -25,7 +25,8 @@ public class NaiveDiscourseConnectiveAnnotatorTest extends DiscourseParserCompon
 	public void setUpPipeline(DatasetPath dataSet)
 			throws ResourceInitializationException {
 		super.setUpPipeline(dataSet);
-		aggregateBuilder.add(DiscourseConnectiveAnnotator.getClassifierDescription(DiscourseParser.getDcAnnotatorTrainDir(new ConllDataset("train").getModelDir())));
+		aggregateBuilder.add(DCClassifierAnnotator.getClassifierDescription(
+				DiscourseParser.getDcAnnotatorTrainDir(new ConllDataset("train").getModelDir()), DiscourseConnectivesList.DISCOURSE_CONNECTIVES_LIST_FILE));
 	}
 	
 	@Test

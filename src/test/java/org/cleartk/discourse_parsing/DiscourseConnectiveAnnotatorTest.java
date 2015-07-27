@@ -16,7 +16,8 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDataset;
 import org.cleartk.corpus.conll2015.DatasetPath;
 import org.cleartk.corpus.conll2015.statistics.DatasetStatistics;
-import org.cleartk.discourse_parsing.module.DiscourseConnectiveAnnotator;
+import org.cleartk.corpus.conll2015.statistics.DiscourseConnectivesList;
+import org.cleartk.discourse_parsing.module.dcAnnotator.DCClassifierAnnotator;
 import org.cleartk.ml.CleartkProcessingException;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instance;
@@ -29,10 +30,11 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		DatasetPath dataset = new ConllDataset();
 		DatasetStatistics datasetStatistics = new DatasetStatistics(dataset, dataset.getXmiOutDir());
 		datasetStatistics.readDataset();
-		datasetStatistics.getStatistics(DiscourseConnectiveAnnotator.getClassifierDescription(
-				DiscourseParser.getDcAnnotatorTrainDir(new ConllDataset("train").getModelDir())));
+		datasetStatistics.getStatistics(DCClassifierAnnotator.getClassifierDescription(
+				DiscourseParser.getDcAnnotatorTrainDir(new ConllDataset("train").getModelDir()),
+				DiscourseConnectivesList.DISCOURSE_CONNECTIVES_LIST_FILE));
 		
-		double precision = (double) DiscourseConnectiveAnnotator.getCorrect() / DiscourseConnectiveAnnotator.getTotal();
+		double precision = (double) DCClassifierAnnotator.getCorrect() / DCClassifierAnnotator.getTotal();
 		assertThat(precision).isGreaterThan(0.90);
 		System.out
 				.println("Arg2LabelerTest.whenRunningInTestModeThenGetTheSamePrecisionAsInWeka(): Precision = " + precision);
@@ -50,7 +52,7 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		discourseRelation = discourseRelationFactory.makeSimpleRelation(aJCas, arg1, arg2, dc);
 		discourseRelation.getDiscourseConnective().addToIndexes();
 		
-		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DiscourseConnectiveAnnotator.class);
+		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DCClassifierAnnotator.class);
 		run(true, writerDescription, null);
 
 		verify(dataWrite, times(4)).write(instanceCaptor.capture());
@@ -73,7 +75,7 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		String parseTree = "(ROOT (S (PP (IN As) (NP (NP (DT a) (NN result)) (PP (IN of) (NP (NP (DT the) (NNS pilots) (POS ')) (NN strike))))) (, ,) (NP (DT all) (NNS flights)) (VP (VBP have) (VP (VBN had) (S (VP (TO to) (VP (VB be) (VP (VBN cancelled))))))) (. .)))";
 		syntaxReader.initJCas(aJCas, parseTree);
 
-		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DiscourseConnectiveAnnotator.class);
+		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DCClassifierAnnotator.class);
 		run(true, writerDescription, null);
 
 		verify(dataWrite, times(1)).write(instanceCaptor.capture());
@@ -87,7 +89,7 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		String parseTree = "(ROOT (S (PP (IN As) (NP (NP (DT a) (NN result)) (PP (IN of) (NP (NP (DT the) (NNS pilots) (POS ')) (NN strike))))) (, ,) (NP (DT all) (NNS flights)) (VP (VBP have) (VP (VBN had) (S (VP (TO to) (VP (VB be) (VP (VBN cancelled))))))) (. .)))";
 		syntaxReader.initJCas(aJCas, parseTree);
 
-		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DiscourseConnectiveAnnotator.class);
+		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DCClassifierAnnotator.class);
 		run(true, writerDescription, null);
 
 		verify(dataWrite, times(1)).write(instanceCaptor.capture());
@@ -114,7 +116,7 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		discourseRelation = discourseRelationFactory.makeSimpleRelation(aJCas, arg1, arg2, dc);
 		discourseRelation.getDiscourseConnective().addToIndexes();
 
-		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DiscourseConnectiveAnnotator.class);
+		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DCClassifierAnnotator.class);
 		run(true, writerDescription, null);
 
 		verify(dataWrite, atLeast(1)).write(instanceCaptor.capture());
@@ -136,15 +138,7 @@ public class DiscourseConnectiveAnnotatorTest extends ParseComponentBaseTest<Str
 		assertThat(soMorked).isTrue();
 	}
 	
-	public void test() throws ResourceInitializationException{
-		String parseTree = "( (S (NP (DT That) (NN debt)) (VP (MD would) (VP (VB be) (VP (VBN paid) (PRT (RP off)) (SBAR (IN as) (S (NP (DT the) (NNS assets)) (VP (VBP are) (VP (VBN sold) (, ,) (S (VP (VBG leaving) (NP (NP (DT the) (JJ total) (NN spending)) (PP (IN for) (NP (DT the) (NN bailout)))) (PP (IN at) (NP (NP (QP ($ $) (CD 50) (CD billion))) (, ,) (CC or) (NP (QP ($ $) (CD 166) (CD billion))) (PP (VBG including) (NP (NP (NN interest)) (PP (IN over) (NP (CD 10) (NNS years)))))))))))))))) (. .)) )";
-		syntaxReader.initJCas(aJCas, parseTree);
-
-		AnalysisEngineDescription writerDescription = AnalysisEngineFactory.createEngineDescription(DiscourseConnectiveAnnotator.getClassifierDescription(
-				DiscourseParser.getDcAnnotatorTrainDir(new ConllDataset("train").getModelDir())));
-		
-		
-
-	}
+	
+	
 	
 }

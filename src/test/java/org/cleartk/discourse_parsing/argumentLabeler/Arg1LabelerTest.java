@@ -22,13 +22,14 @@ import org.cleartk.corpus.conll2015.ConllDataset;
 import org.cleartk.corpus.conll2015.DatasetPath;
 import org.cleartk.corpus.conll2015.Tools;
 import org.cleartk.corpus.conll2015.statistics.DatasetStatistics;
+import org.cleartk.corpus.conll2015.statistics.DiscourseConnectivesList;
 import org.cleartk.discourse_parsing.DiscourseParser;
 import org.cleartk.discourse_parsing.ParseComponentBaseTest;
-import org.cleartk.discourse_parsing.module.DiscourseConnectiveAnnotator;
 import org.cleartk.discourse_parsing.module.argumentLabeler.Arg1Labeler;
 import org.cleartk.discourse_parsing.module.argumentLabeler.Arg2Labeler;
 import org.cleartk.discourse_parsing.module.argumentLabeler.NodeArgType;
 import org.cleartk.discourse_parsing.module.argumentLabeler.Position;
+import org.cleartk.discourse_parsing.module.dcAnnotator.DCClassifierAnnotator;
 import org.cleartk.ml.CleartkProcessingException;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instance;
@@ -110,7 +111,8 @@ public class Arg1LabelerTest extends ParseComponentBaseTest<String>{
 		String jsonFile = "outputs/test/arg2.json";
 		AggregateBuilder builder = new AggregateBuilder();
 		DatasetPath trainDataset = new ConllDataset("train");
-		builder.add(DiscourseConnectiveAnnotator.getClassifierDescription(DiscourseParser.getDcAnnotatorTrainDir(trainDataset.getModelDir())));
+		builder.add(DCClassifierAnnotator.getClassifierDescription(
+				DiscourseParser.getDcAnnotatorTrainDir(trainDataset.getModelDir()), DiscourseConnectivesList.DISCOURSE_CONNECTIVES_LIST_FILE));
 		builder.add(Arg2Labeler.getClassifierDescription(
 				DiscourseParser.getArg2LabelerTrainDir(trainDataset.getModelDir()), Arg2Labeler.DEFAULT_PATTERN_FILE));
 		builder.add(Arg1Labeler.getClassifierDescription(

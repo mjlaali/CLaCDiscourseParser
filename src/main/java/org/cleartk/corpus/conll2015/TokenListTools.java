@@ -46,13 +46,22 @@ public class TokenListTools {
 		return sb.toString();
 	}
 
-	public static boolean isEqualTokenList(List<Token> connectiveTokenList,
-			List<Token> relationConnectiveTokenList) {
-		if (connectiveTokenList.size() != relationConnectiveTokenList.size())
+	public static boolean isEqualTokenList(TokenList firstTokenList,
+			TokenList secondTokenList) {
+		return isEqualTokenList(convertToTokens(firstTokenList), convertToTokens(secondTokenList));
+	}
+	
+	public static boolean isEqualTokenList(List<Token> firstTokenList,
+			List<Token> secondTokenList) {
+		if ((firstTokenList == null && secondTokenList != null) 
+				|| (firstTokenList != null && secondTokenList == null))
 			return false;
 		
-		for (int i = 0; i < connectiveTokenList.size(); i++){
-			if (!connectiveTokenList.get(i).equals(relationConnectiveTokenList.get(i)))
+		if (firstTokenList.size() != secondTokenList.size())
+			return false;
+		
+		for (int i = 0; i < firstTokenList.size(); i++){
+			if (!firstTokenList.get(i).equals(secondTokenList.get(i)))
 				return false;
 		}
 		return true;

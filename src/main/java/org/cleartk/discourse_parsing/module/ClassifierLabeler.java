@@ -1,7 +1,5 @@
 package org.cleartk.discourse_parsing.module;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import org.apache.uima.UimaContext;
@@ -12,13 +10,11 @@ import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instance;
 import org.cleartk.ml.feature.extractor.CleartkExtractorException;
-import org.cleartk.ml.weka.WekaStringOutcomeClassifier;
-
-import weka.core.Instances;
+//import org.cleartk.ml.weka.WekaStringOutcomeClassifier;
 
 public abstract class ClassifierLabeler<CLASSIFIER_OUTPUT, INSTANCE_TYPE> extends CleartkAnnotator<CLASSIFIER_OUTPUT> implements Labeler<CLASSIFIER_OUTPUT, INSTANCE_TYPE>{
 	protected JCas aJCas;
-	private WekaStringOutcomeClassifier wekaStringOutcomeClassifier ;
+//	private WekaStringOutcomeClassifier wekaStringOutcomeClassifier ;
 	private static int correct, total;
 	
 	@Override
@@ -26,9 +22,9 @@ public abstract class ClassifierLabeler<CLASSIFIER_OUTPUT, INSTANCE_TYPE> extend
 			throws ResourceInitializationException {
 		super.initialize(context);
 		if (!isTraining()){
-			if (classifier instanceof WekaStringOutcomeClassifier){
-				wekaStringOutcomeClassifier = (WekaStringOutcomeClassifier) classifier;
-			}
+//			if (classifier instanceof WekaStringOutcomeClassifier){
+//				wekaStringOutcomeClassifier = (WekaStringOutcomeClassifier) classifier;
+//			}
 		}
 	}
 
@@ -44,31 +40,35 @@ public abstract class ClassifierLabeler<CLASSIFIER_OUTPUT, INSTANCE_TYPE> extend
 			label = getLabel(instance);
 
 			if (isTraining()){
+				for (Feature feature: features){
+					if (feature.getValue() == null || feature.getValue().toString().equals("null"))
+						System.out.println();
+				}
 				dataWriter.write(new Instance<CLASSIFIER_OUTPUT>(label, features));
 			} else {
 				CLASSIFIER_OUTPUT classifiedLabel = null;
 				classifiedLabel = classifier.classify(features);
 				setLabel(aJCas, instance, classifiedLabel);
-				if (wekaStringOutcomeClassifier != null && label != null){
-					wekaStringOutcomeClassifier.store(features, label.toString());
-					correct += label.toString().equals(classifiedLabel.toString()) ? 1 : 0;
-					total++;
-				}
+//				if (wekaStringOutcomeClassifier != null && label != null){
+//					wekaStringOutcomeClassifier.store(features, label.toString());
+//					correct += label.toString().equals(classifiedLabel.toString()) ? 1 : 0;
+//					total++;
+//				}
 			}
 		}
 		
 		wrapUp();
 		
-		if (wekaStringOutcomeClassifier != null){
-			Instances allInstances = wekaStringOutcomeClassifier.getAllInstances();
-			try {
-				PrintWriter printStream = new PrintWriter("outputs/parser/testedInstances.arff");
-				printStream.write(allInstances.toString());
-				printStream.close();
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-		}
+//		if (wekaStringOutcomeClassifier != null){
+//			Instances allInstances = wekaStringOutcomeClassifier.getAllInstances();
+//			try {
+//				PrintWriter printStream = new PrintWriter("outputs/parser/testedInstances.arff");
+//				printStream.write(allInstances.toString());
+//				printStream.close();
+//			} catch (FileNotFoundException e) {
+//				e.printStackTrace();
+//			}
+//		}
 
 	}
 
