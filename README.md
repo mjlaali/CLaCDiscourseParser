@@ -12,12 +12,13 @@ Requires JDK 1.7 or higher and Maven 3.0 or higher.
 1. `git clone git://git.code.sf.net/p/mjtools/code mjtools`
 2. `cd mjtools/`
 3. `mvn install`
+4. `cd ..`
 4. `git clone https://github.com/mjlaali/CLaCDiscourseParser.git` 
 5. `cd CLaCDiscourseParser`
 6. `mvn dependency:copy-dependencies package -DskipTests`
 7. `cp -r <SHARED-TASK-DATE> data/conll15st-train-dev`
-8. To Train:
-9. To Test: 
+8. `./train.sh`
+9. `./test.sh` 
 
 ## Copyright notice and statement of copying permission
 
