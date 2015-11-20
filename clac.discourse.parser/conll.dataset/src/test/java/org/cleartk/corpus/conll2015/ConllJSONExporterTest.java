@@ -18,7 +18,7 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ConllJSONExporterTest {
 	public static final String JSON_OUTPUT = "outputs/test/exporter.json";
-	public static final String PERFECT_RESULT = "Precision 1.0 Recall 1.0 F1 1.0";
+	public static final String PERFECT_RESULT = "Precision 1.0000 Recall 1.0000 F1 1.0000";
 	@SuppressWarnings("unused")
 	private JCas jCas;
 
