@@ -1,0 +1,3 @@
+[submodule "clac.discourse.parser/conll.dataset/data/conll15st-train-dev"]
+	path = clac.discourse.parser/conll.dataset/data/conll15st-train-dev
+	url = git@bitbucket.org:mjlaali/conll2015-dataset.git
