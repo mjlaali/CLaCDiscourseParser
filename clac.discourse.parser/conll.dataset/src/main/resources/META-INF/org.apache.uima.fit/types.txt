@@ -1,0 +1,4 @@
+classpath*:org/cleartk/TypeSystem.xml
+classpath*:org/cleartk/corpus/conll2015/TypeSystem.xml
+classpath*:org/cleartk/discourse/TypeSystem.xml
+classpath*:org/cleartk/discourse_parsing/TypeSystem.xml

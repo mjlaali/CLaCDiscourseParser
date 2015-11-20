@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>SentenceWithSyntax</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <imports>
+    <import name="desc.type.LexicalUnits"/>
+  </imports>
+  <types>
+    <typeDescription>
+      <name>org.cleartk.corpus.conll2015.type.SentenceWithSyntax</name>
+      <description/>
+      <supertypeName>de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence</supertypeName>
+      <features>
+        <featureDescription>
+          <name>syntaxTree</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>
