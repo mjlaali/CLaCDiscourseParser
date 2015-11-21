@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>mjlaali</groupId>
 	<artifactId>clac.discourse.parser</artifactId>
@@ -7,11 +8,14 @@
 	<packaging>pom</packaging>
 	<modules>
 		<module>conll.dataset</module>
-    <module>parser.dc-disambiguation</module>
-  </modules>
+		<module>parser.dc-disambiguation</module>
+		<module>parser.tools</module>
+	</modules>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<dkpro.version>1.7.0</dkpro.version>
+		<cleartk.version>2.0.0</cleartk.version>
 	</properties>
 
 	<build>
@@ -51,19 +55,46 @@
 			<artifactId>jewelcli</artifactId>
 			<version>0.8.9</version>
 		</dependency>
+
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.api.segmentation-asl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>
 				de.tudarmstadt.ukp.dkpro.core.api.syntax-asl
 			</artifactId>
-			<version>1.7.0</version>
+			<version>${dkpro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
+			<artifactId>de.tudarmstadt.ukp.dkpro.core.io.penntree-asl</artifactId>
+			<version>${dkpro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
+			<artifactId>
+				de.tudarmstadt.ukp.dkpro.core.berkeleyparser-gpl
+			</artifactId>
+			<version>${dkpro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
+			<artifactId>
+				de.tudarmstadt.ukp.dkpro.core.io.text-asl
+			</artifactId>
+			<version>${dkpro.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
+			<artifactId>
+				de.tudarmstadt.ukp.dkpro.core.opennlp-asl
+			</artifactId>
+			<version>${dkpro.version}</version>
 		</dependency>
 
 		<dependency>

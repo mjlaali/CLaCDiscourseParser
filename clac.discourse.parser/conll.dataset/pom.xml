@@ -8,10 +8,7 @@
 		<artifactId>clac.discourse.parser</artifactId>
 		<version>0.0.1</version>
 	</parent>
-	
-	<properties>
-		<dkpro.version>1.7.0</dkpro.version>
-	</properties>
+
 
 	<artifactId>conll.dataset</artifactId>
 
@@ -44,25 +41,6 @@
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>18.0</version>
-		</dependency>
-		<dependency>
-			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
-			<artifactId>de.tudarmstadt.ukp.dkpro.core.io.penntree-asl</artifactId>
-			<version>${dkpro.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
-			<artifactId>
-				de.tudarmstadt.ukp.dkpro.core.berkeleyparser-gpl
-			</artifactId>
-			<version>${dkpro.version}</version>
-		</dependency>
-				<dependency>
-			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
-			<artifactId>
-				de.tudarmstadt.ukp.dkpro.core.io.text-asl
-			</artifactId>
-			<version>${dkpro.version}</version>
 		</dependency>
 	</dependencies>
 </project>
