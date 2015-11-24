@@ -10,7 +10,7 @@ import org.cleartk.ml.Feature;
 
 public interface ClassifierAlgorithmFactory <CLASSIFIER_OUTPUT, INSTANCE_TYPE extends Annotation> extends Initializable{
 	public InstanceExtractor<INSTANCE_TYPE> getExtractor();
-	public Function<INSTANCE_TYPE, List<Feature>> getFeatureExtractor();
+	public List<Function<INSTANCE_TYPE, List<Feature>>> getFeatureExtractor();
 	public Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> getLabelExtractor();
 	public BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> getLabeller();
 	

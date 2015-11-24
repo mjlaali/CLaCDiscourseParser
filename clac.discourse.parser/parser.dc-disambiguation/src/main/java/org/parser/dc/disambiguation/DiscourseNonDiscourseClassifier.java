@@ -1,5 +1,6 @@
 package org.parser.dc.disambiguation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -12,6 +13,7 @@ import org.cleartk.ml.Feature;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
+import ca.concordia.clac.ml.feature.FeatureExtractors;
 
 public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 
@@ -29,7 +31,10 @@ public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFacto
 
 	@Override
 	public Function<DiscourseConnective, List<Feature>> getFeatureExtractor() {
-		return null;
+		
+		return dc -> Arrays.asList(
+				FeatureExtractors.makeAttributeFeatureExtractor(
+						(DiscourseConnective ann) -> ann.getCoveredText(), "coveredText").apply(dc));
 	}
 
 	@Override

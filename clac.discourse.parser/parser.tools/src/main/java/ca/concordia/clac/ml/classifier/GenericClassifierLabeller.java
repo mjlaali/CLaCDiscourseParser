@@ -1,10 +1,13 @@
 package ca.concordia.clac.ml.classifier;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.uima.UimaContext;
@@ -32,7 +35,7 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 
 	protected ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE> algorithmFactory;
 	private InstanceExtractor<INSTANCE_TYPE> extractor;
-	private Function<INSTANCE_TYPE, List<Feature>> featureExtractor;
+	private List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor;
 	private Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> labelExtractor;
 	private BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> labeller;
 	
@@ -74,26 +77,39 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 		this.aJCas = aJCas;
 		Collection<INSTANCE_TYPE> instances = extractor.getInstances(aJCas);
 		
+		
 		Stream<INSTANCE_TYPE> stream;
 		if (parallelClassification)
 			stream = instances.parallelStream();
 		else
 			stream = instances.stream();
 		
-		Stream<ComplexInstance<CLASSIFIER_OUTPUT, INSTANCE_TYPE>> instancesWithFeatures = stream
-			.map(i -> new ComplexInstance<CLASSIFIER_OUTPUT, INSTANCE_TYPE>(i))
-			.map(i -> i.setFeatures(featureExtractor.apply(i.getInstance())));
-
+		Map<INSTANCE_TYPE, List<Feature>> allFeatures = stream
+				.flatMap(ann -> featureExtractor.stream().map(f -> {
+					ComplexInstance<CLASSIFIER_OUTPUT, INSTANCE_TYPE> res = new ComplexInstance<>(ann);
+					res.setFeatures(f.apply(ann));
+					return res;	
+					}))
+				.collect(Collectors.toMap(
+						ci -> ci.getInstance(), 
+						ci -> ci.getFeatures(), 
+						(list1, list2) -> {
+							List<Feature> res = new LinkedList<>(list1); 
+							res.addAll(list2);
+							return res;}));
+		BiConsumer<? super INSTANCE_TYPE, ? super List<Feature>> action;
 		if (isTraining()){
-			instancesWithFeatures
-				.map(i -> i.setLabel(labelExtractor.apply(i.getInstance())))
-				.map(i -> i.getClearTkInstance())
-				.forEach(writer);
+			action = (ins, features) -> {
+				CLASSIFIER_OUTPUT label = labelExtractor.apply(ins);
+				writer.accept(new Instance<CLASSIFIER_OUTPUT>(label, features));
+			};
 		} else {
-			instancesWithFeatures
-				.map(i -> i.setLabel(classify.apply(i.getFeatures())))
-				.forEach(i -> labeller.accept(i.getLabel(), i.getInstance()));
-		}
+			action = (ins, features) -> {
+				CLASSIFIER_OUTPUT label = classify.apply(features);
+				labeller.accept(label, ins);
+			};
+		
+		} 
+		allFeatures.forEach(action);
 	}
-
 }

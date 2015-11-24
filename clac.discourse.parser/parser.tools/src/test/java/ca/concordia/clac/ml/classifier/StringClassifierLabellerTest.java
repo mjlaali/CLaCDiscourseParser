@@ -43,8 +43,8 @@ public class StringClassifierLabellerTest {
 		}
 
 		@Override
-		public Function<Token, List<Feature>> getFeatureExtractor() {
-			return token -> Arrays.asList(new Feature("firstLetter", token.getCoveredText().charAt(0)));
+		public List<Function<Token, List<Feature>>> getFeatureExtractor() {
+			return Arrays.asList(token -> Arrays.asList(new Feature("firstLetter", token.getCoveredText().charAt(0))));
 		}
 
 		@Override
@@ -83,12 +83,13 @@ public class StringClassifierLabellerTest {
 						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile)
 						);
 		
-		assertThat(FileUtils.readFileToString(new File(featureFile, "training-data.maxent"))).isEqualTo(
-				"PRP firstLetter_I\n" +
-				"VBZ firstLetter_i\n" +
-				"DT firstLetter_a\n" +
-				"NN firstLetter_t\n" +
-				". firstLetter_.\n");
+		String[] extractedFeatures = FileUtils.readFileToString(new File(featureFile, "training-data.maxent")).split("\n");
+		assertThat(extractedFeatures).containsOnly(
+				"PRP firstLetter_I",
+				"VBZ firstLetter_i",
+				"DT firstLetter_a",
+				"NN firstLetter_t",
+				". firstLetter_.");
 	}
 	
 	@Test
