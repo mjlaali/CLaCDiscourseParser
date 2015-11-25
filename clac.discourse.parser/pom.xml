@@ -15,6 +15,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dkpro.version>1.7.0</dkpro.version>
+		<dkpro.version.patched>1.8.0-SNAPSHOT</dkpro.version.patched>
 		<cleartk.version>2.0.0</cleartk.version>
 	</properties>
 
@@ -73,7 +74,7 @@
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
 			<artifactId>de.tudarmstadt.ukp.dkpro.core.io.penntree-asl</artifactId>
-			<version>${dkpro.version}</version>
+			<version>${dkpro.version.patched}</version>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>

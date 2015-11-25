@@ -1,5 +1,11 @@
 package org.parser.dc.disambiguation;
 
+import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToFeatureList;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getAttribute;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.extractFromScope;
+import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -13,7 +19,7 @@ import org.cleartk.ml.Feature;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
-import ca.concordia.clac.ml.feature.FeatureExtractors;
+
 
 public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 
@@ -29,12 +35,17 @@ public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFacto
 		return lookupInstanceExtractor;
 	}
 
+	
 	@Override
-	public Function<DiscourseConnective, List<Feature>> getFeatureExtractor() {
+	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor() {
+		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
+				.andThen(extractFromScope(
+				 getLast(getAttribute(ann -> ann.getCoveredText(), "selfCat"))
+			));
 		
-		return dc -> Arrays.asList(
-				FeatureExtractors.makeAttributeFeatureExtractor(
-						(DiscourseConnective ann) -> ann.getCoveredText(), "coveredText").apply(dc));
+		return Arrays.asList(
+				convertToFeatureList(getAttribute(ann -> ann.getCoveredText(), "coveredText")), 
+				pathFeatures);
 	}
 
 	@Override

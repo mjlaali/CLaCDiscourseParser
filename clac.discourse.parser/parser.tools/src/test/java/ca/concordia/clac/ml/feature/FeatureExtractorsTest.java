@@ -1,5 +1,7 @@
 package ca.concordia.clac.ml.feature;
 
+import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToFeatureList;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -23,9 +25,9 @@ public class FeatureExtractorsTest {
 		Token token = new Token(aJCas, 0, coverText.length());
 		
 		String featureName = "coverText";
-		List<Feature> features = FeatureExtractors.makeAttributeFeatureExtractor(
+		List<Feature> features = convertToFeatureList(getAttribute(
 				(Token ann) -> ann.getCoveredText(), 
-				featureName).apply(token);
+				featureName)).apply(token);
 		
 		assertThat(features).hasSize(1);
 		Feature feature = features.get(0);
