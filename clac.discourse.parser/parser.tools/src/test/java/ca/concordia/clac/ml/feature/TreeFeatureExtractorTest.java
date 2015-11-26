@@ -1,5 +1,6 @@
 package ca.concordia.clac.ml.feature;
 
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
@@ -173,7 +174,7 @@ public class TreeFeatureExtractorTest {
 	public void givenARootNodeWhenCalculatingItsLeftSiblingThenReturnNull(){
 		ROOT root = JCasUtil.selectByIndex(aJCas, ROOT.class, 0);
 		Function<Constituent, String> feature = getLeftSibling().andThen(getConstituentType());
-		String res = Optional.of(root).map(feature).orElse("null");
+		Object res = getFeature("FeatureWithNull", feature).apply(root).getValue();
 		assertThat(res).isEqualTo("null");
 	}
 

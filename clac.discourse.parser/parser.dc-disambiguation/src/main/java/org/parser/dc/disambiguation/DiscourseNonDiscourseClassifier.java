@@ -47,15 +47,15 @@ public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFacto
 		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
 				.andThen(extractFromScope(
 				 getLast(Constituent.class).andThen(
-						 getFeatures(getConstituentType().andThen(getFeature("selfCat")),
-								     getParent().andThen(getConstituentType()).andThen(getFeature("selfCatParent")),
-						 			 getLeftSibling().andThen(getConstituentType()).andThen(getFeature("selfCatLeftSibling")),
-						 			 getRightSibling().andThen(getConstituentType()).andThen(getFeature("selfCatLeftSibling"))
+						 getFeatures(getFeature("selfCat", getConstituentType()),
+								 	 getFeature("selfCatParent", getParent().andThen(getConstituentType())),
+								 	 getFeature("selfCatLeftSibling", getLeftSibling().andThen(getConstituentType())),
+						 			 getFeature("selfCatLeftSibling", getRightSibling().andThen(getConstituentType()))
 						 )) 
 			));
 		
 		return Arrays.asList(
-				getFeatures(getText(DiscourseConnective.class).andThen(getFeature("coveredText"))), 
+				getFeatures(getFeature("coveredText", getText(DiscourseConnective.class))), 
 				pathFeatures);
 	}
 

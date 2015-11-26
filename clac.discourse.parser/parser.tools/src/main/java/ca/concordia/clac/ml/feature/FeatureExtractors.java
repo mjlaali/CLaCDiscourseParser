@@ -2,6 +2,7 @@ package ca.concordia.clac.ml.feature;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -11,8 +12,8 @@ import org.cleartk.ml.Feature;
 
 public class FeatureExtractors{
 
-	public static <ANN_TYPE extends Annotation> Function<String, Feature> getFeature(String featureName) {
-		return val -> new Feature(featureName, "" + val);
+	public static <T> Function<T, Feature> getFeature(String featureName, Function<T, String> featureExtractor) {
+		return val -> new Feature(featureName, Optional.of(val).map(featureExtractor).orElse("null"));
 	}
 	
 	@SafeVarargs
@@ -32,6 +33,8 @@ public class FeatureExtractors{
 	public static <T extends Annotation> Function<T, String> getText(Class<T> cls){
 		return (ann) -> ann.getCoveredText();
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public static <T> Function<FSArray, List<T>> convertToList(Class<T> cls){

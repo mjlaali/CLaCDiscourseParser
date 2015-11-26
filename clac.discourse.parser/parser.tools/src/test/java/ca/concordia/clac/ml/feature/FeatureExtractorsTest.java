@@ -26,7 +26,7 @@ public class FeatureExtractorsTest {
 		Token token = new Token(aJCas, 0, coverText.length());
 		
 		String featureName = "coverText";
-		List<Feature> features = getFeatures(getText(Token.class).andThen(getFeature(featureName))).apply(token);
+		List<Feature> features = getFeatures(getFeature(featureName, getText(Token.class))).apply(token);
 		
 		assertThat(features).hasSize(1);
 		Feature feature = features.get(0);
