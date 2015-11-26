@@ -35,7 +35,7 @@ public class ConllSyntaxGoldAnnotatorTest {
 				TextReader.PARAM_SOURCE_LOCATION, new File(ConllJSON.TRIAL_RAW_TEXT_LD), 
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
-		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(ConllJSON.TRIAL_SYNTAX_FILE);
+		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(new File(ConllJSON.TRIAL_SYNTAX_FILE));
 //		AnalysisEngineDescription syntaxParseTreeReader = AnalysisEngineFactory.createEngineDescription(TreebankGoldAnnotator.class);
 		
 		for (JCas jCas : SimplePipeline.iteratePipeline(reader, conllSyntaxJsonReader)) {

@@ -103,10 +103,11 @@ public class SyntaxReader{
 	public void addSyntacticConstituents(Sentence aSentence, String parseTree) throws AnalysisEngineProcessException{
 		//create fragment parser if there is no parser. It makes the program simpler
 		List<Token> sentTokens = JCasUtil.selectCovering(Token.class, aSentence);
-		if (parseTree.trim().equals(ConllSyntaxGoldAnnotator.NO_PARSE)){
+		parseTree = parseTree.trim();
+		if (parseTree.equals(ConllSyntaxGoldAnnotator.NO_PARSE) || parseTree.isEmpty()){
 			StringBuilder buffer = new StringBuilder();
 			if (sentTokens.size() != 0){
-				buffer.append("(TOP");
+				buffer.append("(ROOT");
 				for (int i = 0; i < sentTokens.size(); i++){
 					Token jsonWord = sentTokens.get(i);
 					String coveredText = jsonWord.getCoveredText();
@@ -120,11 +121,19 @@ public class SyntaxReader{
 			//otherwise ignore this sentence
 		} 
 
+		if (parseTree.isEmpty())
+			return;
 		posMappingProvider.configure(aSentence.getCAS());
 		constituentMappingProvider.configure(aSentence.getCAS());
 		PennTreeNode parsePennTree = PennTreeUtils.parsePennTree(parseTree);
 		converter.setCreatePosTags(true);
-		converter.convertPennTree(aSentence, parsePennTree);
+		try {
+			converter.convertPennTree(aSentence, parsePennTree);
+		} catch (Exception e) {
+			System.err.println("\n\n**************************");
+			System.err.println(parseTree);
+			e.printStackTrace();
+		}
 	}
 //
 //	private void syncPosition(TreebankNode node, Iterator<Token> tokensIter) {

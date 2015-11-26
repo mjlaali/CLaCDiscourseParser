@@ -1,7 +1,5 @@
 package org.cleartk.corpus.conll2015;
 
-import ir.laali.tools.ds.DSManagment;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,15 +8,20 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.CollectionReaderFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.json.JSONComplexAnnotation;
 import org.cleartk.corpus.conll2015.json.JSONRelation;
 import org.cleartk.corpus.conll2015.json.JSONToken;
@@ -28,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
+import ir.laali.tools.ds.DSManagment;
 
 
 public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
@@ -43,22 +48,22 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 			description = DISCOURSE_JSON_FILE_DESCRIPTION,
 			mandatory = true)
 	private String discourseJsonFilePath;
-	
+
 	@ConfigurationParameter(
 			name = PARAM_ADD_MULTIPLE_SENSES,
 			description = ADD_MULTIPLE_SENSES_DESCRIPTION,
 			mandatory = true)
 	private boolean addMultipleSenses;
-	
-	
+
+
 	private Map<String, RelationType> textToRelation = new TreeMap<String, RelationType>();
 	private DiscourseRelationFactory discourseRelationFactory = new DiscourseRelationFactory();
-	
-	public static AnalysisEngineDescription getDescription(String discourseFilePath) throws ResourceInitializationException {
+
+	public static AnalysisEngineDescription getDescription(File discourseFilePath) throws ResourceInitializationException {
 		return getDescription(discourseFilePath, true);
 	}
-	
-	public static AnalysisEngineDescription getDescription(String discourseFilePath, boolean addMultipleSenses) throws ResourceInitializationException {
+
+	public static AnalysisEngineDescription getDescription(File discourseFilePath, boolean addMultipleSenses) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
 				ConllDiscourseGoldAnnotator.class,
 				PARAM_DISCOURSE_JSON_FILE,
@@ -70,12 +75,12 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 	private Map<String, List<JSONObject>> docJSonRelations = new TreeMap<String, List<JSONObject>>();
 	private JCas aJCas;
 	private ArrayList<Token> docTokens;
-	
+
 	@Override
 	public void initialize(UimaContext context)
 			throws ResourceInitializationException {
 		super.initialize(context);
-		
+
 		File source = new File(discourseJsonFilePath);
 		try {
 			Scanner scanner = new Scanner(source);
@@ -89,14 +94,14 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 		} catch (IOException | JSONException e) {
 			throw new ResourceInitializationException(e);
 		}
-		
+
 		for (RelationType relationType: RelationType.values()){
 			textToRelation.put(relationType.toString().toLowerCase(), relationType);
 		}
 	}
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
-		
+
 		if (!docJSonRelations.containsKey(Tools.getDocName(aJCas))){
 			if (JCasUtil.exists(aJCas, ConllToken.class)){
 				System.err.println("ConllDiscourseGoldAnnotator.process(): No discourse relation for file <" +
@@ -105,26 +110,26 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 			}
 			return;
 		}
-		
+
 		List<JSONObject> jsonRelations = docJSonRelations.remove(Tools.getDocName(aJCas));
 		if (jsonRelations == null)
 			return;
-		
+
 		this.aJCas = aJCas;
 		docTokens = new ArrayList<>(JCasUtil.select(aJCas, Token.class));
 		for (JSONObject aDiscourseAnnotation: jsonRelations){
 			JSONRelation discourseRelaiton;
-				try {
-					discourseRelaiton = new JSONRelation();
-					discourseRelaiton.init(aDiscourseAnnotation);
-				} catch (JSONException e) {
-					throw new RuntimeException(e); 
-				}
+			try {
+				discourseRelaiton = new JSONRelation();
+				discourseRelaiton.init(aDiscourseAnnotation);
+			} catch (JSONException e) {
+				throw new RuntimeException(e); 
+			}
 			addDiscourseRelation(discourseRelaiton);
 		}
-		
+
 	}
-	
+
 	private void addDiscourseRelation(JSONRelation jsonDiscourseRelation) {
 		@SuppressWarnings("unchecked")
 		List<String> senses = (List<String>)jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_SENSE);
@@ -137,7 +142,7 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 			List<Token> arg1Tokens = convertToTokens(annotaions.get(ArgType.Arg1.toString()).getTokenList().getTokenList());
 			List<Token> arg2Tokens = convertToTokens(annotaions.get(ArgType.Arg2.toString()).getTokenList().getTokenList());
 
-			
+
 			DiscourseRelation discourseRelation = discourseRelationFactory.makeDiscourseRelation(aJCas,
 					type, sense, discourseConnectiveText, discourseConnectiveTokenList, arg1Tokens, arg2Tokens);
 			addToIndex(discourseRelation);
@@ -156,17 +161,32 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 
 	private List<Token> convertToTokens(List<JSONToken> jsonTokenList) {
 		List<Token> tokens = new ArrayList<>();
-		
+
 		for (JSONToken jsonToken: jsonTokenList){
 			if (docTokens.size() <= jsonToken.getDocOffset())
 				System.out.println("ConllDiscourseGoldAnnotator.convertToTokens(): " + aJCas.getDocumentText());
 			Token token = docTokens.get(jsonToken.getDocOffset());
 			tokens.add(token);
 		}
-		
+
 		return tokens;
 	}
-	
-	
-	
+
+	public static void main(String[] args) throws UIMAException, IOException {
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("data"), DatasetMode.train);
+
+		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
+				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
+				TextReader.PARAM_LANGUAGE, "en",
+				TextReader.PARAM_PATTERNS, "wsj_*");
+		AnalysisEngineDescription conllSyntaxJsonReader = 
+				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
+
+		AnalysisEngineDescription conllGoldJsonReader = 
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+
+		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, conllGoldJsonReader);
+	}
+
+
 }

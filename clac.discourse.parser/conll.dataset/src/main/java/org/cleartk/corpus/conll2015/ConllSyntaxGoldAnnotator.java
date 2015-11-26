@@ -5,16 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CASException;
+import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.descriptor.TypeCapability;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.CollectionReaderFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.type.ConllToken;
 import org.cleartk.corpus.conll2015.type.SentenceWithSyntax;
 import org.json.JSONArray;
@@ -23,6 +28,7 @@ import org.json.JSONObject;
 
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 @TypeCapability(outputs = {"org.cleartk.token.type.Sentence", "org.cleartk.corpus.conll2015.type.ConllToken"})
 public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
@@ -40,7 +46,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 	private int tokenIdx;
 	private SyntaxReader syntaxReader = new SyntaxReader();
 
-	public static AnalysisEngineDescription getDescription(String syntaxFilePath) throws ResourceInitializationException {
+	public static AnalysisEngineDescription getDescription(File syntaxFilePath) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
 				ConllSyntaxGoldAnnotator.class,
 				PARAM_SYNTAX_JSON_FILE,
@@ -170,5 +176,17 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 //			}
 //			node.addToIndexes();
 //		}
+	}
+	
+	public static void main(String[] args) throws UIMAException, IOException {
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("data"), DatasetMode.train);
+		
+		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
+				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
+				TextReader.PARAM_LANGUAGE, "en",
+				TextReader.PARAM_PATTERNS, "wsj_*");
+		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
+
+		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader);
 	}
 }
