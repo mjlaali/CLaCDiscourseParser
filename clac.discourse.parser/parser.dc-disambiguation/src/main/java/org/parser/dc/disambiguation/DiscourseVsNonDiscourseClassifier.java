@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.uima.UimaContext;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -27,7 +28,7 @@ import ca.concordia.clac.ml.classifier.InstanceExtractor;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 
-public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
+public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 
 	private LookupInstanceExtractor lookupInstanceExtractor = new LookupInstanceExtractor();
 	
@@ -54,8 +55,12 @@ public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFacto
 						 )) 
 			));
 		
+		
 		return Arrays.asList(
-				getFeatures(getFeature("coveredText", getText(DiscourseConnective.class))), 
+				getFeatures(getFeature("CON-LStr", getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
+						    getFeature("CON-POS", getText(DiscourseConnective.class)
+						    		.andThen(StringUtils::isAllLowerCase)
+						    		.andThen((b) -> b.toString()))), 
 				pathFeatures);
 	}
 

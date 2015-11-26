@@ -1,54 +1,44 @@
 package ca.concordia.clac.ml.feature;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToList;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 
+import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class TreeFeatureExtractor {
 	
 	public static Function<Constituent, Constituent> getParent(){
-		return (Constituent cons) -> (Constituent) cons.getParent();
+		return getFunction(Constituent::getParent).andThen(t -> (Constituent) t);
 	}
 	
-	public static Function<Constituent, FSArray> getChilderen(){
-		return (Constituent par) -> par.getChildren();
-	}
-	
-
 	public static <T extends Annotation> Function<T, String> getConstituentType(){
 		return (T ann) -> {
-			try{
 				if (ann instanceof Constituent)
 					return ((Constituent)ann).getConstituentType();
-				else if (ann instanceof Token)
-					return ((Token)ann).getPos().getPosValue();
-			} catch (NullPointerException e){
-				
-			}
-			return null;
+				if (ann instanceof Token)
+					return Optional.of((Token)ann).map(Token::getPos).map(POS::getPosValue).orElse(null);
+				return null;
 		};
 	}
 	
 	public static Function<Constituent, List<Annotation>> getSiblings(){
 		return (cons) -> {
 			return Optional.of(cons).map(getParent())
-					.map(getChilderen())
+					.map(Constituent::getChildren)
 					.map(convertToList(Annotation.class))
 					.orElse(Collections.emptyList());
 		};
 		
 	}
-	
-
 	
 	public static Function<Constituent, Annotation> getLeftSibling(){
 		return (cons) -> {

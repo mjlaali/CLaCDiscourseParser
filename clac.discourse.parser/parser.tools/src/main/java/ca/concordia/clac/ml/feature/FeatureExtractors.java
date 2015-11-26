@@ -34,7 +34,14 @@ public class FeatureExtractors{
 		return (ann) -> ann.getCoveredText();
 	}
 	
+	public static <T, R> Function<T, R> getFunction(Function<T, R> f){
+		return f;
+	}
 	
+	public static <T, R> Function<T, R> getFunction(Function<T, R> f, Class<T> clsT, Class<R> clsR){
+		return f;
+	}
+
 	
 	@SuppressWarnings("unchecked")
 	public static <T> Function<FSArray, List<T>> convertToList(Class<T> cls){
@@ -46,4 +53,5 @@ public class FeatureExtractors{
 			return res;
 		};
 	}
+	
 }
