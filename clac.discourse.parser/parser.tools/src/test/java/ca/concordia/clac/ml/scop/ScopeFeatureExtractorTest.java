@@ -1,8 +1,10 @@
 package ca.concordia.clac.ml.scop;
 
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.extractFromScope;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
 import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import java.util.function.Function;
@@ -79,9 +81,12 @@ public class ScopeFeatureExtractorTest {
 		Token soToken = JCasUtil.selectCovered(aJCas, Token.class, soPos, soPos + so.length()).get(0);
 		
 		Function<Token, List<Feature>> feature = getPathToRoot(Token.class).andThen(extractFromScope(
-				joinInScope((Constituent cons) -> cons.getConstituentType(), "full-path")));
+				getFeatures(joinInScope((Constituent cons) -> cons.getConstituentType(), "full-path"))));
 		
 		List<Feature> res = feature.apply(soToken);
-		System.out.println(res);
+		assertThat(res).hasSize(1);
+		Feature f = res.get(0);
+		assertThat(f.getName()).isEqualTo("full-path");
+		assertThat(f.getValue()).isEqualTo("ROOT-S-VP-ADVP");
 	}
 }

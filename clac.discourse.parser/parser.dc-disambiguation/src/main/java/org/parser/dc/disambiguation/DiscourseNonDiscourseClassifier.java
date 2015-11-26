@@ -1,9 +1,14 @@
 package org.parser.dc.disambiguation;
 
-import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToFeatureList;
-import static ca.concordia.clac.ml.feature.FeatureExtractors.getAttribute;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeature;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getText;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.extractFromScope;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
 import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 
 import java.util.Arrays;
@@ -19,6 +24,7 @@ import org.cleartk.ml.Feature;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 
 public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
@@ -40,11 +46,16 @@ public class DiscourseNonDiscourseClassifier implements ClassifierAlgorithmFacto
 	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor() {
 		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
 				.andThen(extractFromScope(
-				 getLast(getAttribute(ann -> ann.getCoveredText(), "selfCat"))
+				 getLast(Constituent.class).andThen(
+						 getFeatures(getConstituentType().andThen(getFeature("selfCat")),
+								     getParent().andThen(getConstituentType()).andThen(getFeature("selfCatParent")),
+						 			 getLeftSibling().andThen(getConstituentType()).andThen(getFeature("selfCatLeftSibling")),
+						 			 getRightSibling().andThen(getConstituentType()).andThen(getFeature("selfCatLeftSibling"))
+						 )) 
 			));
 		
 		return Arrays.asList(
-				convertToFeatureList(getAttribute(ann -> ann.getCoveredText(), "coveredText")), 
+				getFeatures(getText(DiscourseConnective.class).andThen(getFeature("coveredText"))), 
 				pathFeatures);
 	}
 

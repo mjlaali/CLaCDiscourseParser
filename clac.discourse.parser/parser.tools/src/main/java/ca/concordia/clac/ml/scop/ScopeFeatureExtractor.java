@@ -11,17 +11,17 @@ import org.cleartk.ml.Feature;
 
 public class ScopeFeatureExtractor {
 	@SafeVarargs
-	public static <T> Function<List<T>, List<Feature>> extractFromScope(Function<List<T>, Feature>... featureExtractors) {
+	public static <T> Function<List<T>, List<Feature>> extractFromScope(Function<List<T>, List<Feature>>... featureExtractors) {
 		
 		return (scope) -> {
 			List<Feature> results = new ArrayList<>();
-			Stream.of(featureExtractors).forEach(f -> results.add(f.apply(scope)));
+			Stream.of(featureExtractors).forEach(f -> results.addAll(f.apply(scope)));
 			return results;
 		};
 	}
 	
-	public static <ANN extends Annotation> Function<List<ANN>, Feature> getLast(Function<ANN, Feature> func){
-		return (annotations) -> func.apply(annotations.get(annotations.size() - 1));
+	public static <ANN extends Annotation> Function<List<ANN>, ANN> getLast(Class<ANN> cls){
+		return (annotations) -> annotations.get(annotations.size() - 1);
 	}
 	
 	public static <ANN extends Annotation> Function<List<ANN>, Feature> joinInScope(Function<ANN, String> func, String featureName){
