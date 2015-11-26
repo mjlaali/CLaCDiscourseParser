@@ -22,15 +22,15 @@ import org.cleartk.ml.CleartkProcessingException;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instance;
 
-public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends Annotation> 
-extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
+public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends Annotation>
+		extends CleartkAnnotator<CLASSIFIER_OUTPUT> {
 	public static final String PARAM_PARALLEL_CLASSIFICATION = "parallelClassification";
 	public static final String PARAM_LABELER_CLS_NAME = "labellerClsName";
 
 	@ConfigurationParameter(name = PARAM_LABELER_CLS_NAME)
 	private String labellerClsName;
-	
-	@ConfigurationParameter(name = PARAM_PARALLEL_CLASSIFICATION, defaultValue="false")
+
+	@ConfigurationParameter(name = PARAM_PARALLEL_CLASSIFICATION, defaultValue = "false")
 	private Boolean parallelClassification;
 
 	protected ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE> algorithmFactory;
@@ -38,10 +38,10 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 	private List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor;
 	private Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> labelExtractor;
 	private BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> labeller;
-	
+
 	protected Consumer<Instance<CLASSIFIER_OUTPUT>> writer;
 	protected Function<List<Feature>, CLASSIFIER_OUTPUT> classify;
-	
+
 	protected JCas aJCas;
 
 	@SuppressWarnings("unchecked")
@@ -49,12 +49,12 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 		super.initialize(context);
 		algorithmFactory = InitializableFactory.create(context, labellerClsName, ClassifierAlgorithmFactory.class);
-		
+
 		extractor = algorithmFactory.getExtractor();
 		featureExtractor = algorithmFactory.getFeatureExtractor();
 		labelExtractor = algorithmFactory.getLabelExtractor();
 		labeller = algorithmFactory.getLabeller();
-		
+
 		writer = (instance) -> {
 			try {
 				dataWriter.write(instance);
@@ -62,7 +62,7 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 				throw new RuntimeException(e);
 			}
 		};
-		
+
 		classify = (features) -> {
 			try {
 				return classifier.classify(features);
@@ -76,29 +76,16 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		this.aJCas = aJCas;
 		Collection<INSTANCE_TYPE> instances = extractor.getInstances(aJCas);
-		
-		
+
 		Stream<INSTANCE_TYPE> stream;
 		if (parallelClassification)
 			stream = instances.parallelStream();
 		else
 			stream = instances.stream();
-		
-		Map<INSTANCE_TYPE, List<Feature>> allFeatures = stream
-				.flatMap(ann -> featureExtractor.stream().map(f -> {
-					ComplexInstance<CLASSIFIER_OUTPUT, INSTANCE_TYPE> res = new ComplexInstance<>(ann);
-					res.setFeatures(f.apply(ann));
-					return res;	
-					}))
-				.collect(Collectors.toMap(
-						ci -> ci.getInstance(), 
-						ci -> ci.getFeatures(), 
-						(list1, list2) -> {
-							List<Feature> res = new LinkedList<>(list1); 
-							res.addAll(list2);
-							return res;}));
+
+		Map<INSTANCE_TYPE, List<Feature>> allFeatures = calcFeatures(stream, featureExtractor);
 		BiConsumer<? super INSTANCE_TYPE, ? super List<Feature>> action;
-		if (isTraining()){
+		if (isTraining()) {
 			action = (ins, features) -> {
 				CLASSIFIER_OUTPUT label = labelExtractor.apply(ins);
 				writer.accept(new Instance<CLASSIFIER_OUTPUT>(label, features));
@@ -108,8 +95,23 @@ extends CleartkAnnotator<CLASSIFIER_OUTPUT>{
 				CLASSIFIER_OUTPUT label = classify.apply(features);
 				labeller.accept(label, ins);
 			};
-		
-		} 
+
+		}
 		allFeatures.forEach(action);
+	}
+
+	public static <INSTANCE_TYPE extends Annotation> Map<INSTANCE_TYPE, List<Feature>> calcFeatures(
+			Stream<INSTANCE_TYPE> stream, List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor) {
+		
+		Map<INSTANCE_TYPE, List<Feature>> allFeatures = stream.flatMap(ann -> featureExtractor.stream().map(f -> {
+			ComplexInstance<INSTANCE_TYPE> res = new ComplexInstance<>(ann);
+			res.setFeatures(f.apply(ann));
+			return res;
+		})).collect(Collectors.toMap(ci -> ci.getInstance(), ci -> ci.getFeatures(), (list1, list2) -> {
+			List<Feature> res = new LinkedList<>(list1);
+			res.addAll(list2);
+			return res;
+		}));
+		return allFeatures;
 	}
 }

@@ -106,7 +106,7 @@ public class TestNewFeature {
 		
 		Map<Token, List<Feature>> allFeatures = anns.stream()
 		.flatMap(ann -> extractors.stream().map(f -> {
-			ComplexInstance<String, Token> res = new ComplexInstance<>(ann);
+			ComplexInstance<Token> res = new ComplexInstance<>(ann);
 			res.setFeatures(f.apply(ann));
 			return res;	
 			}))

@@ -20,7 +20,7 @@ public class ConnectiveLabellerTest {
 		aJCas.setDocumentText("but, this is another issue.");
 		DiscourseConnective connective = new DiscourseConnective(aJCas, 0, "but".length());
 		
-		BiConsumer<String, DiscourseConnective> labeller = new DiscourseNonDiscourseClassifier().getLabeller();
+		BiConsumer<String, DiscourseConnective> labeller = new DiscourseVsNonDiscourseClassifier().getLabeller();
 		labeller.accept("true", connective);
 		
 		assertThat(JCasUtil.select(aJCas, DiscourseConnective.class)).hasSize(1);
@@ -33,7 +33,7 @@ public class ConnectiveLabellerTest {
 		aJCas.setDocumentText("but, this is another issue.");
 		DiscourseConnective connective = new DiscourseConnective(aJCas, 0, "but".length());
 		
-		BiConsumer<String, DiscourseConnective> labeller = new DiscourseNonDiscourseClassifier().getLabeller();
+		BiConsumer<String, DiscourseConnective> labeller = new DiscourseVsNonDiscourseClassifier().getLabeller();
 		labeller.accept("false", connective);
 		
 		assertThat(JCasUtil.select(aJCas, DiscourseConnective.class)).hasSize(0);

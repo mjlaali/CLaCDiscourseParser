@@ -123,6 +123,7 @@ public class SyntaxReader{
 		posMappingProvider.configure(aSentence.getCAS());
 		constituentMappingProvider.configure(aSentence.getCAS());
 		PennTreeNode parsePennTree = PennTreeUtils.parsePennTree(parseTree);
+		converter.setCreatePosTags(true);
 		converter.convertPennTree(aSentence, parsePennTree);
 	}
 //

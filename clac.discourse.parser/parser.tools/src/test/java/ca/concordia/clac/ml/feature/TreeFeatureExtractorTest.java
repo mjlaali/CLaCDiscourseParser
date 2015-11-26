@@ -23,7 +23,6 @@ import org.cleartk.ml.Feature;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
@@ -80,16 +79,12 @@ public class TreeFeatureExtractorTest {
 		aSentence.addToIndexes();
 		int pos = 0;
 		
-		int idx = 0;
-		List<PennTreeNode> nodes = PennTreeUtils.getPreTerminals(parsePennTree);
 		for (String tokenStr: sent.split(" ")){
 			Token token = new Token(aJCas, pos, pos + tokenStr.length());
-			POS partOfSpeach = new POS(aJCas, token.getBegin(), token.getEnd());
-			partOfSpeach.setPosValue(nodes.get(idx++).getLabel());
-			token.setPos(partOfSpeach);
 			token.addToIndexes();
 			pos += tokenStr.length() + 1;
 		}
+		converter.setCreatePosTags(true);
 		converter.convertPennTree(aSentence, parsePennTree);
 
 	}
