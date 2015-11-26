@@ -6,8 +6,9 @@
 	<parent>
 		<groupId>mjlaali</groupId>
 		<artifactId>clac.discourse.parser</artifactId>
-		<version>0.0.1</version>
+		<version>${project.versio}</version>
 	</parent>
+	
 	<artifactId>parser.tools</artifactId>
 	<name>parser.tools</name>
 	<url>http://maven.apache.org</url>

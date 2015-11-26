@@ -35,10 +35,18 @@ public class Scopes {
 					parent = constituents[i];
 				else 
 					System.err.println("Cannot found the childeren of node " + parent);
-					
+			}
+			
+			int idx = -1;
+			for (int i = 0; i < constituents.length; i++){
+				if (constituents[i].equals(inAnn))
+					idx = i;
 			}
 				
-			return new ArrayList<>(Arrays.asList(constituents));
+			List<Constituent> res = new ArrayList<>(Arrays.asList(constituents));
+			if (idx != -1)
+				res = res.subList(0, idx);
+			return res;
 		};
 	}
 }

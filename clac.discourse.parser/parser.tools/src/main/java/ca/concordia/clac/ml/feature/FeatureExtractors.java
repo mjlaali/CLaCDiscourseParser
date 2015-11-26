@@ -21,7 +21,7 @@ public class FeatureExtractors{
 	
 	@SafeVarargs
 	public static <T> Function<T, List<Feature>> getFeatures(
-			Function<T, Feature>... extractor) {
+			Function<? super T, Feature>... extractor) {
 		return annotation -> {
 			List<Feature> results = new ArrayList<>();
 			Stream.of(extractor).forEach((f) -> results.add(f.apply(annotation)));
