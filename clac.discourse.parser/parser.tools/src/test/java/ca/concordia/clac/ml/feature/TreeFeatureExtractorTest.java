@@ -1,4 +1,4 @@
-package ca.concordia.clac.ml.scop;
+package ca.concordia.clac.ml.feature;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
@@ -12,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.uima.UIMAException;
@@ -166,6 +167,14 @@ public class TreeFeatureExtractorTest {
 		
 		String res = feature.apply(advp);
 		assertThat(res).isEqualTo("CC");
+	}
+	
+	@Test
+	public void givenARootNodeWhenCalculatingItsLeftSiblingThenReturnNull(){
+		ROOT root = JCasUtil.selectByIndex(aJCas, ROOT.class, 0);
+		Function<Constituent, String> feature = getLeftSibling().andThen(getConstituentType());
+		String res = Optional.of(root).map(feature).orElse("null");
+		assertThat(res).isEqualTo("null");
 	}
 
 }

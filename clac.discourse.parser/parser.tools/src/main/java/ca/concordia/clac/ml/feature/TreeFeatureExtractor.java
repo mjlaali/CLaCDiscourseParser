@@ -1,10 +1,10 @@
 package ca.concordia.clac.ml.feature;
 
-import static ca.concordia.clac.ml.feature.FeatureExtractors.nullSafeCall;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToList;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.uima.jcas.cas.FSArray;
@@ -16,11 +16,16 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 public class TreeFeatureExtractor {
 	
 	public static Function<Constituent, Constituent> getParent(){
-		return nullSafeCall((Constituent cons) -> (Constituent) cons.getParent());
+		return (Constituent cons) -> (Constituent) cons.getParent();
 	}
+	
+	public static Function<Constituent, FSArray> getChilderen(){
+		return (Constituent par) -> par.getChildren();
+	}
+	
 
 	public static <T extends Annotation> Function<T, String> getConstituentType(){
-		return nullSafeCall((T ann) -> {
+		return (T ann) -> {
 			try{
 				if (ann instanceof Constituent)
 					return ((Constituent)ann).getConstituentType();
@@ -30,20 +35,15 @@ public class TreeFeatureExtractor {
 				
 			}
 			return null;
-		});
+		};
 	}
 	
 	public static Function<Constituent, List<Annotation>> getSiblings(){
-		Function<Constituent, FSArray> getChilderen = getParent().andThen((par) -> par.getChildren());
 		return (cons) -> {
-			FSArray childeren = getChilderen.apply(cons);
-			if (childeren == null)
-				return Collections.emptyList();
-			List<Annotation> res = new ArrayList<>();
-			for (int i = 0; i < childeren.size(); i++){
-				res.add((Annotation)childeren.get(i));
-			}
-			return res;
+			return Optional.of(cons).map(getParent())
+					.map(getChilderen())
+					.map(convertToList(Annotation.class))
+					.orElse(Collections.emptyList());
 		};
 		
 	}
