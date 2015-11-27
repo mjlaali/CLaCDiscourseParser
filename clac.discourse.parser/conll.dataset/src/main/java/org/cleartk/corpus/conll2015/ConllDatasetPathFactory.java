@@ -2,6 +2,8 @@ package org.cleartk.corpus.conll2015;
 
 import java.io.File;
 
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
+
 public class ConllDatasetPathFactory {
 	
 	private File baseFld;
@@ -55,5 +57,9 @@ public class ConllDatasetPathFactory {
 		File dataFld = new File("data");
 		for (ConllDatasetPath.DatasetMode mode: ConllDatasetPath.DatasetMode.values())
 			factory.makeADataset(dataFld, mode);
+	}
+
+	public ConllDatasetPath makeADataset(DatasetMode mode) {
+		return makeADataset(new File("data"), mode);
 	}
 }

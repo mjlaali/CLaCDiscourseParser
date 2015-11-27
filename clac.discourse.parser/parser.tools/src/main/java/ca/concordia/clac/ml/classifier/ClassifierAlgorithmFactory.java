@@ -14,5 +14,4 @@ public interface ClassifierAlgorithmFactory <CLASSIFIER_OUTPUT, INSTANCE_TYPE ex
 	public Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> getLabelExtractor();
 	public BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> getLabeller();
 	
-	
 }

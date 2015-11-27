@@ -22,7 +22,7 @@ public class ConllJSONExporterTest {
 	@SuppressWarnings("unused")
 	private JCas jCas;
 
-	public void setUp(DatasetPath dataSet) throws UIMAException, IOException{
+	public void setUp(ConllDatasetPath dataSet) throws UIMAException, IOException{
 		new File(JSON_OUTPUT).getParentFile().mkdirs();
 
 		// A collection reader that creates one CAS per file, containing the file's URI
@@ -30,8 +30,8 @@ public class ConllJSONExporterTest {
 				TextReader.PARAM_SOURCE_LOCATION, new File(ConllJSON.TRIAL_RAW_TEXT_LD), 
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
-		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(new File(dataSet.getSyntaxAnnotationFlie()));
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(new File(dataSet.getDiscourseGoldAnnotationFile()), false);
+		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(dataSet.getParsesJSonFile());
+		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(dataSet.getDataJSonFile(), false);
 		AnalysisEngineDescription conllJSONExporter = ConllJSONExporter.getDescription(JSON_OUTPUT);
 //		AnalysisEngineDescription syntaxParseTreeReader = AnalysisEngineFactory.createEngineDescription(TreebankGoldAnnotator.class);
 		
@@ -42,7 +42,7 @@ public class ConllJSONExporterTest {
 	
 	@Test
 	public void givenTrialDataSetWhenWritingTheSameOutputThenGetPerfectResults() throws IOException, UIMAException{
-		DatasetPath dataSet = new ConllDataset();
+		ConllDatasetPath dataSet = new ConllDatasetPathFactory().makeADataset(ConllDatasetPath.DatasetMode.trial);
 		setUp(dataSet);
 		String overallResult = Tools.runScorer(ConllJSON.TRIAL_DISCOURSE_FILE, JSON_OUTPUT).getLast();
 		
@@ -52,9 +52,9 @@ public class ConllJSONExporterTest {
 	@Ignore
 	@Test
 	public void givenDevDataSetWhenWritingTheSameOutputThenGetPerfectResults() throws IOException, UIMAException{
-		DatasetPath dataSet = new ConllDataset("dev");
+		ConllDatasetPath dataSet = new ConllDatasetPathFactory().makeADataset(ConllDatasetPath.DatasetMode.dev);
 		setUp(dataSet);
-		String overallResult = Tools.runScorer(dataSet.getDiscourseGoldAnnotationFile(), JSON_OUTPUT).getLast();
+		String overallResult = Tools.runScorer(dataSet.getDataJSonFile().getAbsolutePath(), JSON_OUTPUT).getLast();
 		
 		assertThat(overallResult).isEqualTo(PERFECT_RESULT);
 	}

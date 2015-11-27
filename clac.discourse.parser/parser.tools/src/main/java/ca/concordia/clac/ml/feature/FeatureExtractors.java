@@ -13,7 +13,7 @@ import org.cleartk.ml.Feature;
 public class FeatureExtractors{
 
 	public static <T> Function<T, Feature> getFeature(String featureName, Function<T, String> featureExtractor) {
-		return val -> new Feature(featureName, Optional.of(val).map(featureExtractor).orElse("null"));
+		return val -> val == null ? null : new Feature(featureName, Optional.of(val).map(featureExtractor).orElse("null"));
 	}
 	
 	@SafeVarargs
