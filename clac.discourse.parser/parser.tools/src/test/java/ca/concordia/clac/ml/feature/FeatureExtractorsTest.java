@@ -33,4 +33,6 @@ public class FeatureExtractorsTest {
 		assertThat(feature.getName()).isEqualTo(featureName);
 		assertThat(feature.getValue()).isEqualTo(coverText);
 	}
+	
+	
 }

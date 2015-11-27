@@ -57,7 +57,7 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 
 		writer = (instance) -> {
 			try {
-				dataWriter.write(instance);
+				dataWriter.write(instance) ;
 			} catch (CleartkProcessingException e) {
 				throw new RuntimeException(e);
 			}
@@ -107,7 +107,8 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 			ComplexInstance<INSTANCE_TYPE> res = new ComplexInstance<>(ann);
 			res.setFeatures(f.apply(ann));
 			return res;
-		})).collect(Collectors.toMap(ci -> ci.getInstance(), ci -> ci.getFeatures(), (list1, list2) -> {
+		})).filter((ci) -> ci.getFeatures().isEmpty())
+			.collect(Collectors.toMap(ci -> ci.getInstance(), ci -> ci.getFeatures(), (list1, list2) -> {
 			List<Feature> res = new LinkedList<>(list1);
 			res.addAll(list2);
 			return res;

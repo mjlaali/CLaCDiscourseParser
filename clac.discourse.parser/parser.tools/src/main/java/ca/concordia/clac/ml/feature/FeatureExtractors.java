@@ -21,7 +21,11 @@ public class FeatureExtractors{
 			Function<? super T, Feature>... extractor) {
 		return annotation -> {
 			List<Feature> results = new ArrayList<>();
-			Stream.of(extractor).forEach((f) -> results.add(f.apply(annotation)));
+			Stream.of(extractor).forEach((f) -> {
+				Feature features = f.apply(annotation);
+				if (features != null)
+					results.add(features);
+			});
 			return results;
 		};
 	}

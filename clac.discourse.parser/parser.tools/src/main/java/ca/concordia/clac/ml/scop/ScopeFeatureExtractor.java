@@ -24,7 +24,7 @@ public class ScopeFeatureExtractor {
 		};
 	}
 	
-	public static <ANN extends Annotation> Function<List<ANN>, ANN> getLast(Class<ANN> cls){
+	public static <ANN> Function<List<ANN>, ANN> getLast(Class<ANN> cls){
 		return (annotations) -> annotations.size() > 0 ? annotations.get(annotations.size() - 1) : null;
 	}
 	
