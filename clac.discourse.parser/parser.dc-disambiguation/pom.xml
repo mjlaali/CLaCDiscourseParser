@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>mjlaali</groupId>
 		<artifactId>clac.discourse.parser</artifactId>
-		<version>${project.versio}</version>
+		<version>${project.version}</version>
 	</parent>
 
 	<artifactId>parser.dc-disambiguation</artifactId>
@@ -25,6 +25,11 @@
 			<groupId>mjlaali</groupId>
 			<artifactId>conll.dataset</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cleartk</groupId>
+			<artifactId>cleartk-ml-weka</artifactId>
+			<version>${cleartk.version.patched}</version>
 		</dependency>
 		
 		<dependency>

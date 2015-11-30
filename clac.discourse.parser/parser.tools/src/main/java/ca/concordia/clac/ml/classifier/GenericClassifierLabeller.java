@@ -107,7 +107,7 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 			ComplexInstance<INSTANCE_TYPE> res = new ComplexInstance<>(ann);
 			res.setFeatures(f.apply(ann));
 			return res;
-		})).filter((ci) -> ci.getFeatures().isEmpty())
+		})).filter((ci) -> !ci.getFeatures().isEmpty())
 			.collect(Collectors.toMap(ci -> ci.getInstance(), ci -> ci.getFeatures(), (list1, list2) -> {
 			List<Feature> res = new LinkedList<>(list1);
 			res.addAll(list2);

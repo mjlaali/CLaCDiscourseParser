@@ -11,11 +11,12 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.ml.Feature;
 
 public class FeatureExtractors{
-
-	public static <T> Function<T, Feature> getFeature(String featureName, Function<T, String> featureExtractor) {
-		return val -> val == null ? null : new Feature(featureName, Optional.of(val).map(featureExtractor).orElse("null"));
+	public static <T, R> Function<T, Feature> getFeature(String featureName, Function<T, R> featureExtractor) {
+		return val -> val == null ? null : new Feature(featureName, Optional.of(val)
+				.map(featureExtractor).map(Object::toString).orElse("null"));
 	}
 	
+
 	@SafeVarargs
 	public static <T> Function<T, List<Feature>> getFeatures(
 			Function<? super T, Feature>... extractor) {

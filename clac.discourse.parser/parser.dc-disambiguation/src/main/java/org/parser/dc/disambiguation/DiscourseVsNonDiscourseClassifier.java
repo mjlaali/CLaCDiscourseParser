@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
@@ -37,7 +38,7 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
-import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.GenericClassifierLabeller;
@@ -77,8 +78,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		
 		return Arrays.asList(
 				getFeatures(getFeature("CON-LStr", getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
-						    getFeature("CON-POS", getText(DiscourseConnective.class)
-						    		.andThen(StringUtils::isAllLowerCase)
+						    getFeature("CON-POS", getText(DiscourseConnective.class).andThen(StringUtils::isAllLowerCase)
 						    		.andThen((b) -> b.toString()))), 
 				pathFeatures);
 	}
@@ -112,7 +112,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, true,
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList,
-				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, MaxentStringOutcomeDataWriter.class.getName(), 
+				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
 	
@@ -131,6 +131,8 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		
 		File dcList = new File("resources/dcHeadList.txt");
 		File featureFile = new File("outputs/discourse-vs-nondiscourse");
+		if (featureFile.exists())
+			FileUtils.deleteDirectory(featureFile);
 		SimplePipeline.runPipeline(reader,
 				conllSyntaxJsonReader, 
 				conllGoldJsonReader, 

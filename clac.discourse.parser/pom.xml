@@ -10,13 +10,30 @@
 		<module>conll.dataset</module>
 		<module>parser.dc-disambiguation</module>
 		<module>parser.tools</module>
+		<module>weka.cleartk</module>
 	</modules>
 
+	<distributionManagement>
+		<repository>
+			<id>majid-repo</id>
+			<url>file:///Users/majid/Documents/git/mvn-repo</url>
+		</repository>
+	</distributionManagement>
+
+	<repositories>
+		<repository>
+			<id>majid-repo</id>
+			<name>Majid Laali repository</name>
+			<url>http://users.encs.concordia.ca/~m_laali/mvn-repo/</url>
+		</repository>
+	</repositories>
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dkpro.version>1.7.0</dkpro.version>
 		<dkpro.version.patched>1.8.0-SNAPSHOT</dkpro.version.patched>
 		<cleartk.version>2.0.0</cleartk.version>
+		<cleartk.version.patched>2.0.1-SNAPSHOT</cleartk.version.patched>
 	</properties>
 
 	<build>
@@ -33,22 +50,6 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<distributionManagement>
-		<repository>
-			<id>dropbox.repo</id>
-			<url>file:///Users/majid/Documents/git/mvn-repo</url>
-		</repository>
-	</distributionManagement>
-
-	<repositories>
-		<repository>
-			<id>majid-repo</id>
-			<name>Majid Laali repository</name>
-			<url>http://users.encs.concordia.ca/~m_laali/mvn-repo/</url>
-		</repository>
-	</repositories>
-
 
 	<dependencies>
 		<dependency>
