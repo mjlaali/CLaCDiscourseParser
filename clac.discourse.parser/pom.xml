@@ -10,7 +10,6 @@
 		<module>conll.dataset</module>
 		<module>parser.dc-disambiguation</module>
 		<module>parser.tools</module>
-		<module>weka.cleartk</module>
 	</modules>
 
 	<distributionManagement>
