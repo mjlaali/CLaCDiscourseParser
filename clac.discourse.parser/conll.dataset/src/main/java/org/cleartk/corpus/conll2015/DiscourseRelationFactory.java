@@ -74,6 +74,7 @@ public class DiscourseRelationFactory {
 			TokenListTools.initTokenList(aJCas, discourseConnective, discourseConnectiveTokens);
 			discourseRelation.setDiscourseConnective(discourseConnective);
 			discourseConnective.setDiscourseRelation(discourseRelation);
+			discourseConnective.setSense(sense);
 			tokens.addAll(discourseConnectiveTokens);
 		}
 		

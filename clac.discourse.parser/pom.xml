@@ -10,6 +10,7 @@
 		<module>conll.dataset</module>
 		<module>parser.dc-disambiguation</module>
 		<module>parser.tools</module>
+		<module>evaluation</module>
 	</modules>
 
 	<distributionManagement>
