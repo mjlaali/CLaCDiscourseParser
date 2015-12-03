@@ -24,6 +24,8 @@ import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
+import org.cleartk.ml.jar.GenericJarClassifierFactory;
+import org.cleartk.ml.jar.JarClassifierBuilder;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
@@ -33,6 +35,7 @@ import ca.concordia.clac.ml.classifier.StringClassifierLabeller;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
+	public static final String PACKAGE_DIR = "discourse-sense-labeler";
 
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -58,11 +61,18 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 		return (sense, dc) -> dc.setSense(sense);
 	}
 
-	public static AnalysisEngineDescription getEngineDescription(File outputFld) throws ResourceInitializationException{
+	public static AnalysisEngineDescription getWriterDescription(File outputFld) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseSenseLabeler.class.getName(), 
 				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
+	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(File packageDir) throws ResourceInitializationException {
+		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
+				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseSenseLabeler.class.getName(), 
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, JarClassifierBuilder.getModelJarFile(packageDir)
+				);
 	}
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../conll.dataset/data"), DatasetMode.train);
@@ -77,13 +87,15 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
 		
-		File featureFile = new File("outputs/discourse-sense-labeler");
+		File featureFile = new File(new File("output"), PACKAGE_DIR);
 		if (featureFile.exists())
 			FileUtils.deleteDirectory(featureFile);
 		SimplePipeline.runPipeline(reader,
 				conllSyntaxJsonReader, 
 				conllGoldJsonReader, 
-				getEngineDescription(featureFile)
+				getWriterDescription(featureFile)
 						);
 	}
+
+	
 }

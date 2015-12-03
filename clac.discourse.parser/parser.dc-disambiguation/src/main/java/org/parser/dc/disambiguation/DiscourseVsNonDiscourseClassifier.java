@@ -38,6 +38,8 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
+import org.cleartk.ml.jar.GenericJarClassifierFactory;
+import org.cleartk.ml.jar.JarClassifierBuilder;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
@@ -49,7 +51,8 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
-
+	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse";
+	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
 	private LookupInstanceExtractor lookupInstanceExtractor = new LookupInstanceExtractor();
 	
 	@Override
@@ -107,7 +110,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	
-	public static AnalysisEngineDescription getEngineDescription(File dcList, File outputFld) throws ResourceInitializationException{
+	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, true,
@@ -115,6 +118,16 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(File dcList, File packageDir) throws ResourceInitializationException{
+		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
+				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
+				CleartkAnnotator.PARAM_IS_TRAINING, false,
+				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList,
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, JarClassifierBuilder.getModelJarFile(packageDir)
+				);
+	}
+	
 	
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../conll.dataset/data"), DatasetMode.train);
@@ -129,14 +142,14 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
 		
-		File dcList = new File("resources/dcHeadList.txt");
-		File featureFile = new File("outputs/discourse-vs-nondiscourse");
+		File dcList = new File(new File("resources"), DC_HEAD_LIST_FILE);
+		File featureFile = new File(new File("outputs"), PACKAGE_DIR);
 		if (featureFile.exists())
 			FileUtils.deleteDirectory(featureFile);
 		SimplePipeline.runPipeline(reader,
 				conllSyntaxJsonReader, 
 				conllGoldJsonReader, 
-				getEngineDescription(dcList, featureFile)
+				getWriterDescription(dcList, featureFile)
 						);
 		
 		
