@@ -2,6 +2,8 @@ package org.parser.dc.disambiguation;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -25,20 +27,24 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public class DiscourseConnectiveDisambiguator {
 
-	private File model;
-	private File dcList;
-	private File discourseVsNonDiscoursePackage;
-	private File senseLabelerPackage;
-	
-	public DiscourseConnectiveDisambiguator() {
-		this(new File(ClassLoader.getSystemResource("model").getFile()));
+	private URL model;
+	private URL dcList;
+	private URL discourseVsNonDiscoursePackage;
+	private URL senseLabelerPackage;
+
+	public DiscourseConnectiveDisambiguator() throws MalformedURLException {
+		this(ClassLoader.getSystemClassLoader().getResource("clacParser/model/"));
 	}
-	
-	public DiscourseConnectiveDisambiguator(File packageDir) {
-		model = new File(packageDir, "eng_sm5.gr");
-		dcList = new File(packageDir, DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
-		discourseVsNonDiscoursePackage = new File(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
-		senseLabelerPackage = new File(packageDir, DiscourseSenseLabeler.PACKAGE_DIR);
+
+	public DiscourseConnectiveDisambiguator(File packageDir) throws MalformedURLException {
+		this(packageDir.toURI().toURL());
+	}
+
+	public DiscourseConnectiveDisambiguator(URL packageDir) throws MalformedURLException {
+		model = new URL(packageDir, "eng_sm5.gr");
+		dcList = new URL(packageDir, DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
+		discourseVsNonDiscoursePackage =  new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
+		senseLabelerPackage = new URL(packageDir, DiscourseSenseLabeler.PACKAGE_DIR);
 	}
 	
 	private AnalysisEngineDescription getTokenizer() throws ResourceInitializationException{
@@ -52,7 +58,7 @@ public class DiscourseConnectiveDisambiguator {
 	private AnalysisEngineDescription getSyntacticParser() throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(BerkeleyParser.class, 
 				BerkeleyParser.PARAM_MODEL_LOCATION, 
-				model.getAbsolutePath());
+				model.toString());
 	}
 	
 	private AnalysisEngineDescription getWriter(File dir) throws ResourceInitializationException{
@@ -75,7 +81,7 @@ public class DiscourseConnectiveDisambiguator {
 						);
 	}
 	
-	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException{
+	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException, MalformedURLException{
 		AggregateBuilder parser = new AggregateBuilder();
 		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage), 
 				CAS.NAME_DEFAULT_SOFA, viewName);
@@ -93,7 +99,9 @@ public class DiscourseConnectiveDisambiguator {
 	}
 	
 	public void train() throws Exception{
-		File[] packageDirs = new File[]{discourseVsNonDiscoursePackage, senseLabelerPackage};
+		File[] packageDirs = new File[]{
+				new File(discourseVsNonDiscoursePackage.getFile()), 
+				new File(senseLabelerPackage.getFile())};
 		for (File packageDir: packageDirs){
 			JarClassifierBuilder.trainAndPackage(packageDir, "weka.classifiers.trees.J48", "-C 0.25 -M 2");
 		}

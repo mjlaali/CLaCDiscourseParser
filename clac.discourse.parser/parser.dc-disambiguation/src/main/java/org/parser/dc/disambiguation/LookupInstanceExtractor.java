@@ -1,8 +1,11 @@
 package org.parser.dc.disambiguation;
 
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,7 +16,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.uima.UimaContext;
 import org.apache.uima.fit.component.initialize.ConfigurationParameterInitializer;
 import org.apache.uima.fit.component.initialize.ExternalResourceInitializer;
@@ -31,9 +33,21 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 class DefaultLoader implements LookupInstanceExtractor.Loader{
 
+	List<String> readLines(URL url, Charset encoding) throws IOException{
+		BufferedReader input = new BufferedReader(new InputStreamReader(url.openStream(), encoding));
+		String line = null;
+		List<String> lines = new ArrayList<>();
+		while ((line = input.readLine()) != null){
+			lines.add(line);
+		}
+		return lines;
+	}
+	
 	@Override
-	public List<String> load(File file) throws IOException {
-		List<String> terms = FileUtils.readLines(file, StandardCharsets.UTF_8);
+	public List<String> load(URL file) throws IOException {
+		
+		Charset utf8 = StandardCharsets.UTF_8;
+		List<String> terms = readLines(file, utf8);
 		Collections.sort(terms, new Comparator<String>() {
 			@Override
 			public int compare(String o1, String o2) {
@@ -54,11 +68,11 @@ public class LookupInstanceExtractor implements Initializable, InstanceExtractor
 	public static final String PARAM_LOOKUP_FILE = "lookupFile";
 	
 	public static interface Loader{
-		public List<String> load(File file) throws IOException;
+		public List<String> load(URL file) throws IOException;
 	}
 	
 	@ConfigurationParameter(name=PARAM_LOOKUP_FILE)
-	private File lookupFile;
+	private URL lookupFile;
 	private List<String> terms;
 	private Loader loader;
 

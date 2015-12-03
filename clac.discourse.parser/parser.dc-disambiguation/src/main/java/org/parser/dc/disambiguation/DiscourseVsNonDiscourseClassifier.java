@@ -13,6 +13,8 @@ import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -39,7 +41,6 @@ import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
-import org.cleartk.ml.jar.JarClassifierBuilder;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
@@ -51,7 +52,7 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
-	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse";
+	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
 	private LookupInstanceExtractor lookupInstanceExtractor = new LookupInstanceExtractor();
 	
@@ -119,12 +120,12 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
 	
-	public static AnalysisEngineDescription getClassifierDescription(File dcList, File packageDir) throws ResourceInitializationException{
+	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false,
-				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList,
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, JarClassifierBuilder.getModelJarFile(packageDir)
+				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList.toString(),
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString()
 				);
 	}
 	
