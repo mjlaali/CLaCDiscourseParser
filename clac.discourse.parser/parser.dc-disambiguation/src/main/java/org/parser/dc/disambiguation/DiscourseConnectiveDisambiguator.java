@@ -5,7 +5,9 @@ import java.io.IOException;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.cas.CAS;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
@@ -27,6 +29,10 @@ public class DiscourseConnectiveDisambiguator {
 	private File dcList;
 	private File discourseVsNonDiscoursePackage;
 	private File senseLabelerPackage;
+	
+	public DiscourseConnectiveDisambiguator() {
+		this(new File(ClassLoader.getSystemResource("model").getFile()));
+	}
 	
 	public DiscourseConnectiveDisambiguator(File packageDir) {
 		model = new File(packageDir, "eng_sm5.gr");
@@ -64,10 +70,19 @@ public class DiscourseConnectiveDisambiguator {
 				getTokenizer(), 
 				getPosTagger(), 
 				getSyntacticParser(),
-				DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage),
-				DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage), 
+				getParser(CAS.NAME_DEFAULT_SOFA), 
 				getWriter(output)
 						);
+	}
+	
+	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException{
+		AggregateBuilder parser = new AggregateBuilder();
+		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage), 
+				CAS.NAME_DEFAULT_SOFA, viewName);
+		parser.add(DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage), 
+				CAS.NAME_DEFAULT_SOFA, viewName);
+		
+		return parser.createAggregateDescription();
 	}
 	
 	public void parseSubdirectory(File dir, File output) throws ResourceInitializationException, UIMAException, IOException{

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -31,6 +32,17 @@ public class DiscourseConnectiveDisambiguatorTest {
 	@Test
 	public void whenParseSimpleSentenceThenItsDiscourseConnectiveIsLabeled() throws ResourceInitializationException, UIMAException, IOException, SAXException{
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File("resources"));
+		test(disambiguator);
+	}
+
+	@Test
+	public void whenParseWithDefaultModelsThenTheResultsOfParserAreCorrect() throws ResourceInitializationException, UIMAException, IOException, SAXException{
+		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator();
+		test(disambiguator);
+	}
+	
+	private void test(DiscourseConnectiveDisambiguator disambiguator)
+			throws ResourceInitializationException, UIMAException, IOException, FileNotFoundException, SAXException {
 		String name = getClass().getName();
 		name = name.substring(0, name.length() - getClass().getSimpleName().length() - 1);
 		
@@ -46,7 +58,6 @@ public class DiscourseConnectiveDisambiguatorTest {
 		
 		DiscourseConnective connective = JCasUtil.selectByIndex(jCas, DiscourseConnective.class, 0);
 		assertThat(connective.getCoveredText()).isEqualTo("But");
-		System.out.println(connective.getSense());
 		assertThat(connective.getSense()).isEqualTo("Comparison.Contrast");
 	}
 }
