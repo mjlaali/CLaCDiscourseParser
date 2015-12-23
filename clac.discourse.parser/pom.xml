@@ -27,7 +27,7 @@
 			<url>http://users.encs.concordia.ca/~m_laali/mvn-repo/</url>
 		</repository>
 	</repositories>
-	
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dkpro.version>1.7.0</dkpro.version>
@@ -97,6 +97,17 @@
 				de.tudarmstadt.ukp.dkpro.core.opennlp-asl
 			</artifactId>
 			<version>${dkpro.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.5</version>
 		</dependency>
 
 		<dependency>
