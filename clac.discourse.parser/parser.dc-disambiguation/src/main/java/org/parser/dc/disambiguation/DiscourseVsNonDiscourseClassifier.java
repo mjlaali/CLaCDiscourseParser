@@ -47,6 +47,7 @@ import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.GenericClassifierLabeller;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
 import ca.concordia.clac.ml.classifier.StringClassifierLabeller;
+import ca.concordia.clac.uima.engines.LookupInstanceExtractor;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
@@ -54,7 +55,7 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
-	private LookupInstanceExtractor lookupInstanceExtractor = new LookupInstanceExtractor();
+	private LookupInstanceExtractor<DiscourseConnective> lookupInstanceExtractor = new LookupInstanceExtractor<>();
 	
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -116,6 +117,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, true,
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList,
+				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
 				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
@@ -125,6 +127,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false,
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList.toString(),
+				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
 				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString()
 				);
 	}

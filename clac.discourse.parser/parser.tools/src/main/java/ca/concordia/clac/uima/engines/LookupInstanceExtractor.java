@@ -1,5 +1,4 @@
-package org.parser.dc.disambiguation;
-
+package ca.concordia.clac.uima.engines;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,12 +20,12 @@ import org.apache.uima.fit.component.initialize.ConfigurationParameterInitialize
 import org.apache.uima.fit.component.initialize.ExternalResourceInitializer;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.initializable.Initializable;
+import org.apache.uima.fit.factory.initializable.InitializableFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.cleartk.corpus.conll2015.TokenListTools;
-import org.cleartk.discourse.type.DiscourseConnective;
+import org.assertj.core.util.VisibleForTesting;
 
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -64,8 +63,9 @@ class DefaultLoader implements LookupInstanceExtractor.Loader{
 	
 }
 
-public class LookupInstanceExtractor implements Initializable, InstanceExtractor<DiscourseConnective>{
+public class LookupInstanceExtractor<T extends Annotation> implements Initializable, InstanceExtractor<T>{
 	public static final String PARAM_LOOKUP_FILE = "lookupFile";
+	public static final String PARAM_ANNOTATION_FACTORY_CLASS_NAME = "annotationFactoryClassName";
 	
 	public static interface Loader{
 		public List<String> load(URL file) throws IOException;
@@ -73,6 +73,12 @@ public class LookupInstanceExtractor implements Initializable, InstanceExtractor
 	
 	@ConfigurationParameter(name=PARAM_LOOKUP_FILE)
 	private URL lookupFile;
+	
+	@ConfigurationParameter(name=PARAM_ANNOTATION_FACTORY_CLASS_NAME)
+	private String annotationFactoryClassName;
+	
+	private AnnotationFactory<T> annotationFactory;
+	
 	private List<String> terms;
 	private Loader loader;
 
@@ -84,9 +90,13 @@ public class LookupInstanceExtractor implements Initializable, InstanceExtractor
 		this.loader = loader;
 	}
 	
-	public void setTerms(List<String> terms) {
+	@VisibleForTesting
+	void init(List<String> terms, AnnotationFactory<T> annotationFactory) {
 		this.terms = terms;
+		this.annotationFactory = annotationFactory;
 	}
+	
+	
 	
 	public static TreeMap<Integer, Integer> coverToTokens(JCas aJCas, Class<? extends Annotation> cls){
 		TreeMap<Integer, Integer> indexes = new TreeMap<Integer, Integer>();
@@ -139,22 +149,21 @@ public class LookupInstanceExtractor implements Initializable, InstanceExtractor
 	}
 
 	@Override
-	public Collection<DiscourseConnective> getInstances(JCas aJCas) {
+	public Collection<T> getInstances(JCas aJCas) {
 		String documentText = aJCas.getDocumentText().toLowerCase();
 
-		List<DiscourseConnective> candidates = new ArrayList<>();
+		List<T> candidates = new ArrayList<>();
 		Map<Integer, Integer> occurrences = getOccurrence(documentText, coverToTokens(aJCas, Token.class));
 		for (Entry<Integer, Integer> occurence: occurrences.entrySet()){
 			int indexOfDC = occurence.getKey();
 			int endOfDc = occurence.getValue();
-			DiscourseConnective discourseConnective = new DiscourseConnective(aJCas);
-			List<Token> tokens = JCasUtil.selectCovered(aJCas, Token.class, indexOfDC, endOfDc);
-			TokenListTools.initTokenList(aJCas, discourseConnective, tokens);
+			T discourseConnective = annotationFactory.buildAnnotation(aJCas, indexOfDC, endOfDc);
 			candidates.add(discourseConnective);
 		}
 		return candidates;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 	    ConfigurationParameterInitializer.initialize(this, context);
@@ -165,6 +174,8 @@ public class LookupInstanceExtractor implements Initializable, InstanceExtractor
 		} catch (IOException e) {
 			throw new ResourceInitializationException(e);
 		}
+	    
+	   annotationFactory = InitializableFactory.create(context, annotationFactoryClassName, AnnotationFactory.class);
 	}
 }
 

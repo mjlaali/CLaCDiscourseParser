@@ -1,4 +1,4 @@
-package org.parser.dc.disambiguation;
+package ca.concordia.clac.uima.engines;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -26,13 +26,15 @@ public class LookupInstanceExtractorTest {
 		}
 		return idxWords;
 	}
+	
+	private AnnotationFactory<Annotation> annotationFactory = (aJCas, start, end) -> new Annotation(aJCas, start, end); 
 
 	@Test
 	public void whenLookingOfTermsThenTheirOccurrenceAreIdentified(){
-		LookupInstanceExtractor instanceExtractor = new LookupInstanceExtractor();
+		LookupInstanceExtractor<Annotation> instanceExtractor = new LookupInstanceExtractor<>();
 		String text = "it is a test .";
 		List<String> terms = Arrays.asList(text.split(" "));
-		instanceExtractor.setTerms(terms);
+		instanceExtractor.init(terms, annotationFactory);
 		
 		Map<Integer, Integer> occurrence = instanceExtractor.getOccurrence(text, tokenize(text));
 		assertThat(occurrence).hasSize(5);
@@ -41,10 +43,10 @@ public class LookupInstanceExtractorTest {
 	
 	@Test
 	public void whenTermsAreOverLapThenOnlyOneOfThemAreIndexed(){
-		LookupInstanceExtractor instanceExtractor = new LookupInstanceExtractor();
+		LookupInstanceExtractor<Annotation> instanceExtractor = new LookupInstanceExtractor<>();
 		String text = "it is a test .";
 		List<String> terms = Arrays.asList(new String[]{"it is", "is a"});
-		instanceExtractor.setTerms(terms);
+		instanceExtractor.init(terms, annotationFactory);
 		
 		Map<Integer, Integer> occurrence = instanceExtractor.getOccurrence(text, tokenize(text));
 		assertThat(occurrence).hasSize(1);
@@ -52,10 +54,10 @@ public class LookupInstanceExtractorTest {
 	
 	@Test
 	public void whenATermContainAnotherTermThenTheBiggestIsIdentified(){
-		LookupInstanceExtractor instanceExtractor = new LookupInstanceExtractor();
+		LookupInstanceExtractor<Annotation> instanceExtractor = new LookupInstanceExtractor<>();
 		String text = "it is a test .";
 		List<String> terms = Arrays.asList(new String[]{"it is", "is", "a test", "a"});
-		instanceExtractor.setTerms(terms);
+		instanceExtractor.init(terms, annotationFactory);
 		
 		Map<Integer, Integer> occurrence = instanceExtractor.getOccurrence(text, tokenize(text));
 		assertThat(occurrence).hasSize(2);
@@ -66,10 +68,10 @@ public class LookupInstanceExtractorTest {
 	
 	@Test
 	public void whenCreatingInstancesThenTheyAreNotAddedToJCas() throws UIMAException{
-		LookupInstanceExtractor instanceExtractor = new LookupInstanceExtractor();
+		LookupInstanceExtractor<Annotation> instanceExtractor = new LookupInstanceExtractor<>();
 		String text = "it";
 		List<String> terms = Arrays.asList(new String[]{"it"});
-		instanceExtractor.setTerms(terms);
+		instanceExtractor.init(terms, annotationFactory);
 		
 		JCas aJCas = JCasFactory.createJCas();
 		aJCas.setDocumentText(text);
