@@ -3,6 +3,7 @@ package org.parser.dc.disambiguation;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.uima.UIMAException;
@@ -26,6 +27,8 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public class DiscourseConnectiveDisambiguator {
+	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/");
+	public static String DEFAULT_BERKELEY_MODEL_FILE = "eng_sm5.gr";
 
 	private URL model;
 	private URL dcList;
@@ -33,15 +36,15 @@ public class DiscourseConnectiveDisambiguator {
 	private URL senseLabelerPackage;
 
 	public DiscourseConnectiveDisambiguator() throws MalformedURLException {
-		this(ClassLoader.getSystemClassLoader().getResource("clacParser/model/"));
+		this(DEFAULT_URL, DEFAULT_BERKELEY_MODEL_FILE);
 	}
 
 	public DiscourseConnectiveDisambiguator(File packageDir) throws MalformedURLException {
-		this(packageDir.toURI().toURL());
+		this(packageDir.toURI().toURL(), DEFAULT_BERKELEY_MODEL_FILE);
 	}
 
-	public DiscourseConnectiveDisambiguator(URL packageDir) throws MalformedURLException {
-		model = new URL(packageDir, "eng_sm5.gr");
+	public DiscourseConnectiveDisambiguator(URL packageDir, String berkeleyModelFile) throws MalformedURLException {
+		model = new URL(packageDir, berkeleyModelFile);
 		dcList = new URL(packageDir, DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
 		discourseVsNonDiscoursePackage =  new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
 		senseLabelerPackage = new URL(packageDir, DiscourseSenseLabeler.PACKAGE_DIR);
@@ -66,7 +69,7 @@ public class DiscourseConnectiveDisambiguator {
 				, XmiWriter.PARAM_TARGET_LOCATION, dir.getAbsolutePath());
 	}
 	
-	public void parse(File dir, File output) throws ResourceInitializationException, UIMAException, IOException{
+	public void parse(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dir, 
 				TextReader.PARAM_LANGUAGE, "en",
@@ -81,7 +84,7 @@ public class DiscourseConnectiveDisambiguator {
 						);
 	}
 	
-	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException, MalformedURLException{
+	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		AggregateBuilder parser = new AggregateBuilder();
 		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage), 
 				CAS.NAME_DEFAULT_SOFA, viewName);
@@ -91,7 +94,7 @@ public class DiscourseConnectiveDisambiguator {
 		return parser.createAggregateDescription();
 	}
 	
-	public void parseSubdirectory(File dir, File output) throws ResourceInitializationException, UIMAException, IOException{
+	public void parseSubdirectory(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{
 		for (File d: dir.listFiles()){
 			if (d.isDirectory())
 				parse(d, new File(output, d.getName()));
@@ -126,7 +129,7 @@ public class DiscourseConnectiveDisambiguator {
 				description = "Specify the output directory to stores extracted texts")
 		public String getOutputDir();
 	}
-	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
+	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
 		Options options = CliFactory.parseArguments(Options.class, args);
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File(options.getModel()));
 		disambiguator.parseSubdirectory(new File(options.getInputDataset()), new File(options.getOutputDir()));

@@ -88,7 +88,7 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
 		
-		File featureFile = new File(new File("output"), PACKAGE_DIR);
+		File featureFile = new File(new File("outputs/resources"), PACKAGE_DIR);
 		if (featureFile.exists())
 			FileUtils.deleteDirectory(featureFile);
 		SimplePipeline.runPipeline(reader,

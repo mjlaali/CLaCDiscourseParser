@@ -14,6 +14,7 @@ import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -112,21 +113,21 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	
-	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException{
+	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException, MalformedURLException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, true,
-				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList,
+				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
 				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
 	
-	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException{
+	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false,
-				LookupInstanceExtractor.PARAM_LOOKUP_FILE, dcList.toString(),
+				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
 				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString()
 				);
@@ -146,8 +147,8 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
 		
-		File dcList = new File(new File("resources"), DC_HEAD_LIST_FILE);
-		File featureFile = new File(new File("outputs"), PACKAGE_DIR);
+		File dcList = new File(new File("outputs/resources"), DC_HEAD_LIST_FILE);
+		File featureFile = new File(new File("outputs/resources"), PACKAGE_DIR);
 		if (featureFile.exists())
 			FileUtils.deleteDirectory(featureFile);
 		SimplePipeline.runPipeline(reader,

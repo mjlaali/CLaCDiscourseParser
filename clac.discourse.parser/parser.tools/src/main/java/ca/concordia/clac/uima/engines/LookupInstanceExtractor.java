@@ -64,15 +64,15 @@ class DefaultLoader implements LookupInstanceExtractor.Loader{
 }
 
 public class LookupInstanceExtractor<T extends Annotation> implements Initializable, InstanceExtractor<T>{
-	public static final String PARAM_LOOKUP_FILE = "lookupFile";
+	public static final String PARAM_LOOKUP_FILE_URL = "lookupFileUrl";
 	public static final String PARAM_ANNOTATION_FACTORY_CLASS_NAME = "annotationFactoryClassName";
 	
 	public static interface Loader{
 		public List<String> load(URL file) throws IOException;
 	}
 	
-	@ConfigurationParameter(name=PARAM_LOOKUP_FILE)
-	private URL lookupFile;
+	@ConfigurationParameter(name=PARAM_LOOKUP_FILE_URL)
+	private URL lookupFileUrl;
 	
 	@ConfigurationParameter(name=PARAM_ANNOTATION_FACTORY_CLASS_NAME)
 	private String annotationFactoryClassName;
@@ -170,7 +170,7 @@ public class LookupInstanceExtractor<T extends Annotation> implements Initializa
 	    ExternalResourceInitializer.initialize(this, context);
 	    
 	    try {
-			terms = loader.load(lookupFile);
+			terms = loader.load(lookupFileUrl);
 		} catch (IOException e) {
 			throw new ResourceInitializationException(e);
 		}
