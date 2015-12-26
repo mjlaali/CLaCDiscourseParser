@@ -18,7 +18,6 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseConnective;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
