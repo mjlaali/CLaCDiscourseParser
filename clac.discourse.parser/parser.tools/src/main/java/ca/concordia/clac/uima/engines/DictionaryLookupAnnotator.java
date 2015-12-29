@@ -33,7 +33,7 @@ public class DictionaryLookupAnnotator<T extends Annotation> extends JCasAnnotat
 	}
 	
 	public static <T extends Annotation> AnalysisEngineDescription getDescription(
-			URL lookupfile, Class<AnnotationFactory<T>> factoryClass) throws ResourceInitializationException{
+			URL lookupfile, Class<? extends AnnotationFactory<T>> factoryClass) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(DictionaryLookupAnnotator.class, 
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, lookupfile.toString(), 
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, factoryClass.getName());

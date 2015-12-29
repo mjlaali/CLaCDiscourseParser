@@ -41,7 +41,6 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 
 	public static final String PARAM_ADD_MULTIPLE_SENSES = "PARAM_ADD_MULTIPLE_SENSES";
 	public static final String ADD_MULTIPLE_SENSES_DESCRIPTION = "Indicate if multiple senses of a discourse relations addes as separate relations or just one of them.";
-	public static final String GOLD_DISCOURSE_VIEW = "";
 
 	@ConfigurationParameter(
 			name = PARAM_DISCOURSE_JSON_FILE,

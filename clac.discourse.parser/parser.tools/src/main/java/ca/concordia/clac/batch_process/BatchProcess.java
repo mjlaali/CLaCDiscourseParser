@@ -24,7 +24,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.cas.CAS;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
@@ -78,7 +80,15 @@ public class BatchProcess implements Serializable{
 		processInOrder.add(name);
 		processeEngines.put(name, Arrays.asList(engines));
 	}
-
+	
+	public void addProcess(String name, String viewName, AnalysisEngineDescription... engines) throws ResourceInitializationException{
+		AggregateBuilder aggregate = new AggregateBuilder();
+		for (AnalysisEngineDescription engine: engines)
+			aggregate.add(engine, CAS.NAME_DEFAULT_SOFA, viewName);
+		
+		addProcess(name, aggregate.createAggregateDescription());
+	}
+	
 	public void run() throws UIMAException, IOException{
 		for (String processName: processInOrder){
 			logger.info(String.format("Start processing %s ...", processName));
