@@ -4,13 +4,13 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>mjlaali</groupId>
-		<artifactId>clac.discourse.parser</artifactId>
+		<groupId>clac.concordia.ca</groupId>
+		<artifactId>discourse.parser.parent</artifactId>
 		<version>0.0.1</version>
 	</parent>
 
 
-	<artifactId>conll.dataset</artifactId>
+	<artifactId>discourse.conll.dataset</artifactId>
 
 	<name>conll.dataset</name>
 	<url>http://maven.apache.org</url>

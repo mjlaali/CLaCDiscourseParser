@@ -2,15 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>mjlaali</groupId>
-	<artifactId>clac.discourse.parser</artifactId>
+	<groupId>clac.concordia.ca</groupId>
+	<artifactId>discourse.parser.parent</artifactId>
 	<version>0.0.1</version>
 	<packaging>pom</packaging>
 	<modules>
-		<module>conll.dataset</module>
-		<module>parser.dc-disambiguation</module>
-		<module>parser.tools</module>
-		<module>evaluation</module>
+		<module>discourse.conll.dataset</module>
+		<module>discourse.parser.dc-disambiguation</module>
+		<module>tools</module>
+		<module>discourse.parser.evaluation</module>
 	</modules>
 
 	<distributionManagement>

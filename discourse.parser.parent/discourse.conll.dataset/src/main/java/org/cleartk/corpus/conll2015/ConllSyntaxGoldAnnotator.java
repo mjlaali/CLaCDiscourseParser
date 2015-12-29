@@ -3,8 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -59,9 +59,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 		super.initialize(context);
 		File source = new File(syntaxFilePath);
 		try {
-			Scanner scanner = new Scanner(source);
-			root = new JSONObject(scanner.nextLine());
-			scanner.close();
+			root = new JSONObject(FileUtils.readFileToString(source));
 		} catch (JSONException | IOException e) {
 			throw new ResourceInitializationException(e);
 		}
