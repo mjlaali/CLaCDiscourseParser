@@ -8,10 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.distribution.EnumeratedDistribution;
+import org.apache.commons.math3.util.Pair;
+
 @SuppressWarnings("serial")
 public class StatisticResult implements Serializable{
 	private final Map<String, Map<String, Integer>> counts;
-	private final Map<String, LabeledEnumeratedDistribution> distributions;
+	private final Map<String, EnumeratedDistribution<String>> distributions;
 	
 	public StatisticResult(Map<String, Map<String, Integer>> counts) {
 		this.counts = counts;
@@ -21,21 +24,17 @@ public class StatisticResult implements Serializable{
 			List<String> labels = new ArrayList<String>(freqs.keySet());
 			Collections.sort(labels);
 			
-			int sum = 0;
-			for (Integer freq: freqs.values()){
-				sum += freq;
+			List<Pair<String, Double>> pmf = new ArrayList<>();
+			
+			for (String label: labels){
+				pmf.add(new Pair<String, Double>(label, freqs.get(label).doubleValue()));
 			}
 			
-			double[] probabilities = new double[labels.size()];
-			for (int i = 0; i < labels.size(); i++){
-				probabilities[i] = (double) freqs.get(labels.get(i)) / sum;
-			}
-			distributions.put(catFreqs.getKey(), new LabeledEnumeratedDistribution(
-					labels.toArray(new String[labels.size()]), probabilities));
+			distributions.put(catFreqs.getKey(), new EnumeratedDistribution<String>(pmf));
 		}
 	}
 
-	public LabeledEnumeratedDistribution getDistribution(String name) {
+	public EnumeratedDistribution<String> getDistribution(String name) {
 		return distributions.get(name);
 	}
 

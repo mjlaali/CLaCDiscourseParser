@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Function;
 
+import org.apache.commons.math3.distribution.EnumeratedDistribution;
+import org.apache.commons.math3.util.Pair;
 import org.apache.uima.UimaContext;
 import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
@@ -65,18 +67,17 @@ public class StatisticExtractorAnnotatorTest {
 		
 		
 		StatisticResult statistic = StatisticFactory.getStatistic(statOutputFile);
-		LabeledEnumeratedDistribution distributoin = statistic.getDistribution(Token.class.getName());
-		List<String> labels = distributoin.getLabels();
-		assertThat(labels).containsOnly(words);
+		EnumeratedDistribution<String> distributoin = statistic.getDistribution(Token.class.getName());
+		List<Pair<String, Double>> pmf = distributoin.getPmf();
 		
-		for (int i = 0; i < labels.size(); i++){
-			if (labels.get(i).equals("test")){
-				assertThat(distributoin.probability(i)).isCloseTo(2.0 / words.length, within(1.0E-10));
+		for (Pair<String, Double> pm: pmf){
+			if (pm.getKey().equals("test")){
+				assertThat(pm.getValue()).isCloseTo(2.0 / words.length, within(1.0E-10));
 			} else {
-				assertThat(distributoin.probability(i)).isEqualTo(1.0 / words.length, within(1.0E-10));
+				assertThat(pm.getValue()).isCloseTo(1.0 / words.length, within(1.0E-10));
 			}
 			
+			assertThat(words).contains(pm.getKey());
 		}
-		
 	}
 }
