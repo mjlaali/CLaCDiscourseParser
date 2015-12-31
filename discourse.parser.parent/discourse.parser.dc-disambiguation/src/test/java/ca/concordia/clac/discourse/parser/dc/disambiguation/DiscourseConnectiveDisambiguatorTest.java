@@ -1,4 +1,4 @@
-package org.parser.dc.disambiguation;
+package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,6 +22,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseConnectiveDisambiguator;
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseSenseLabeler;
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.CompressionUtils;
 
 

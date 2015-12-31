@@ -1,4 +1,4 @@
-package org.parser.dc.disambiguation;
+package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
 import java.io.File;
 import java.io.IOException;

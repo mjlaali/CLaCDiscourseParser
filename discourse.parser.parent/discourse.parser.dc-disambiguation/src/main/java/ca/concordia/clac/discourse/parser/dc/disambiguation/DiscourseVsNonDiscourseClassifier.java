@@ -1,4 +1,4 @@
-package org.parser.dc.disambiguation;
+package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;

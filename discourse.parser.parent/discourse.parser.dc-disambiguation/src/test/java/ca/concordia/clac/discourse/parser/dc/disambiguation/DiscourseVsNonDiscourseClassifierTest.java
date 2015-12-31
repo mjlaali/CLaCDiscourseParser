@@ -1,4 +1,4 @@
-package org.parser.dc.disambiguation;
+package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,6 +16,7 @@ import org.cleartk.ml.Feature;
 import org.junit.Before;
 import org.junit.Test;
 
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.GenericClassifierLabeller;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
