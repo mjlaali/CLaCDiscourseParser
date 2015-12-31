@@ -1,5 +1,7 @@
 package ca.concordia.clac.uima.engines.stat;
 
+import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.uima.UimaContext;
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
@@ -35,7 +38,13 @@ public class StatisticExtractorAnnotator<T> extends JCasAnnotator_ImplBase{
 	private Function<T, String> valueExtractor;
 	
 	private Map<String, Map<String, Integer>> counts = new HashMap<>();
-	
+
+	public static <T> AnalysisEngineDescription getDescription(File outputFile, Class<? extends ExtractorPolicy<T>> policyClass) throws ResourceInitializationException {
+		return createEngineDescription(StatisticExtractorAnnotator.class, 
+				PARAM_OUTPUT_FILE, outputFile, 
+				PARAM_POLICY_CLASS_NAME, policyClass.getName());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -86,4 +95,5 @@ public class StatisticExtractorAnnotator<T> extends JCasAnnotator_ImplBase{
 		}
 		
 	}
+
 }

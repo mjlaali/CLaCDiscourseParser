@@ -1,5 +1,7 @@
 package ca.concordia.clac.uima.engines;
 
+import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +10,7 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.uima.UimaContext;
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
@@ -31,6 +34,13 @@ public class AnnotationMergerAnnotator<T extends Annotation> extends JCasAnnotat
 	private InstanceExtractor<T> instanceExtractor;
 	private BiFunction<T, T, T> merger;
 	
+	
+	public static <T extends Annotation> AnalysisEngineDescription getDescription(
+			Class<? extends MergePolicy<T>> policyCls) throws ResourceInitializationException {
+		
+		return createEngineDescription(AnnotationMergerAnnotator.class, 
+				PARAM_MERGE_POLICY_CLS_NAME, policyCls.getName());
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -98,6 +108,7 @@ public class AnnotationMergerAnnotator<T extends Annotation> extends JCasAnnotat
 	      return helper.toString();
 	    }
 	  }
-	
+
+
 
 }

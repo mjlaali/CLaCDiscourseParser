@@ -135,7 +135,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	
 	
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../conll.dataset/data"), DatasetMode.train);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
