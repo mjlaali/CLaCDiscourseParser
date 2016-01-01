@@ -12,7 +12,7 @@
 
 	<artifactId>discourse.conll.dataset</artifactId>
 
-	<name>conll.dataset</name>
+	<name>discourse.conll.dataset</name>
 	<url>http://maven.apache.org</url>
 
 

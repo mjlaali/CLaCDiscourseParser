@@ -10,7 +10,7 @@
 	</parent>
 
 	<artifactId>discourse.parser.dc-disambiguation</artifactId>
-	<name>parser.dc-disambiguation</name>
+	<name>discourse.parser.dc-disambiguation</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
