@@ -22,8 +22,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>mjlaali</groupId>
-			<artifactId>conll.dataset</artifactId>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>discourse.conll.dataset</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
