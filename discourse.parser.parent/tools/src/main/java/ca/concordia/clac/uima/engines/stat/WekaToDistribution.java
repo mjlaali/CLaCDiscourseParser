@@ -51,6 +51,10 @@ public class WekaToDistribution {
 			Instances filetedInstance = Filter.useFilter(instances, filterWithValue);
 			AttributeStats conditionalStat = filetedInstance.attributeStats(targetAttribute.index());
 			
+			if (conditionalStat.distinctCount == 0){
+				System.err.printf("No instances found with <%s> value in attribute <%s>\n", filterLabels.get(i), conditionedVariable);
+				continue;
+			}
 			int[] counts = conditionalStat.nominalCounts;
 			List<Pair<String, Double>> pmf = new ArrayList<>();
 			for (int j = 0; j < counts.length; j++){

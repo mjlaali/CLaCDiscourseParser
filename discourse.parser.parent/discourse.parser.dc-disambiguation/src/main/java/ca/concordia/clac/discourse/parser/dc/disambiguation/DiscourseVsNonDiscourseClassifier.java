@@ -56,6 +56,9 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
+	
+	public static final String CONN_LStr = "CON-LStr";
+	
 	private LookupInstanceExtractor<DiscourseConnective> lookupInstanceExtractor = new LookupInstanceExtractor<>();
 	
 	@Override
@@ -83,7 +86,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		
 		
 		return Arrays.asList(
-				getFeatures(getFeature("CON-LStr", getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
+				getFeatures(getFeature(CONN_LStr, getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
 						    getFeature("CON-POS", getText(DiscourseConnective.class).andThen(StringUtils::isAllLowerCase)
 						    		.andThen((b) -> b.toString()))), 
 				pathFeatures);
