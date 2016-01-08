@@ -21,7 +21,7 @@ public class ConnectiveLabelExtractorTest {
 		aJCas.setDocumentText("but, this is another issue.");
 		DiscourseConnective connective = new DiscourseConnective(aJCas, 0, "but".length());
 		
-		Function<DiscourseConnective, String> labelExtractor = new DiscourseVsNonDiscourseClassifier().getLabelExtractor();
+		Function<DiscourseConnective, String> labelExtractor = new DiscourseVsNonDiscourseClassifier().getLabelExtractor(aJCas);
 		String label = labelExtractor.apply(connective);
 		
 		assertThat(label).isEqualTo("false");
@@ -37,7 +37,7 @@ public class ConnectiveLabelExtractorTest {
 		
 		DiscourseConnective test = new DiscourseConnective(aJCas, 0, "but".length());
 		
-		Function<DiscourseConnective, String> labelExtractor = new DiscourseVsNonDiscourseClassifier().getLabelExtractor();
+		Function<DiscourseConnective, String> labelExtractor = new DiscourseVsNonDiscourseClassifier().getLabelExtractor(aJCas);
 		String label = labelExtractor.apply(test);
 		
 		assertThat(label).isEqualTo("true");

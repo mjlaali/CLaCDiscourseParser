@@ -34,10 +34,6 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 	private Boolean parallelClassification;
 
 	protected ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE> algorithmFactory;
-	private InstanceExtractor<INSTANCE_TYPE> extractor;
-	private List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor;
-	private Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> labelExtractor;
-	private BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> labeller;
 
 	protected Consumer<Instance<CLASSIFIER_OUTPUT>> writer;
 	protected Function<List<Feature>, CLASSIFIER_OUTPUT> classify;
@@ -50,10 +46,6 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 		super.initialize(context);
 		algorithmFactory = InitializableFactory.create(context, labellerClsName, ClassifierAlgorithmFactory.class);
 
-		extractor = algorithmFactory.getExtractor();
-		featureExtractor = algorithmFactory.getFeatureExtractor();
-		labelExtractor = algorithmFactory.getLabelExtractor();
-		labeller = algorithmFactory.getLabeller();
 
 		writer = (instance) -> {
 			try {
@@ -75,6 +67,11 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE extends 
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		this.aJCas = aJCas;
+		InstanceExtractor<INSTANCE_TYPE> extractor = algorithmFactory.getExtractor(aJCas);
+		List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor = algorithmFactory.getFeatureExtractor(aJCas);
+		Function<INSTANCE_TYPE, CLASSIFIER_OUTPUT> labelExtractor = algorithmFactory.getLabelExtractor(aJCas);
+		BiConsumer<CLASSIFIER_OUTPUT, INSTANCE_TYPE> labeller = algorithmFactory.getLabeller(aJCas);
+
 		Collection<INSTANCE_TYPE> instances = extractor.getInstances(aJCas);
 
 		Stream<INSTANCE_TYPE> stream;

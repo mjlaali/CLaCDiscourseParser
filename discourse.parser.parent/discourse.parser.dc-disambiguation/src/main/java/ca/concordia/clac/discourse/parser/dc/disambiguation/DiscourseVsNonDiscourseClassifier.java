@@ -31,6 +31,7 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
@@ -67,13 +68,13 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	@Override
-	public InstanceExtractor<DiscourseConnective> getExtractor() {
+	public InstanceExtractor<DiscourseConnective> getExtractor(JCas aJCas) {
 		return lookupInstanceExtractor;
 	}
 
 	
 	@Override
-	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor() {
+	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor(JCas aJCas) {
 		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
 				.andThen(extractFromScope(
 				 getLast(Constituent.class).andThen(
@@ -93,7 +94,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	@Override
-	public Function<DiscourseConnective, String> getLabelExtractor() {
+	public Function<DiscourseConnective, String> getLabelExtractor(JCas aJCas) {
 		return (dc) -> {
 			List<DiscourseConnective> selectCovered = JCasUtil.selectCovering(DiscourseConnective.class, dc);
 			for (DiscourseConnective indexedDc: selectCovered){
@@ -107,7 +108,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	@Override
-	public BiConsumer<String, DiscourseConnective> getLabeller() {
+	public BiConsumer<String, DiscourseConnective> getLabeller(JCas aJCas) {
 		return (label, dc) ->{
 			boolean toAdd = Boolean.parseBoolean(label);
 			if (toAdd)

@@ -38,22 +38,22 @@ public class StringClassifierLabellerTest {
 		}
 
 		@Override
-		public InstanceExtractor<Token> getExtractor() {
+		public InstanceExtractor<Token> getExtractor(JCas aJCas) {
 			return (jcas) ->  new ArrayList<>(JCasUtil.select(jcas, Token.class));
 		}
 
 		@Override
-		public List<Function<Token, List<Feature>>> getFeatureExtractor() {
+		public List<Function<Token, List<Feature>>> getFeatureExtractor(JCas aJCas) {
 			return Arrays.asList(token -> Arrays.asList(new Feature("firstLetter", token.getCoveredText().charAt(0))));
 		}
 
 		@Override
-		public Function<Token, String> getLabelExtractor() {
+		public Function<Token, String> getLabelExtractor(JCas aJCas) {
 			return token -> token.getPos().getPosValue();
 		}
 
 		@Override
-		public BiConsumer<String, Token> getLabeller() {
+		public BiConsumer<String, Token> getLabeller(JCas aJCas) {
 			return (lable, token) -> {
 				System.out.println(token.getCoveredText());
 				token.removeFromIndexes();

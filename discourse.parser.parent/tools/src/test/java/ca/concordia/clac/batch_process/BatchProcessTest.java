@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
@@ -12,10 +13,15 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.JCasFactory;
+import org.apache.uima.fit.util.CasIOUtil;
+import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.junit.Test;
 
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public class BatchProcessTest {
@@ -87,7 +93,25 @@ public class BatchProcessTest {
 		assertThat(loaded).isEqualTo(saved);
 	}
 	
+	@Test
+	public void whenAddingWithTheSameNameThenEnginesAreConcatinating() throws FileNotFoundException, IOException, ClassNotFoundException, UIMAException{
+		BatchProcess toRun = new BatchProcess(inputDir, outputDir);
+		toRun.addProcess("test", AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class));
+		toRun.addProcess("test", AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class));
+		
+		toRun.run();
+		JCas jCas = getJCas(new File(outputDir, "test/a.txt.xmi"));
+		Collection<Token> tokens = JCasUtil.select(jCas, Token.class);
+		assertThat(tokens).isNotEmpty();
+		assertThat(tokens.iterator().next().getPos()).isNotNull();
+	}
 	
+	private JCas getJCas(File aFile) throws UIMAException, IOException {
+		JCas aJCas = JCasFactory.createJCas();
+		
+		CasIOUtil.readJCas(aJCas, aFile);
+		return aJCas;
+	}
 	@Test
 	public void whenAbruptThenNextTimeContinued() throws UIMAException, IOException, ClassNotFoundException{
 		BatchProcess faulty = new BatchProcess(inputDir, outputDir);

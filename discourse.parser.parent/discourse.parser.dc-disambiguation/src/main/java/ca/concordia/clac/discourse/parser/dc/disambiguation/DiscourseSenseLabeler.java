@@ -17,6 +17,7 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
@@ -43,22 +44,22 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 	}
 
 	@Override
-	public InstanceExtractor<DiscourseConnective> getExtractor() {
+	public InstanceExtractor<DiscourseConnective> getExtractor(JCas aJCas) {
 		return (jCas) -> JCasUtil.select(jCas, DiscourseConnective.class);
 	}
 
 	@Override
-	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor() {
-		return new DiscourseVsNonDiscourseClassifier().getFeatureExtractor();
+	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor(JCas aJCas) {
+		return new DiscourseVsNonDiscourseClassifier().getFeatureExtractor(aJCas);
 	}
 
 	@Override
-	public Function<DiscourseConnective, String> getLabelExtractor() {
+	public Function<DiscourseConnective, String> getLabelExtractor(JCas aJCas) {
 		return (dc) -> dc.getSense();
 	}
 
 	@Override
-	public BiConsumer<String, DiscourseConnective> getLabeller() {
+	public BiConsumer<String, DiscourseConnective> getLabeller(JCas aJCas) {
 		return (sense, dc) -> dc.setSense(sense);
 	}
 

@@ -74,11 +74,16 @@ public class BatchProcess implements Serializable{
 
 
 	public void addProcess(String name, AnalysisEngineDescription... engines){
-		if (processInOrder.size() > 0)
-			prevProcessName.put(name, processInOrder.get(processInOrder.size() - 1));
 
-		processInOrder.add(name);
-		processeEngines.put(name, Arrays.asList(engines));
+		List<AnalysisEngineDescription> enginesList = processeEngines.get(name);
+		if (enginesList == null){
+			if (processInOrder.size() > 0)
+				prevProcessName.put(name, processInOrder.get(processInOrder.size() - 1));
+			processInOrder.add(name);
+			enginesList = new ArrayList<>();
+			processeEngines.put(name, enginesList);
+		}
+		enginesList.addAll(Arrays.asList(engines));
 	}
 	
 	public void addProcess(String name, String viewName, AnalysisEngineDescription... engines) throws ResourceInitializationException{

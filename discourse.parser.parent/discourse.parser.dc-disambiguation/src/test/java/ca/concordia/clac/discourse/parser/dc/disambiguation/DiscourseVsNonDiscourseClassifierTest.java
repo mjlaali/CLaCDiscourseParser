@@ -87,7 +87,7 @@ public class DiscourseVsNonDiscourseClassifierTest {
 	@Test
 	public void givenTheTreeWhenCalculatingFeaturesThenAllOfThemCorrect(){
 		List<Function<DiscourseConnective, List<Feature>>> featureExtractor = new DiscourseVsNonDiscourseClassifier()
-				.getFeatureExtractor();
+				.getFeatureExtractor(aJCas);
 		
 		String so = "so";
 		int soPos = sent.indexOf(so);
