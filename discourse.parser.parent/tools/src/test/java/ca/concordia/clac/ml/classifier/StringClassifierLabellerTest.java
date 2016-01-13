@@ -19,10 +19,8 @@ import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
-import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.jar.JarClassifierBuilder;
 import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
 import org.junit.Test;
@@ -75,12 +73,9 @@ public class StringClassifierLabellerTest {
 		SimplePipeline.runPipeline(aJCas, 
 				AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class), 
 				AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class), 
-				AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-						GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, TokenClassificationAlgorithmFactory.class.getName(), 
-						CleartkAnnotator.PARAM_IS_TRAINING, true, 
-//						ClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, true,
-						DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, MaxentStringOutcomeDataWriter.class.getName(), 
-						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile)
+				StringClassifierLabeller.getWriterDescription(
+						TokenClassificationAlgorithmFactory.class, MaxentStringOutcomeDataWriter.class, 
+						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile) 
 						);
 		
 		String[] extractedFeatures = FileUtils.readFileToString(new File(featureFile, "training-data.maxent")).split("\n");
@@ -101,25 +96,18 @@ public class StringClassifierLabellerTest {
 		SimplePipeline.runPipeline(aJCas, 
 				AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class), 
 				AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class), 
-				AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-						GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, TokenClassificationAlgorithmFactory.class.getName(), 
-						CleartkAnnotator.PARAM_IS_TRAINING, true, 
-						GenericClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, true,
-						DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, MaxentStringOutcomeDataWriter.class.getName(), 
-						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile)
+				StringClassifierLabeller.getWriterDescription(
+						TokenClassificationAlgorithmFactory.class, MaxentStringOutcomeDataWriter.class, 
+						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile) 
 						);
-		
+
 		JarClassifierBuilder.trainAndPackage(featureFile, new String[]{"10", "0"});
 		
 		SimplePipeline.runPipeline(aJCas, 
-				AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-						GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, TokenClassificationAlgorithmFactory.class.getName(), 
-						CleartkAnnotator.PARAM_IS_TRAINING, false, 
-						GenericClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, false,
-						DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, MaxentStringOutcomeDataWriter.class.getName(), 
-						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile,
-						GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new File(featureFile, "model.jar")) 
-						);
+				StringClassifierLabeller.getClassifierDescription(
+						TokenClassificationAlgorithmFactory.class, 
+						new File(featureFile, "model.jar").toURI().toURL())
+					);
 		
 		assertThat(JCasUtil.select(aJCas, Token.class)).hasSize(0);
 	}
