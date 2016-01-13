@@ -16,7 +16,7 @@ import org.cleartk.ml.jar.GenericJarClassifierFactory;
 
 public class StringClassifierLabeller<INSTANCE_TYPE extends Annotation> extends GenericClassifierLabeller<String, INSTANCE_TYPE>{
 
-	public static <T extends Annotation> AnalysisEngineDescription getWriterDescription(
+	public static <T> AnalysisEngineDescription getWriterDescription(
 				Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls,
 				Class<? extends DataWriter<String>> dataWriterCls, Object... dataWriterParams) throws ResourceInitializationException{
 		List<Object> params = new ArrayList<>();
@@ -31,7 +31,7 @@ public class StringClassifierLabeller<INSTANCE_TYPE extends Annotation> extends 
 				);
 	}
 	
-	public static <T extends Annotation> AnalysisEngineDescription getClassifierDescription(
+	public static <T> AnalysisEngineDescription getClassifierDescription(
 			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, URL modelUrl) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, classifierAlgorithmFactoryCls.getName(), 
