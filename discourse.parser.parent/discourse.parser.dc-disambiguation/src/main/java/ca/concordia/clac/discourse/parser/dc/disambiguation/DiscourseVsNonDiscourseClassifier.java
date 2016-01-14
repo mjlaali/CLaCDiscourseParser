@@ -27,7 +27,6 @@ import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
@@ -39,14 +38,10 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.discourse.type.DiscourseConnective;
-import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
-import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
-import ca.concordia.clac.ml.classifier.GenericClassifierLabeller;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
 import ca.concordia.clac.ml.classifier.StringClassifierLabeller;
 import ca.concordia.clac.uima.engines.LookupInstanceExtractor;
@@ -57,11 +52,11 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
-	
+
 	public static final String CONN_LStr = "CON-LStr";
-	
+
 	private LookupInstanceExtractor<DiscourseConnective> lookupInstanceExtractor = new LookupInstanceExtractor<>();
-	
+
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 		lookupInstanceExtractor.initialize(context);
@@ -72,24 +67,24 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		return lookupInstanceExtractor;
 	}
 
-	
+
 	@Override
 	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor(JCas aJCas) {
 		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
 				.andThen(extractFromScope(
-				 getLast(Constituent.class).andThen(
-						 getFeatures(getFeature("selfCat", getConstituentType()),
-								 	 getFeature("selfCatParent", getParent().andThen(getConstituentType())),
-								 	 getFeature("selfCatLeftSibling", getLeftSibling().andThen(getConstituentType())),
-						 			 getFeature("selfCatLeftSibling", getRightSibling().andThen(getConstituentType()))
-						 )) 
-			));
-		
-		
+						getLast(Constituent.class).andThen(
+								getFeatures(getFeature("selfCat", getConstituentType()),
+										getFeature("selfCatParent", getParent().andThen(getConstituentType())),
+										getFeature("selfCatLeftSibling", getLeftSibling().andThen(getConstituentType())),
+										getFeature("selfCatLeftSibling", getRightSibling().andThen(getConstituentType()))
+										)) 
+						));
+
+
 		return Arrays.asList(
 				getFeatures(getFeature(CONN_LStr, getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
-						    getFeature("CON-POS", getText(DiscourseConnective.class).andThen(StringUtils::isAllLowerCase)
-						    		.andThen((b) -> b.toString()))), 
+						getFeature("CON-POS", getText(DiscourseConnective.class).andThen(StringUtils::isAllLowerCase)
+								.andThen((b) -> b.toString()))), 
 				pathFeatures);
 	}
 
@@ -99,7 +94,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 			List<DiscourseConnective> selectCovered = JCasUtil.selectCovering(DiscourseConnective.class, dc);
 			for (DiscourseConnective indexedDc: selectCovered){
 				if (indexedDc.getBegin() == dc.getBegin() &&
-					indexedDc.getEnd() == dc.getEnd()){
+						indexedDc.getEnd() == dc.getEnd()){
 					return Boolean.toString(true);
 				}
 			}
@@ -116,28 +111,27 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		};
 	}
 
-	
+
 	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException, MalformedURLException{
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
-				CleartkAnnotator.PARAM_IS_TRAINING, true,
+		return StringClassifierLabeller.getWriterDescription(
+				DiscourseVsNonDiscourseClassifier.class,
+				WekaStringOutcomeDataWriter.class, 
+				outputFld, 
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
-				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
-				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, WekaStringOutcomeDataWriter.class.getName(), 
-				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
-	}
-	
-	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseVsNonDiscourseClassifier.class.getName(), 
-				CleartkAnnotator.PARAM_IS_TRAINING, false,
-				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
-				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName(),
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString()
+				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName()
 				);
 	}
-	
-	
+
+	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
+		return StringClassifierLabeller.getClassifierDescription(
+					DiscourseVsNonDiscourseClassifier.class, 
+					new URL(packageDir, "model.jar"),
+					LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
+					LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName()
+					);
+	}
+
+
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
@@ -150,7 +144,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
-		
+
 		File dcList = new File(new File("outputs/resources"), DC_HEAD_LIST_FILE);
 		File featureFile = new File(new File("outputs/resources"), PACKAGE_DIR);
 		if (featureFile.exists())
@@ -159,8 +153,8 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				conllSyntaxJsonReader, 
 				conllGoldJsonReader, 
 				getWriterDescription(dcList, featureFile)
-						);
-		
-		
+				);
+
+
 	}
 }

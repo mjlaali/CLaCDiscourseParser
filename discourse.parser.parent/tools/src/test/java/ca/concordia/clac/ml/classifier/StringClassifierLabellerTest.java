@@ -20,7 +20,6 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.JarClassifierBuilder;
 import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
 import org.junit.Test;
@@ -75,7 +74,7 @@ public class StringClassifierLabellerTest {
 				AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class), 
 				StringClassifierLabeller.getWriterDescription(
 						TokenClassificationAlgorithmFactory.class, MaxentStringOutcomeDataWriter.class, 
-						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile) 
+						featureFile) 
 						);
 		
 		String[] extractedFeatures = FileUtils.readFileToString(new File(featureFile, "training-data.maxent")).split("\n");
@@ -98,7 +97,7 @@ public class StringClassifierLabellerTest {
 				AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class), 
 				StringClassifierLabeller.getWriterDescription(
 						TokenClassificationAlgorithmFactory.class, MaxentStringOutcomeDataWriter.class, 
-						DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, featureFile) 
+						featureFile) 
 						);
 
 		JarClassifierBuilder.trainAndPackage(featureFile, new String[]{"10", "0"});
