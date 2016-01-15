@@ -1,19 +1,46 @@
 package ca.concordia.clac.ml.feature;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.ml.Feature;
 
+import ca.concordia.clac.ml.scop.ScopeFeatureExtractor;
+
+/**
+ * To create feature, first map each instance to a scope (e.g. {@link TreeFeatureExtractor#getChilderen()} 
+ * and then calculate a value based on the scope (e.g. {@link ScopeFeatureExtractor#join(java.util.stream.Collector)}
+ * and finally create a feature for the calculated value ({@link #makeFeature(String)}
+ * 
+ * If you need to calculate multiple features from an scope (e.g. the calculation of the scope is heavy computing process)
+ * it is better to use {@link #multiMap(Function...)} in which each map function is a feature extractor on the scope.
+ * 
+ * @author majid
+ *
+ */
 public class FeatureExtractors{
-	public static <T, R> Function<T, Feature> getFeature(String featureName, Function<T, R> featureExtractor) {
-		return val -> val == null ? null : new Feature(featureName, Optional.of(val)
-				.map(featureExtractor).map(Object::toString).orElse("null"));
+	public static final String NULL_STRING = "null";
+	public static <T> Function<T, Feature> makeFeature(String featureName){
+		return (value) -> new Feature(featureName, value == null ? NULL_STRING : value);
+	}
+	
+	
+	@SafeVarargs
+	public static <T, R> Function<T, List<R>> multiMap(Function<? super T, R>... mapFunctions){
+		return (t) -> {
+			if (t == null)
+				return Collections.emptyList();
+			else 
+			return Stream.of(mapFunctions).map((f) ->  Optional.of(t).map(f).orElse(null))
+				.filter((v) -> v != null).collect(Collectors.toList());
+		};
 	}
 	
 
@@ -31,7 +58,7 @@ public class FeatureExtractors{
 		};
 	}
 
-	public static Function<? extends Annotation, String> getText(){
+	public static <T extends Annotation> Function<T, String> getText(){
 		return (ann) -> ann.getCoveredText();
 	}
 
@@ -47,6 +74,9 @@ public class FeatureExtractors{
 		return f;
 	}
 
+	public static <T> Function<T, T> dummyFunc(Class<T> cls){
+		return (t) -> t;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public static <T> Function<FSArray, List<T>> convertToList(Class<T> cls){

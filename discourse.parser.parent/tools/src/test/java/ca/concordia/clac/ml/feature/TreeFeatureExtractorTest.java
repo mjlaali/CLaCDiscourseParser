@@ -1,13 +1,14 @@
 package ca.concordia.clac.ml.feature;
 
-import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.extractFromScope;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapTo;
 import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,6 +20,7 @@ import org.apache.uima.UIMAException;
 import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.ml.Feature;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +56,8 @@ public class TreeFeatureExtractorTest {
 				+ "(VP (VBP are) (ADVP (RBR better)) (VP (VBN cushioned) (PP (IN against) (NP (NN price) (NNS swings))))))(. .)))";
 
 //		(ROOT
-//				(S (CC But)
+//				(S 
+//						(CC But)
 //						(NP (PRP$ its) (NNS competitors))
 //						(VP
 //								(VP (VBP have)
@@ -104,8 +107,8 @@ public class TreeFeatureExtractorTest {
 		int soPos = sent.indexOf(so);
 		Token soToken = JCasUtil.selectCovered(aJCas, Token.class, soPos, soPos + so.length()).get(0);
 		
-		Function<Token, List<Feature>> feature = getPathToRoot(Token.class).andThen(extractFromScope(
-				getFeatures(joinInScope((Constituent cons) -> cons.getConstituentType(), "full-path"))));
+		Function<Token, List<Feature>> feature = getPathToRoot(Token.class).andThen(mapTo(
+				getFeatures(joinInScope("full-path", (Constituent cons) -> cons.getConstituentType()))));
 		
 		List<Feature> res = feature.apply(soToken);
 		assertThat(res).hasSize(1);
@@ -121,8 +124,8 @@ public class TreeFeatureExtractorTest {
 		assertThat(root.getConstituentType()).isEqualTo("ROOT");
 		assertThat(root.getParent()).isNull();
 		
-		Function<ROOT, List<Feature>> feature = getPathToRoot(ROOT.class).andThen(extractFromScope(
-				getFeatures(joinInScope((Constituent cons) -> cons.getConstituentType(), "full-path"))));
+		Function<ROOT, List<Feature>> feature = getPathToRoot(ROOT.class).andThen(mapTo(
+				getFeatures(joinInScope("full-path", (Constituent cons) -> cons.getConstituentType()))));
 		
 		List<Feature> res = feature.apply(root);
 		assertThat(res).hasSize(1);
@@ -167,9 +170,19 @@ public class TreeFeatureExtractorTest {
 	@Test
 	public void givenARootNodeWhenCalculatingItsLeftSiblingThenReturnNull(){
 		ROOT root = JCasUtil.selectByIndex(aJCas, ROOT.class, 0);
-		Function<Constituent, String> feature = getLeftSibling().andThen(getConstituentType());
-		Object res = getFeature("FeatureWithNull", feature).apply(root).getValue();
+		Function<Constituent, Feature> feature = getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("FeatureWithNull"));
+		Object res = feature.apply(root).getValue();
 		assertThat(res).isEqualTo("null");
 	}
 
+	@Test
+	public void givenTheSNodeWhenCalculatingItsChilderenThenCC_NP_VP_DOT(){
+		ROOT root = JCasUtil.selectByIndex(aJCas, ROOT.class, 0);
+		Annotation s = root.getChildren(0);
+		Function<Annotation, Feature> func = getChilderen().andThen(
+				joinInScope("childeren", TreeFeatureExtractor.getConstituentType()));
+		String value = (String) func.apply(s).getValue();
+		
+		assertThat(value).isEqualTo("CC-NP-VP-.");
+	}
 }

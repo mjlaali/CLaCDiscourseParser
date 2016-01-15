@@ -1,13 +1,13 @@
 package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
-import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeature;
-import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.dummyFunc;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getText;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.multiMap;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.extractFromScope;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
 import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 
@@ -67,24 +67,30 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		return lookupInstanceExtractor;
 	}
 
+	public static Function<DiscourseConnective, List<Feature>> getDiscourseConnectiveFeatures(){
+		Function<String, String> toLowerCase = String::toLowerCase;
+		Function<String, Boolean> isAllLowerCase = StringUtils::isAllLowerCase;
+		return dummyFunc(DiscourseConnective.class).andThen(getText()).andThen(multiMap(
+				toLowerCase.andThen(makeFeature(CONN_LStr)),
+				isAllLowerCase.andThen((b) -> b.toString()).andThen(makeFeature("CON-POS"))
+				));
+	}
 
 	@Override
 	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor(JCas aJCas) {
-		Function<DiscourseConnective, List<Feature>> pathFeatures = getPathToRoot(DiscourseConnective.class)
-				.andThen(extractFromScope(
-						getLast(Constituent.class).andThen(
-								getFeatures(getFeature("selfCat", getConstituentType()),
-										getFeature("selfCatParent", getParent().andThen(getConstituentType())),
-										getFeature("selfCatLeftSibling", getLeftSibling().andThen(getConstituentType())),
-										getFeature("selfCatLeftSibling", getRightSibling().andThen(getConstituentType()))
-										)) 
-						));
-
+		Function<DiscourseConnective, List<Feature>> pathFeatures = 
+				getPathToRoot(DiscourseConnective.class).andThen(
+				getLast(Constituent.class).andThen(
+				multiMap(
+						getConstituentType().andThen(makeFeature("selfCat")),
+						getParent().andThen(getConstituentType()).andThen(makeFeature("selfCatParent")),
+						getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatLeftSibling")),
+						getRightSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatLeftSibling"))
+						)));
+				
 
 		return Arrays.asList(
-				getFeatures(getFeature(CONN_LStr, getText(DiscourseConnective.class).andThen(String::toLowerCase)), 
-						getFeature("CON-POS", getText(DiscourseConnective.class).andThen(StringUtils::isAllLowerCase)
-								.andThen((b) -> b.toString()))), 
+				getDiscourseConnectiveFeatures(), 
 				pathFeatures);
 	}
 

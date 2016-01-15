@@ -20,8 +20,8 @@ public class TreeFeatureExtractor {
 		return getFunction(Constituent::getParent).andThen(t -> (Constituent) t);
 	}
 	
-	public static <T extends Annotation> Function<T, String> getConstituentType(){
-		return (T ann) -> {
+	public static Function<Annotation, String> getConstituentType(){
+		return (Annotation ann) -> {
 				if (ann instanceof Constituent)
 					return ((Constituent)ann).getConstituentType();
 				if (ann instanceof Token)
@@ -30,11 +30,22 @@ public class TreeFeatureExtractor {
 		};
 	}
 	
+	public static Function<Annotation, List<Annotation>> getChilderen(){
+		return (Annotation ann) -> {
+			if (ann instanceof Constituent)
+				return Optional.of((Constituent)ann).map(Constituent::getChildren)
+						.map(convertToList(Annotation.class))
+						.orElse(Collections.emptyList());
+			if (ann instanceof Token)
+				return Collections.emptyList();
+			return null;
+	};
+	}
+	
 	public static Function<Constituent, List<Annotation>> getSiblings(){
 		return (cons) -> {
 			return Optional.of(cons).map(getParent())
-					.map(Constituent::getChildren)
-					.map(convertToList(Annotation.class))
+					.map(getChilderen())
 					.orElse(Collections.emptyList());
 		};
 		
