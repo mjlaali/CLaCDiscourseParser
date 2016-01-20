@@ -16,8 +16,7 @@ import org.cleartk.ml.Feature;
 import org.junit.Before;
 import org.junit.Test;
 
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
-import ca.concordia.clac.ml.classifier.GenericClassifierLabeller;
+import ca.concordia.clac.ml.classifier.GenericClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
@@ -93,7 +92,7 @@ public class DiscourseVsNonDiscourseClassifierTest {
 		int soPos = sent.indexOf(so);
 		DiscourseConnective dc = new DiscourseConnective(aJCas, soPos, soPos + so.length());
 		
-		Map<DiscourseConnective, List<Feature>> features = GenericClassifierLabeller.calcFeatures(
+		Map<DiscourseConnective, List<Feature>> features = GenericClassifier.calcFeatures(
 				Stream.of(dc), featureExtractor);
 		
 		assertThat(features).containsKey(dc);

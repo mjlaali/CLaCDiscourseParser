@@ -1,6 +1,12 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.multiMap;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.join;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
@@ -23,6 +29,7 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.TokenListTools;
+import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
@@ -50,6 +57,10 @@ class Arg2Instance{
 		return discourseConnective;
 	}
 	
+	public Constituent getImediateDcParent() {
+		return imediateDcParent;
+	}
+	
 	Constituent constituent;
 	Constituent imediateDcParent;
 	DiscourseConnective discourseConnective;
@@ -67,6 +78,30 @@ class SelectedDiscourseRelation{
 
 	Set<Token> arg1Tokens = null, arg2Tokens = null;
 	DiscourseRelation discourseRelation;
+}
+
+
+enum NodeArgType {
+	Arg1, Arg2, Non, Relation
+}
+
+class Arg2InstanceLabeler{
+	
+	public static String getLabel(Arg2Instance instance){
+		NodeArgType res;
+		DiscourseRelation discourseRelation = instance.getDiscourseConnective().getDiscourseRelation();
+		if (discourseRelation == null)
+			return null;
+		
+		DiscourseArgument arguments = discourseRelation.getArguments(1);
+		List<Token> arg2Tokens = TokenListTools.convertToTokens(arguments);
+		List<Token> nodeTokens = JCasUtil.selectCovered(Token.class, instance.getConstituent());
+		if (nodeTokens.containsAll(arg2Tokens)){
+			res = NodeArgType.Arg2;
+		} else
+			res = NodeArgType.Non;
+		return res.toString();
+	}
 }
 
 class Arg2InstanceExtractor implements InstanceExtractor<Arg2Instance>{
@@ -147,8 +182,6 @@ public class Arg2Labeler implements ClassifierAlgorithmFactory<String, Arg2Insta
 
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -164,20 +197,34 @@ public class Arg2Labeler implements ClassifierAlgorithmFactory<String, Arg2Insta
 				);
 		
 		Function<Arg2Instance, Constituent> convertToConstituent = Arg2Instance::getConstituent;
-		Function<Arg2Instance, Feature> pathFeatures =
+		Function<Arg2Instance, Feature> childPatterns =
 								convertToConstituent.andThen(
 										TreeFeatureExtractor.getChilderen()).andThen(
 										mapOneByOneTo(TreeFeatureExtractor.getConstituentType())).andThen(
 										join(Collectors.joining("-"))).andThen(
 										makeFeature("ChildPat"));
+		Function<Arg2Instance, Feature> ntCtx = convertToConstituent
+				.andThen(multiMap(
+						getConstituentType(), 
+						getParent().andThen(getConstituentType()), 
+						getLeftSibling().andThen(getConstituentType()),
+						getRightSibling().andThen(getConstituentType())
+						))
+				.andThen(join(Collectors.joining("-")))
+				.andThen(makeFeature("NT-Ctx"));
+		
+		Function<Arg2Instance, List<Constituent>> pathExtractor = (inst) -> getPath().apply(inst.getImediateDcParent(), inst.getConstituent()); 
+		Function<Arg2Instance, Feature> path = pathExtractor
+				.andThen(mapOneByOneTo(getConstituentType()))
+				.andThen(join(Collectors.joining("-")))
+				.andThen(makeFeature("CON-NT-Path"));
 
-		return Arrays.asList(dcFeatures);//, pathFeatures);
+		return Arrays.asList(dcFeatures, multiMap(childPatterns, ntCtx, path));
 	}
 
 	@Override
 	public Function<Arg2Instance, String> getLabelExtractor(JCas jCas) {
-		// TODO Auto-generated method stub
-		return null;
+		return Arg2InstanceLabeler::getLabel;
 	}
 
 	@Override

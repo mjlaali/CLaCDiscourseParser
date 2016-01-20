@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,25 +40,32 @@ public class FeatureExtractors{
 				return Collections.emptyList();
 			else 
 			return Stream.of(mapFunctions).map((f) ->  Optional.of(t).map(f).orElse(null))
-				.filter((v) -> v != null).collect(Collectors.toList());
+				.collect(Collectors.toList());
 		};
 	}
 	
-
 	@SafeVarargs
-	public static <T> Function<T, List<Feature>> getFeatures(
-			Function<? super T, Feature>... extractor) {
-		return annotation -> {
-			List<Feature> results = new ArrayList<>();
-			Stream.of(extractor).forEach((f) -> {
-				Feature features = f.apply(annotation);
-				if (features != null)
-					results.add(features);
-			});
-			return results;
+	public static <T, R> Function<T, List<R>> combineMap(Function<? super T, List<R>>... mapFunctions){
+		return (t) -> {
+			if (t == null)
+				return Collections.emptyList();
+			else 
+			return Stream.of(mapFunctions).map((f) ->  Optional.of(t).map(f).orElse(null))
+				.filter((v) -> v != null).flatMap((l) -> l.stream()).collect(Collectors.toList());
 		};
 	}
-
+	
+	public static <T> Function<T, List<T>> recursiveCall(Function<T, T> func, Predicate<? super T> condition){
+		return (t) -> {
+			List<T> res = new ArrayList<>();
+			while (condition.test(t)){
+				res.add(t);
+				t = func.apply(t);
+			}
+			return res;
+		};
+	}
+	
 	public static <T extends Annotation> Function<T, String> getText(){
 		return (ann) -> ann.getCoveredText();
 	}

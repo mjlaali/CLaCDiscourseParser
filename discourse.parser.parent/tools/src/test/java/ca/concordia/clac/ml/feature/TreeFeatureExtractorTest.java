@@ -1,20 +1,22 @@
 package ca.concordia.clac.ml.feature;
 
-import static ca.concordia.clac.ml.feature.FeatureExtractors.getFeatures;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathToRoot;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.join;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapTo;
-import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.fit.factory.JCasFactory;
@@ -107,14 +109,25 @@ public class TreeFeatureExtractorTest {
 		int soPos = sent.indexOf(so);
 		Token soToken = JCasUtil.selectCovered(aJCas, Token.class, soPos, soPos + so.length()).get(0);
 		
-		Function<Token, List<Feature>> feature = getPathToRoot(Token.class).andThen(mapTo(
-				getFeatures(joinInScope("full-path", (Constituent cons) -> cons.getConstituentType()))));
+		Function<Token, Feature> feature = getPathToRoot(Token.class)
+					.andThen(mapOneByOneTo((c) -> (Annotation)c))
+					.andThen(mapOneByOneTo(getConstituentType()))
+					.andThen(join(Collectors.joining("-")))
+					.andThen(makeFeature("full-path"));
 		
-		List<Feature> res = feature.apply(soToken);
-		assertThat(res).hasSize(1);
-		Feature f = res.get(0);
+		Feature f = feature.apply(soToken);
 		assertThat(f.getName()).isEqualTo("full-path");
 		assertThat(f.getValue()).isEqualTo("ROOT-S-VP-ADVP");
+	}
+	
+	@Test
+	public void givenTheADVPNodeAndTheNNSNodeWhenCalculatingThePathBetweenThemThenTheResultIsNP_S_null_VP_ADVP(){
+		Constituent np = findFirstConstituent("NP");
+		Constituent advp = findFirstConstituent("ADVP");
+		
+		List<Constituent> pathConstituents = getPath().apply(np, advp);
+		String path = pathConstituents.stream().map(getConstituentType()).collect(Collectors.joining("-"));
+		assertThat(path).isEqualTo("NP-S-null-VP-ADVP");
 	}
 
 	@Test
@@ -124,12 +137,13 @@ public class TreeFeatureExtractorTest {
 		assertThat(root.getConstituentType()).isEqualTo("ROOT");
 		assertThat(root.getParent()).isNull();
 		
-		Function<ROOT, List<Feature>> feature = getPathToRoot(ROOT.class).andThen(mapTo(
-				getFeatures(joinInScope("full-path", (Constituent cons) -> cons.getConstituentType()))));
+		Function<ROOT, Feature> feature = getPathToRoot(ROOT.class)
+				.andThen(mapOneByOneTo((c) -> (Annotation)c))
+				.andThen(mapOneByOneTo(getConstituentType()))
+				.andThen(join(Collectors.joining("-")))
+				.andThen(makeFeature("full-path"));
 		
-		List<Feature> res = feature.apply(root);
-		assertThat(res).hasSize(1);
-		Feature f = res.get(0);
+		Feature f = feature.apply(root);
 		assertThat(f.getName()).isEqualTo("full-path");
 		assertThat(f.getValue()).isEqualTo("");
 	}
@@ -184,5 +198,10 @@ public class TreeFeatureExtractorTest {
 		String value = (String) func.apply(s).getValue();
 		
 		assertThat(value).isEqualTo("CC-NP-VP-.");
+	}
+	
+	@Test
+	public void givenTheVPNodeWhenCalculatingItsPathToRootThenReturnVP_S_ROOT(){
+		
 	}
 }

@@ -2,10 +2,9 @@ package ca.concordia.clac.ml.classifier;
 
 import java.util.List;
 
-import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.ml.Feature;
 
-public class ComplexInstance<INSTANCE_TYPE extends Annotation> {
+public class ComplexInstance<INSTANCE_TYPE> {
 	private INSTANCE_TYPE instance;
 	private List<Feature> features;
 	public ComplexInstance(INSTANCE_TYPE instance){

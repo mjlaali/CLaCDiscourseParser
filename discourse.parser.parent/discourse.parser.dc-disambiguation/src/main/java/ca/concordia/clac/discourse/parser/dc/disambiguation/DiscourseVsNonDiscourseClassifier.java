@@ -7,9 +7,9 @@ import static ca.concordia.clac.ml.feature.FeatureExtractors.multiMap;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathToRoot;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
-import static ca.concordia.clac.ml.scop.Scopes.getPathToRoot;
 
 import java.io.File;
 import java.io.IOException;
