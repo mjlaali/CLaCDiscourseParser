@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -32,6 +33,22 @@ public class FeatureExtractors{
 		return (value) -> new Feature(featureName, value == null ? NULL_STRING : value);
 	}
 	
+	public static <T> Function<List<List<T>>, List<T>>flatMap(Class<T> cls){
+		return (input) ->
+			input.stream().flatMap((a) -> a.stream()).collect(Collectors.toList());
+		
+	}
+	
+	@SafeVarargs
+	public static <S, T, R> BiFunction<S, T, List<R>> multiBiFuncMap(BiFunction<? super S, ? super T, R>... mapFunctions){
+		return (s, t) -> {
+			if (t == null || s == null)
+				return Collections.emptyList();
+			else 
+			return Stream.of(mapFunctions).map((f) ->  f.apply(s, t))
+				.collect(Collectors.toList());
+		};
+	}
 	
 	@SafeVarargs
 	public static <T, R> Function<T, List<R>> multiMap(Function<? super T, R>... mapFunctions){

@@ -125,7 +125,7 @@ public class TreeFeatureExtractorTest {
 		Constituent np = findFirstConstituent("NP");
 		Constituent advp = findFirstConstituent("ADVP");
 		
-		List<Constituent> pathConstituents = getPath().apply(np, advp);
+		List<Annotation> pathConstituents = getPath().apply(np, advp);
 		String path = pathConstituents.stream().map(getConstituentType()).collect(Collectors.joining("-"));
 		assertThat(path).isEqualTo("NP-S-null-VP-ADVP");
 	}
@@ -154,7 +154,7 @@ public class TreeFeatureExtractorTest {
 		Constituent advp = findFirstConstituent("ADVP");
 		assertThat(advp).isNotNull();
 		
-		Function<Constituent, String> feature = getParent().andThen(getConstituentType());
+		Function<Annotation, String> feature = getParent().andThen(getConstituentType());
 		
 		String res = feature.apply(advp);
 		assertThat(res).isEqualTo("VP");
@@ -165,7 +165,7 @@ public class TreeFeatureExtractorTest {
 	public void givenADVPNodeWhenCalculatingItsRightSiblignThenReturnVP(){
 		Constituent advp = findFirstConstituent("ADVP");
 		
-		Function<Constituent, String> feature = getRightSibling().andThen(getConstituentType());
+		Function<Annotation, String> feature = getRightSibling().andThen(getConstituentType());
 		
 		String res = feature.apply(advp);
 		assertThat(res).isEqualTo("VP");
@@ -175,7 +175,7 @@ public class TreeFeatureExtractorTest {
 	public void givenADVPNodeWhenCalculatingItsLeftSiblignThenReturnCC(){
 		Constituent advp = findFirstConstituent("ADVP");
 		
-		Function<Constituent, String> feature = getLeftSibling().andThen(getConstituentType());
+		Function<Annotation, String> feature = getLeftSibling().andThen(getConstituentType());
 		
 		String res = feature.apply(advp);
 		assertThat(res).isEqualTo("CC");
@@ -184,7 +184,7 @@ public class TreeFeatureExtractorTest {
 	@Test
 	public void givenARootNodeWhenCalculatingItsLeftSiblingThenReturnNull(){
 		ROOT root = JCasUtil.selectByIndex(aJCas, ROOT.class, 0);
-		Function<Constituent, Feature> feature = getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("FeatureWithNull"));
+		Function<Annotation, Feature> feature = getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("FeatureWithNull"));
 		Object res = feature.apply(root).getValue();
 		assertThat(res).isEqualTo("null");
 	}

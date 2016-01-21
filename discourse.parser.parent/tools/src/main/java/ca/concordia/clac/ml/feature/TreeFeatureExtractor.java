@@ -20,14 +20,20 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class TreeFeatureExtractor {
 	
-	public static Function<Constituent, Constituent> getParent(){
-		return getFunction(Constituent::getParent).andThen(t -> (Constituent) t);
+	public static Function<Annotation, Constituent> getParent(){
+		return (ann) -> {
+			if (ann instanceof Token)
+				return getFunction(Token::getParent).andThen(t -> (Constituent) t).apply((Token) ann);
+			if (ann instanceof Constituent)
+				return getFunction(Constituent::getParent).andThen(t -> (Constituent) t).apply((Constituent) ann);
+			return null;
+		};
 	}
 
-	public static BiFunction<Constituent, Constituent, List<Constituent>> getPath(){
+	public static BiFunction<Annotation, Annotation, List<Annotation>> getPath(){
 		return (source, target) -> {
-			List<Constituent> fromSource = getPathToRoot(Constituent.class).apply(source);
-			List<Constituent> fromTarget = getPathToRoot(Constituent.class).apply(target);
+			List<Constituent> fromSource = getPathToRoot(Annotation.class).apply(source);
+			List<Constituent> fromTarget = getPathToRoot(Annotation.class).apply(target);
 			
 			int commonRoot;
 			for (commonRoot = 0; commonRoot < Math.min(fromSource.size(), fromTarget.size()); commonRoot++){
@@ -36,7 +42,7 @@ public class TreeFeatureExtractor {
 			}
 			--commonRoot;
 			
-			List<Constituent> path = new ArrayList<>();
+			List<Annotation> path = new ArrayList<>();
 			path.add(source);
 			for (int j = fromSource.size() - 1; j > commonRoot; j--)
 				path.add(fromSource.get(j));
@@ -118,7 +124,7 @@ public class TreeFeatureExtractor {
 	};
 	}
 	
-	public static Function<Constituent, List<Annotation>> getSiblings(){
+	public static Function<Annotation, List<Annotation>> getSiblings(){
 		return (cons) -> {
 			return Optional.of(cons).map(getParent())
 					.map(getChilderen())
@@ -127,7 +133,7 @@ public class TreeFeatureExtractor {
 		
 	}
 	
-	public static Function<Constituent, Annotation> getLeftSibling(){
+	public static Function<Annotation, Annotation> getLeftSibling(){
 		return (cons) -> {
 			List<Annotation> siblings = getSiblings().apply(cons);
 			Integer index = siblings.indexOf(cons);
@@ -137,7 +143,7 @@ public class TreeFeatureExtractor {
 		};
 	}
 	
-	public static Function<Constituent, Annotation> getRightSibling(){
+	public static Function<Annotation, Annotation> getRightSibling(){
 		return (cons) -> {
 			List<Annotation> siblings = getSiblings().apply(cons);
 			Integer index = siblings.indexOf(cons);

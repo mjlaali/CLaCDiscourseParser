@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -24,6 +25,12 @@ public class ScopeFeatureExtractor {
 		};
 	}
 	
+	public static <S, T, R> BiFunction<List<S>, T, List<R>> mapOneByOneTo(BiFunction<S, T, R> fun){
+		return (scope, c) -> {
+			return scope.stream().map((s) -> fun.apply(s, c)).collect(Collectors.toList());
+		};
+	}
+
 	public static <T, R> Function<List<T>, List<R>> mapOneByOneTo(Function<T, R> fun){
 		
 		return (scope) -> {
