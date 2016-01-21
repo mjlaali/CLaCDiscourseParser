@@ -8,14 +8,13 @@ import java.util.List;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
-import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.ml.CleartkAnnotator;
 import org.cleartk.ml.DataWriter;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
 
-public class StringClassifierLabeller<INSTANCE_TYPE extends Annotation> extends GenericClassifierLabeller<String, INSTANCE_TYPE>{
+public class StringClassifierLabeller<INSTANCE_TYPE> extends GenericClassifierLabeller<String, INSTANCE_TYPE>{
 
 	public static <T> AnalysisEngineDescription getWriterDescription(
 			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls,

@@ -38,8 +38,26 @@
 		</dependency>
 		<dependency>
 			<groupId>org.cleartk</groupId>
-			<artifactId>cleartk-ml</artifactId>
+			<artifactId>cleartk-ml-opennlp-maxent</artifactId>
 			<version>${cleartk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cleartk</groupId>
+			<artifactId>cleartk-corpus</artifactId>
+			<version>${cleartk.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.cleartk</groupId>
+			<artifactId>cleartk-opennlp-tools</artifactId>
+			<version>${cleartk.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.cleartk</groupId>
+			<artifactId>cleartk-token</artifactId>
+			<version>${cleartk.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
