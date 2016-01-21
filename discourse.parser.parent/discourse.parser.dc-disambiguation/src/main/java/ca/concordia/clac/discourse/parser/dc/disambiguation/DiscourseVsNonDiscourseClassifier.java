@@ -7,7 +7,7 @@ import static ca.concordia.clac.ml.feature.FeatureExtractors.multiMap;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathToRoot;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
 
@@ -79,7 +79,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	@Override
 	public List<Function<DiscourseConnective, List<Feature>>> getFeatureExtractor(JCas aJCas) {
 		Function<DiscourseConnective, List<Feature>> pathFeatures = 
-				getPathToRoot(DiscourseConnective.class).andThen(
+				getPathFromRoot(DiscourseConnective.class).andThen(
 				getLast(Constituent.class).andThen(
 				multiMap(
 						getConstituentType().andThen(makeFeature("selfCat")),

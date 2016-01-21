@@ -1,7 +1,5 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -35,7 +33,6 @@ public class LabelExtractor implements BiFunction<ArgumentInstance, DiscourseCon
 			nodeTokens = Collections.singletonList((Token)ann);
 		} else
 			nodeTokens = JCasUtil.selectCovered(Token.class, ann);
-		System.out.println(getConstituentType().apply(ann));
 		
 		if (arg1Tokens.containsAll(nodeTokens))
 			res = NodeArgType.Arg1;

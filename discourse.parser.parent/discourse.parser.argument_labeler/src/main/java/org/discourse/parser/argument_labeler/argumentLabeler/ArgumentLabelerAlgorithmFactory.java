@@ -89,7 +89,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 	@Override
 	public SequenceClassifierConsumer<String, DiscourseConnective, ArgumentInstance> getLabeller(JCas jCas) {
-		return null;
+		return new ArgumentConstructor(jCas);
 	}
 
 

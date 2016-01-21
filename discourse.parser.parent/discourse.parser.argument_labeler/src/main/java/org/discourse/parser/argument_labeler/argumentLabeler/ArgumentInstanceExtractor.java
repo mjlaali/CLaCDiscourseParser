@@ -1,7 +1,7 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathToRoot;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 	private int todoCnt;
 
 	public List<ArgumentInstance> apply(DiscourseConnective discourseConnective) {
-		List<Constituent> pathToRoot = getPathToRoot(DiscourseConnective.class).apply(discourseConnective);
+		List<Constituent> pathToRoot = getPathFromRoot(DiscourseConnective.class).apply(discourseConnective);
 		
 		if (pathToRoot.size() == 0){
 			System.out.println("Arg2Labeler.process(): TODO [" + (todoCnt++)

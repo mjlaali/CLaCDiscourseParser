@@ -6,7 +6,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentTy
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathToRoot;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.join;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
@@ -109,7 +109,7 @@ public class TreeFeatureExtractorTest {
 		int soPos = sent.indexOf(so);
 		Token soToken = JCasUtil.selectCovered(aJCas, Token.class, soPos, soPos + so.length()).get(0);
 		
-		Function<Token, Feature> feature = getPathToRoot(Token.class)
+		Function<Token, Feature> feature = getPathFromRoot(Token.class)
 					.andThen(mapOneByOneTo((c) -> (Annotation)c))
 					.andThen(mapOneByOneTo(getConstituentType()))
 					.andThen(join(Collectors.joining("-")))
@@ -137,7 +137,7 @@ public class TreeFeatureExtractorTest {
 		assertThat(root.getConstituentType()).isEqualTo("ROOT");
 		assertThat(root.getParent()).isNull();
 		
-		Function<ROOT, Feature> feature = getPathToRoot(ROOT.class)
+		Function<ROOT, Feature> feature = getPathFromRoot(ROOT.class)
 				.andThen(mapOneByOneTo((c) -> (Annotation)c))
 				.andThen(mapOneByOneTo(getConstituentType()))
 				.andThen(join(Collectors.joining("-")))
@@ -201,7 +201,11 @@ public class TreeFeatureExtractorTest {
 	}
 	
 	@Test
-	public void givenTheVPNodeWhenCalculatingItsPathToRootThenReturnVP_S_ROOT(){
+	public void givenCCAndSWhenCalculatingThePathThenThePathIsEqualToCC_S(){
+		Constituent np = findFirstConstituent("NP");
+		Constituent s = findFirstConstituent("S");
 		
+		String path = getPath().apply(np, s).stream().map(getConstituentType()).collect(Collectors.joining("-"));
+		assertThat(path).isEqualTo("NP-S-null");
 	}
 }

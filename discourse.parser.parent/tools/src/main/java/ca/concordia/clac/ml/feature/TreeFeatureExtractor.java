@@ -2,6 +2,7 @@ package ca.concordia.clac.ml.feature;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToList;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +33,10 @@ public class TreeFeatureExtractor {
 
 	public static BiFunction<Annotation, Annotation, List<Annotation>> getPath(){
 		return (source, target) -> {
-			List<Constituent> fromSource = getPathToRoot(Annotation.class).apply(source);
-			List<Constituent> fromTarget = getPathToRoot(Annotation.class).apply(target);
+			List<Annotation> fromSource = getPathFromRoot(Annotation.class).andThen(mapOneByOneTo((c) -> (Annotation)c)).apply(source);
+			fromSource.add(source);
+			List<Annotation> fromTarget = getPathFromRoot(Annotation.class).andThen(mapOneByOneTo((c) -> (Annotation)c)).apply(target);
+			fromTarget.add(target);
 			
 			int commonRoot;
 			for (commonRoot = 0; commonRoot < Math.min(fromSource.size(), fromTarget.size()); commonRoot++){
@@ -43,26 +46,18 @@ public class TreeFeatureExtractor {
 			--commonRoot;
 			
 			List<Annotation> path = new ArrayList<>();
-			path.add(source);
-			for (int j = fromSource.size() - 1; j > commonRoot; j--)
+			for (int j = fromSource.size() - 1; j >= commonRoot; j--)
 				path.add(fromSource.get(j));
-			
-			if ((commonRoot - 1) < fromSource.size())
-				path.add(fromSource.get(commonRoot));
-			else {
-				path.add(fromTarget.get(commonRoot));
-			}
 			
 			path.add(null);	//we change direction here.
 			for (int j = commonRoot + 1; j < fromTarget.size(); j++){
 				path.add(fromTarget.get(j));
 			}
-			path.add(target);
 			return path;
 		};
 	}
 
-	public static <IN_ANN extends Annotation> Function<IN_ANN, List<Constituent>> getPathToRoot(Class<IN_ANN> cls){
+	public static <IN_ANN extends Annotation> Function<IN_ANN, List<Constituent>> getPathFromRoot(Class<IN_ANN> cls){
 		return (inAnn) -> {
 			Constituent[] constituents = JCasUtil.selectCovering(Constituent.class, inAnn).toArray(new Constituent[0]);
 			

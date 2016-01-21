@@ -28,15 +28,21 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 		for (int i = 0; i < outcomes.size(); i++){
 			NodeArgType nodeType = NodeArgType.valueOf(outcomes.get(i));
 			Annotation ann = instances.get(i).getInstance();
+			List<Token> tokens = null;
+			if (ann instanceof Token){
+				tokens = new ArrayList<>();
+				tokens.add((Token)ann);
+			} else
+				tokens = JCasUtil.selectCovered(Token.class, ann);
 			switch (nodeType) {
 			case Arg1:
-				arg1Tokens.addAll(JCasUtil.selectCovered(Token.class, ann));
+				arg1Tokens.addAll(tokens);
 				break;
 			case Arg2:
-				arg2Tokens.addAll(JCasUtil.selectCovered(Token.class, ann));
+				arg2Tokens.addAll(tokens);
 				break;
 			case DC:
-				dcTokens.addAll(JCasUtil.selectCovered(Token.class, ann));
+				dcTokens.addAll(tokens);
 				break;
 			default:
 				break;
