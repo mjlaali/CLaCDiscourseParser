@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
 
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
@@ -51,55 +52,23 @@ public class SyntaxReader{
 //			}
 //	}
 //
-//	public void initJCas(JCas jCas, String text, String tokens, String poses, String parseTree){
-//		jCas.setDocumentText(text);
-//		
-//		int offset = 0;
-//		
-//		List<Token> conllTokens = new ArrayList<Token>();
-//		int idx = 0;
-//		String[] split = tokens.split(" ");
-//		
-//		for (String tokenTxt: split){
-//			ConllToken token = new ConllToken(jCas, offset, offset + tokenTxt.length());
-//			token.setDocumentOffset(idx);
-//			token.addToIndexes();
-//			conllTokens.add(token);
-//			offset = offset + tokenTxt.length();
-//			while (offset < text.length() && text.charAt(offset) == ' ')
-//				offset++;
-//		}
-//		
-//		if (poses != null){
-//			addPoses(conllTokens, poses);
-//		}
-//		
-//		if (parseTree != null)
-//			addSyntacticConstituents(jCas, conllTokens, parseTree);
-//
-//	}
-//	
-//	private void addPoses(List<Token> conllTokens, String poses) {
-//		String[] arPoses = poses.split(" ");
-//		if (conllTokens.size() != arPoses.length)
-//			throw new RuntimeException(conllTokens.size() + "<>" + poses.length());
-//
-//		Pattern stanfordPattern = Pattern.compile("(\\w+/)(\\w)");
-//
-//		for (int i = 0; i < conllTokens.size(); i++){
-//			String pos = arPoses[i];
-//			Matcher matcher = stanfordPattern.matcher(pos);
-//			if (matcher.matches()){
-//				pos = matcher.group(2);
-//				conllTokens.get(i).setPos(pos);
-//			}
-//
-//		}
-//	
-//	}
-//
+	public void initJCas(JCas jCas, String parseTree) throws AnalysisEngineProcessException{
+		posMappingProvider.configure(jCas.getCas());
+		constituentMappingProvider.configure(jCas.getCas());
+		PennTreeNode parsePennTree = PennTreeUtils.parsePennTree(parseTree);
+		converter.setCreatePosTags(true);
+		try {
+			StringBuilder sb = new StringBuilder();
+			converter.convertPennTree(jCas, sb, parsePennTree);
+			jCas.setDocumentText(sb.toString());
+		} catch (Exception e) {
+			System.err.println("\n\n**************************");
+			System.err.println(parseTree);
+			e.printStackTrace();
+		}
 	
-	
+	}
+
 	public void addSyntacticConstituents(Sentence aSentence, String parseTree) throws AnalysisEngineProcessException{
 		//create fragment parser if there is no parser. It makes the program simpler
 		List<Token> sentTokens = JCasUtil.selectCovering(Token.class, aSentence);
@@ -168,4 +137,5 @@ public class SyntaxReader{
 //	}
 //	
 //	
+
 }

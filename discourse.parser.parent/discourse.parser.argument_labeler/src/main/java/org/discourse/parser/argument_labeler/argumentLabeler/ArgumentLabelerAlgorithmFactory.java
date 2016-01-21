@@ -29,7 +29,7 @@ import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.feature.TreeFeatureExtractor;
 
-public class ArgumentLabeler implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, ArgumentInstance>{
+public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, ArgumentInstance>{
 
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
@@ -38,7 +38,7 @@ public class ArgumentLabeler implements SequenceClassifierAlgorithmFactory<Strin
 
 	@Override
 	public Function<DiscourseConnective, List<ArgumentInstance>> getInstanceExtractor(JCas aJCas) {
-		return new ConstituentExtractor();
+		return new ArgumentInstanceExtractor();
 	}
 	
 	public BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> getArgumentFeatureExtractor(){

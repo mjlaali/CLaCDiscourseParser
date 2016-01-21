@@ -15,7 +15,7 @@ import org.cleartk.discourse.type.DiscourseConnective;
 
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
-public class ConstituentExtractor implements Function<DiscourseConnective, List<ArgumentInstance>>{
+public class ArgumentInstanceExtractor implements Function<DiscourseConnective, List<ArgumentInstance>>{
 	private int todoCnt;
 
 	public List<ArgumentInstance> apply(DiscourseConnective discourseConnective) {

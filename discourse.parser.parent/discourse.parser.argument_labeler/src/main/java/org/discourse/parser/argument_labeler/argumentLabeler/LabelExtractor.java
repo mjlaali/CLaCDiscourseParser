@@ -1,9 +1,13 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiFunction;
 
 import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
@@ -24,12 +28,19 @@ public class LabelExtractor implements BiFunction<ArgumentInstance, DiscourseCon
 		List<Token> arg1Tokens = TokenListTools.convertToTokens(discourseRelation.getArguments(0));
 		List<Token> arg2Tokens = TokenListTools.convertToTokens(discourseRelation.getArguments(1));
 		List<Token> dcTokens = TokenListTools.convertToTokens(dc);
-		List<Token> nodeTokens = JCasUtil.selectCovered(Token.class, instance.getInstance());
+		
+		Annotation ann = instance.getInstance();
+		List<Token> nodeTokens;
+		if (ann instanceof Token){
+			nodeTokens = Collections.singletonList((Token)ann);
+		} else
+			nodeTokens = JCasUtil.selectCovered(Token.class, ann);
+		System.out.println(getConstituentType().apply(ann));
 		
 		if (arg1Tokens.containsAll(nodeTokens))
-			res = NodeArgType.Arg2;
-		else if (arg2Tokens.containsAll(nodeTokens))
 			res = NodeArgType.Arg1;
+		else if (arg2Tokens.containsAll(nodeTokens))
+			res = NodeArgType.Arg2;
 		else if (dcTokens.containsAll(nodeTokens)){
 			res = NodeArgType.DC;
 		} else 
