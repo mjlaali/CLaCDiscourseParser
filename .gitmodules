@@ -1,6 +1,0 @@
-[submodule "clac.discourse.parser/conll.dataset/data/conll15st-train-dev"]
-	path = clac.discourse.parser/conll.dataset/data/conll15st-train-dev
-	url = git@bitbucket.org:mjlaali/conll2015-dataset.git
-[submodule "clac.discourse.parser/conll.dataset/data/validator"]
-	path = clac.discourse.parser/conll.dataset/data/validator
-	url = https://github.com/attapol/conll15st.git
