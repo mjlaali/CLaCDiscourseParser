@@ -29,16 +29,18 @@ public class ConllEvaluation {
 
 	public interface Options{
 		@Option(
+				defaultToNull = true,
 				shortName = "i",
 				longName = "inputDataset", 
 				description = "Specify the input directory")
 		public String getInputDataset();
 		
-//		@Option(
-//				shortName = "m",
-//				longName = "model", 
-//				description = "Specify the model directory")
-//		public String getModel();
+		@Option(
+				defaultToNull = true,
+				shortName = "m",
+				longName = "mode", 
+				description = "Specify the mode {dev, trial}")
+		public String getMode();
 		
 		@Option(
 				shortName = "o",
@@ -47,15 +49,16 @@ public class ConllEvaluation {
 		public String getOutputDir();
 	}
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
+		Options options = CliFactory.parseArguments(Options.class, args);
+		
 		DatasetMode mode = DatasetMode.test;
 		String inputDataset = null;
 		File outputDirectory = null;
-		if (args.length == 0){
-			mode = DatasetMode.dev;
+		if (options.getInputDataset() == null){
+			mode = DatasetMode.valueOf(options.getMode());
 			inputDataset = "../discourse.conll.dataset/data";
 			outputDirectory = new File("outputs/" + mode + "/");
 		} else {
-			Options options = CliFactory.parseArguments(Options.class, args);
 			inputDataset = options.getInputDataset();
 			outputDirectory = new File(options.getOutputDir());
 		}
