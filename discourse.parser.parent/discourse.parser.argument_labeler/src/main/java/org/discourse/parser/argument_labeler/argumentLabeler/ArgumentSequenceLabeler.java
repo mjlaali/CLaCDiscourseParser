@@ -1,6 +1,8 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -15,15 +17,23 @@ import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
 
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ArgumentSequenceLabeler {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
+	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/");
 	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
 		return ArgumentLabelerAlgorithmFactory.getWriterDescription(outputDirectory.getAbsolutePath());
 	}
 
+	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
+		URL modelUrl = new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
+		return ArgumentLabelerAlgorithmFactory.getClassifierDescription(modelUrl.toString());
+	}
+	
+	
 	public static void main(String[] args) throws Exception {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
@@ -48,4 +58,5 @@ public class ArgumentSequenceLabeler {
 
 		 Train.main(outputDirectory);
 	}
+
 }

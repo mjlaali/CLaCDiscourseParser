@@ -18,6 +18,9 @@ public class ConllDatasetPathFactory {
 			baseFld = new File(dataFld, "conll15st-train-dev/conll15st_data/conll15-st-03-04-15-dev");
 			break;
 		
+		case test:
+			baseFld = dataFld;
+			
 		default:
 			baseFld = new File(dataFld, "conll15st-trial-data");
 			break;

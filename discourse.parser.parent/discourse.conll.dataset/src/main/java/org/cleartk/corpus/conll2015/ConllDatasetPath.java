@@ -5,7 +5,7 @@ import java.io.File;
 public class ConllDatasetPath {
 	
 	public static enum DatasetMode{
-		trial, train, dev
+		trial, train, dev, test
 	}
 
 	File rawDirectory;
@@ -18,7 +18,10 @@ public class ConllDatasetPath {
 		this.dataJSonFile = dataJSonFile;
 		this.parsesJSonFile = parsesJSonFile;
 		
-		for (File file: new File[]{rawDirectory, dataJSonFile, parsesJSonFile}){
+		if (mode != DatasetMode.test && dataJSonFile == null)
+			throw new RuntimeException("There is issue with the file: " + dataJSonFile);
+		
+		for (File file: new File[]{rawDirectory, parsesJSonFile}){
 			if (file == null || !file.exists())
 				throw new RuntimeException("There is issue with the file: " + file);
 		}

@@ -14,5 +14,20 @@
 			<artifactId>cleartk-util</artifactId>
 			<version>${cleartk.version.patched}</version>
 		</dependency>
+		<dependency>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>discourse.conll.dataset</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>discourse.parser.dc-disambiguation</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>discourse.parser.argument_labeler</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 </project>
