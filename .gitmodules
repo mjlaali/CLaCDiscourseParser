@@ -1,0 +1,6 @@
+[submodule "discourse.parser.parent/discourse.conll.dataset/data/validator"]
+	path = discourse.parser.parent/discourse.conll.dataset/data/validator
+	url = https://github.com/attapol/conll15st.git
+[submodule "discourse.parser.parent/discourse.conll.dataset/data/conll15st-train-dev"]
+	path = discourse.parser.parent/discourse.conll.dataset/data/conll15st-train-dev
+	url = git@bitbucket.org:mjlaali/conll2015-dataset.git
