@@ -1,5 +1,6 @@
 package org.cleartk.corpus.conll2015;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -74,6 +75,9 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 		xstream.setMode(XStream.NO_REFERENCES);
         xstream.alias("", ConllDiscourseRelation.class);
 		try {
+			File directory = new File(jsonOutFilePath).getParentFile();
+			if (!directory.exists())
+				directory.mkdirs();
 			jsonFile = new PrintWriter(jsonOutFilePath);
 		} catch (FileNotFoundException e) {
 			throw new ResourceInitializationException(e); 

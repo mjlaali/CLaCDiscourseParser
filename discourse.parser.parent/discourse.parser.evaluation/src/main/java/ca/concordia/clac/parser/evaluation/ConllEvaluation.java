@@ -47,9 +47,20 @@ public class ConllEvaluation {
 		public String getOutputDir();
 	}
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
-		Options options = CliFactory.parseArguments(Options.class, args);
+		DatasetMode mode = DatasetMode.test;
+		String inputDataset = null;
+		File outputDirectory = null;
+		if (args.length == 0){
+			mode = DatasetMode.trial;
+			inputDataset = "../discourse.conll.dataset/data";
+			outputDirectory = new File("outputs/trial/");
+		} else {
+			Options options = CliFactory.parseArguments(Options.class, args);
+			inputDataset = options.getInputDataset();
+			outputDirectory = new File(options.getOutputDir());
+		}
 		
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(options.getInputDataset()), DatasetMode.test);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(inputDataset), mode);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
@@ -62,7 +73,6 @@ public class ConllEvaluation {
 		
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription(ArgumentSequenceLabeler.DEFAULT_URL);
 		
-		File outputDirectory = new File(options.getOutputDir());
 		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "data.json").getAbsolutePath());
 				

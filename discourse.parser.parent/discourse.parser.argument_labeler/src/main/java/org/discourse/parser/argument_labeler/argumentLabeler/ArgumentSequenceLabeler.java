@@ -17,19 +17,19 @@ import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
 
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ArgumentSequenceLabeler {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
-	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/");
+	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + PACKAGE_DIR);
 	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
 		return ArgumentLabelerAlgorithmFactory.getWriterDescription(outputDirectory.getAbsolutePath());
 	}
 
 	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
-		URL modelUrl = new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
+		URL modelUrl = new URL(packageDir, "model.jar");
+		System.out.println(modelUrl.toString());
 		return ArgumentLabelerAlgorithmFactory.getClassifierDescription(modelUrl.toString());
 	}
 	
