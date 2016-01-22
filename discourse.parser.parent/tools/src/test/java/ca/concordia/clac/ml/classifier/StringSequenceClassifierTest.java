@@ -10,10 +10,12 @@ import org.cleartk.examples.pos.ExamplePosAnnotator;
 import org.cleartk.examples.pos.PosClassifierAlgorithm;
 import org.cleartk.examples.pos.RunExamplePosAnnotator;
 import org.cleartk.ml.jar.JarClassifierBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StringSequenceClassifierTest {
 
+	@Ignore
 	@Test
 	public void givenClearTKExampleWhenGeneratingDataUsingStringSequenceClassifierThenProduceTheSameOutput() throws Exception{
 		String cleartkOutput = "outputs/test/" + getClass().getSimpleName() + "/cleartk/";
