@@ -43,6 +43,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.cleartk</groupId>
+			<artifactId>cleartk-ml-mallet</artifactId>
+			<version>${cleartk.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cleartk</groupId>
 			<artifactId>cleartk-corpus</artifactId>
 			<version>${cleartk.version}</version>
 			<scope>test</scope>

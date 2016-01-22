@@ -30,32 +30,30 @@ import java.util.List;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.ml.CleartkSequenceAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instances;
 import org.cleartk.ml.feature.extractor.CleartkExtractor;
-import org.cleartk.ml.feature.extractor.CoveredTextExtractor;
-import org.cleartk.ml.feature.extractor.FeatureExtractor1;
 import org.cleartk.ml.feature.extractor.CleartkExtractor.Following;
 import org.cleartk.ml.feature.extractor.CleartkExtractor.Preceding;
+import org.cleartk.ml.feature.extractor.CoveredTextExtractor;
+import org.cleartk.ml.feature.extractor.FeatureExtractor1;
 import org.cleartk.ml.feature.function.CapitalTypeFeatureFunction;
 import org.cleartk.ml.feature.function.CharacterNgramFeatureFunction;
+import org.cleartk.ml.feature.function.CharacterNgramFeatureFunction.Orientation;
 import org.cleartk.ml.feature.function.FeatureFunctionExtractor;
 import org.cleartk.ml.feature.function.LowerCaseFeatureFunction;
 import org.cleartk.ml.feature.function.NumericTypeFeatureFunction;
-import org.cleartk.ml.feature.function.CharacterNgramFeatureFunction.Orientation;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
+import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
 import org.cleartk.ml.jar.DirectoryDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
-import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
-import org.cleartk.ml.viterbi.DefaultOutcomeFeatureExtractor;
-import org.cleartk.ml.viterbi.ViterbiDataWriterFactory;
+import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.token.type.Sentence;
 import org.cleartk.token.type.Token;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
-import org.apache.uima.fit.util.JCasUtil;
 
 /**
  * <br>
@@ -147,15 +145,11 @@ public class ExamplePosAnnotator extends CleartkSequenceAnnotator<String> {
       throws ResourceInitializationException {
     return AnalysisEngineFactory.createEngineDescription(
         ExamplePosAnnotator.class,
-        CleartkSequenceAnnotator.PARAM_DATA_WRITER_FACTORY_CLASS_NAME,
-        ViterbiDataWriterFactory.class.getName(),
+        CleartkSequenceAnnotator.PARAM_IS_TRAINING,
+        true,
         DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
         outputDirectory,
-        ViterbiDataWriterFactory.PARAM_DELEGATED_DATA_WRITER_FACTORY_CLASS,
-        DefaultDataWriterFactory.class.getName(),
-        DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-        MaxentStringOutcomeDataWriter.class.getName(),
-        ViterbiDataWriterFactory.PARAM_OUTCOME_FEATURE_EXTRACTOR_NAMES,
-        new String[] { DefaultOutcomeFeatureExtractor.class.getName() });
+        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
+        MalletCrfStringOutcomeDataWriter.class);
   }
 }

@@ -49,7 +49,7 @@ public class ScopeFeatureExtractor {
 					.collect(Collectors.joining("-")));
 	}
 	
-	public static <T, A, R> Function<List<T>, R> join(Collector<? super T, A, R> collector){
+	public static <T, A, R> Function<List<T>, R> collect(Collector<? super T, A, R> collector){
 		return (scope) -> {
 			return scope.stream().collect(collector);
 		};

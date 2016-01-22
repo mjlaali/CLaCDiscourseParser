@@ -28,12 +28,10 @@ import org.cleartk.ml.feature.function.CharacterNgramFeatureFunction.Orientation
 import org.cleartk.ml.feature.function.FeatureFunctionExtractor;
 import org.cleartk.ml.feature.function.LowerCaseFeatureFunction;
 import org.cleartk.ml.feature.function.NumericTypeFeatureFunction;
-import org.cleartk.ml.jar.DefaultDataWriterFactory;
+import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
 import org.cleartk.ml.jar.DirectoryDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
-import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
-import org.cleartk.ml.viterbi.DefaultOutcomeFeatureExtractor;
-import org.cleartk.ml.viterbi.ViterbiDataWriterFactory;
+import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.token.type.Sentence;
 import org.cleartk.token.type.Token;
 
@@ -140,17 +138,12 @@ public class PosClassifierAlgorithm implements SequenceClassifierAlgorithmFactor
 		return AnalysisEngineFactory.createEngineDescription(StringSequenceClassifier.class,
 				GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
 				PosClassifierAlgorithm.class.getName(),
-				CleartkSequenceAnnotator.PARAM_DATA_WRITER_FACTORY_CLASS_NAME,
-				ViterbiDataWriterFactory.class.getName(),
-				DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
-				outputDirectory,
-				ViterbiDataWriterFactory.PARAM_DELEGATED_DATA_WRITER_FACTORY_CLASS,
-				DefaultDataWriterFactory.class.getName(),
-				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-				MaxentStringOutcomeDataWriter.class.getName(),
-				ViterbiDataWriterFactory.PARAM_OUTCOME_FEATURE_EXTRACTOR_NAMES,
-				new String[] { DefaultOutcomeFeatureExtractor.class.getName() }
-				);
+				CleartkSequenceAnnotator.PARAM_IS_TRAINING,
+		        true,
+		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
+		        outputDirectory,
+		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
+		        MalletCrfStringOutcomeDataWriter.class);
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(String modelFileName) throws ResourceInitializationException {

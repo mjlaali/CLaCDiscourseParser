@@ -9,7 +9,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.join;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.util.Collection;
@@ -50,7 +50,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 				convertToConstituent.andThen(
 						TreeFeatureExtractor.getChilderen()).andThen(
 								mapOneByOneTo(TreeFeatureExtractor.getConstituentType())).andThen(
-										join(Collectors.joining("-"))).andThen(
+										collect(Collectors.joining("-"))).andThen(
 												makeFeature("ChildPat"));
 		Function<ArgumentInstance, Feature> ntCtx = convertToConstituent
 				.andThen(multiMap(
@@ -59,19 +59,29 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 						getLeftSibling().andThen(getConstituentType()),
 						getRightSibling().andThen(getConstituentType())
 						))
-				.andThen(join(Collectors.joining("-")))
+				.andThen(collect(Collectors.joining("-")))
 				.andThen(makeFeature("NT-Ctx"));
 		
 		Function<ArgumentInstance, List<Annotation>> pathExtractor = (inst) -> getPath().apply(inst.getImediateDcParent(), inst.getInstance()); 
 		Function<ArgumentInstance, Feature> path = pathExtractor
 				.andThen(mapOneByOneTo(getConstituentType()))
-				.andThen(join(Collectors.joining("-")))
+				.andThen(collect(Collectors.joining("-")))
 				.andThen(makeFeature("CON-NT-Path"));
+
+		Function<ArgumentInstance, Feature> pathSize = pathExtractor
+				.andThen(mapOneByOneTo(getConstituentType()))
+				.andThen(collect(Collectors.counting()))
+				.andThen(makeFeature("CON-NT-Path-Size"));
+		
+		BiFunction<ArgumentInstance, DiscourseConnective, Feature> posFeature = (inst, dc) -> {
+			boolean left = inst.getInstance().getEnd() < dc.getBegin();
+			return makeFeature("CON-NT-Position").apply(Boolean.toString(left));
+		};
 		
 		BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> constituentFeatures =
-				(inst, dc) -> multiMap(childPatterns, ntCtx, path).apply(inst);
+				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize).apply(inst);
 				
-		return multiBiFuncMap(dcFeatures, constituentFeatures).andThen(flatMap(Feature.class));
+		return multiBiFuncMap(dcFeatures, multiBiFuncMap(posFeature), constituentFeatures).andThen(flatMap(Feature.class));
 	}
 	
 

@@ -8,7 +8,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
-import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.join;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,7 +112,7 @@ public class TreeFeatureExtractorTest {
 		Function<Token, Feature> feature = getPathFromRoot(Token.class)
 					.andThen(mapOneByOneTo((c) -> (Annotation)c))
 					.andThen(mapOneByOneTo(getConstituentType()))
-					.andThen(join(Collectors.joining("-")))
+					.andThen(collect(Collectors.joining("-")))
 					.andThen(makeFeature("full-path"));
 		
 		Feature f = feature.apply(soToken);
@@ -140,7 +140,7 @@ public class TreeFeatureExtractorTest {
 		Function<ROOT, Feature> feature = getPathFromRoot(ROOT.class)
 				.andThen(mapOneByOneTo((c) -> (Annotation)c))
 				.andThen(mapOneByOneTo(getConstituentType()))
-				.andThen(join(Collectors.joining("-")))
+				.andThen(collect(Collectors.joining("-")))
 				.andThen(makeFeature("full-path"));
 		
 		Feature f = feature.apply(root);

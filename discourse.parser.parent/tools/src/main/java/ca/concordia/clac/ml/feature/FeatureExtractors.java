@@ -18,7 +18,7 @@ import ca.concordia.clac.ml.scop.ScopeFeatureExtractor;
 
 /**
  * To create feature, first map each instance to a scope (e.g. {@link TreeFeatureExtractor#getChilderen()} 
- * and then calculate a value based on the scope (e.g. {@link ScopeFeatureExtractor#join(java.util.stream.Collector)}
+ * and then calculate a value based on the scope (e.g. {@link ScopeFeatureExtractor#collect(java.util.stream.Collector)}
  * and finally create a feature for the calculated value ({@link #makeFeature(String)}
  * 
  * If you need to calculate multiple features from an scope (e.g. the calculation of the scope is heavy computing process)

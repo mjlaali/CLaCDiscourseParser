@@ -21,7 +21,8 @@ public class StringSequenceClassifierTest {
 		BuildTestExamplePosModel.main(ExamplePosAnnotator.getWriterDescription(cleartkOutput), cleartkOutput);
 		BuildTestExamplePosModel.main(PosClassifierAlgorithm.getWriterDescription(stringSequenceClassifierOutput), stringSequenceClassifierOutput);
 		
-		String featureFile = "delegated-model/training-data.maxent";
+//		String featureFile = "delegated-model/training-data.maxent";
+		String featureFile = "training-data.malletcrf";
 		assertThat(FileUtils.readFileToString(new File(cleartkOutput + featureFile))).isEqualTo(
 				FileUtils.readFileToString(new File(stringSequenceClassifierOutput + featureFile)));
 		

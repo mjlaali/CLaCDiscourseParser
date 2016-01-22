@@ -71,12 +71,12 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 			.collect(Collectors.toList());
 		
 		String[] goldFeatures = new String[]{
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>",
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>",
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>",
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>",
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>",
-				"<CON-LStr:so>-<CON-POS:true>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>"
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>-<CON-NT-Path-Size:4>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>-<CON-NT-Path-Size:4>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>-<CON-NT-Path-Size:3>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>-<CON-NT-Path-Size:3>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>"
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);
