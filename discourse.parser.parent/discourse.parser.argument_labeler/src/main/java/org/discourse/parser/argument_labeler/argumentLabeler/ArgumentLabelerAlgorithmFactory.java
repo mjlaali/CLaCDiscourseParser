@@ -84,7 +84,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 				.andThen(makeFeature("CON-NT-Path-Size"));
 		
 		BiFunction<ArgumentInstance, DiscourseConnective, Feature> posFeature = (inst, dc) -> {
-			boolean left = inst.getInstance().getEnd() < dc.getBegin();
+			boolean left = inst.getInstance().getBegin() < dc.getBegin();
 			return makeFeature("CON-NT-Position").apply(Boolean.toString(left));
 		};
 		

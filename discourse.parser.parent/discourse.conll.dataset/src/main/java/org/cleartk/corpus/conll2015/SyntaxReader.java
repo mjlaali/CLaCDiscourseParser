@@ -1,5 +1,6 @@
 package org.cleartk.corpus.conll2015;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -10,6 +11,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.ROOT;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeNode;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeToJCasConverter;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeUtils;
@@ -52,6 +54,30 @@ public class SyntaxReader{
 //			}
 //	}
 //
+	
+	public void initJCas(JCas jCas, String[] parseTrees) throws AnalysisEngineProcessException{
+		posMappingProvider.configure(jCas.getCas());
+		constituentMappingProvider.configure(jCas.getCas());
+		converter.setCreatePosTags(true);
+		StringBuilder sb = new StringBuilder();
+		
+		for (String parseTree: parseTrees){
+			PennTreeNode parsePennTree = PennTreeUtils.parsePennTree(parseTree);
+			try {
+				converter.convertPennTree(jCas, sb, parsePennTree);
+			} catch (Exception e) {
+				System.err.println("\n\n**************************");
+				System.err.println(parseTree);
+				e.printStackTrace();
+			}
+		}
+		
+		jCas.setDocumentText(sb.toString());
+		Collection<ROOT> roots = JCasUtil.select(jCas, ROOT.class);
+		roots.stream().map((r) -> new Sentence(jCas, r.getBegin(), r.getEnd())).forEach((s) -> s.addToIndexes());
+	
+	}
+	
 	public void initJCas(JCas jCas, String parseTree) throws AnalysisEngineProcessException{
 		posMappingProvider.configure(jCas.getCas());
 		constituentMappingProvider.configure(jCas.getCas());

@@ -44,6 +44,9 @@ public class TreeFeatureExtractor {
 					break;
 			}
 			--commonRoot;
+			if (commonRoot < 0){	//they are not in the same sentences
+				return Collections.emptyList();
+			}
 			
 			List<Annotation> path = new ArrayList<>();
 			for (int j = fromSource.size() - 1; j >= commonRoot; j--)

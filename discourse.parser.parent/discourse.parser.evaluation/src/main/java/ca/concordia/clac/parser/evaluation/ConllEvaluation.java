@@ -51,9 +51,9 @@ public class ConllEvaluation {
 		String inputDataset = null;
 		File outputDirectory = null;
 		if (args.length == 0){
-			mode = DatasetMode.trial;
+			mode = DatasetMode.dev;
 			inputDataset = "../discourse.conll.dataset/data";
-			outputDirectory = new File("outputs/trial/");
+			outputDirectory = new File("outputs/" + mode + "/");
 		} else {
 			Options options = CliFactory.parseArguments(Options.class, args);
 			inputDataset = options.getInputDataset();
@@ -74,7 +74,7 @@ public class ConllEvaluation {
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription(ArgumentSequenceLabeler.DEFAULT_URL);
 		
 		
-		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "data.json").getAbsolutePath());
+		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "ptdb-data.json").getAbsolutePath());
 				
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
