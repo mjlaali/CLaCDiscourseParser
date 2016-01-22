@@ -55,6 +55,21 @@ public class AdditionallyExample implements DiscourseRelatoinExample {
 		return discourseRelation;
 	}
 	
+	@Override
+	public String getArg1() {
+		return arg1;
+	}
+	
+	@Override
+	public String getArg2() {
+		return arg2;
+	}
+	
+	@Override
+	public String getDc() {
+		return dc;
+	}
+	
 	@Test
 	public void test(){
 		assertThat(JCasUtil.select(aJCas, Token.class)).hasSize(17);

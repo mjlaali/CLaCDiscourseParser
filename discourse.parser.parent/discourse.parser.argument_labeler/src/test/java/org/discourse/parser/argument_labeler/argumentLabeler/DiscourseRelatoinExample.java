@@ -6,7 +6,9 @@ import org.cleartk.discourse.type.DiscourseRelation;
 public interface DiscourseRelatoinExample {
 
 	JCas getJCas();
-
 	DiscourseRelation getRelation();
+	String getArg1();
+	String getArg2();
+	String getDc();
 
 }
