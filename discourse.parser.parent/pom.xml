@@ -24,7 +24,7 @@
 		<repository>
 			<id>majid-repo</id>
 			<name>Majid Laali repository</name>
-			<url>http://users.encs.concordia.ca/~m_laali/mvn-repo/</url>
+			<url>https://github.com/mjlaali/maven-repo/raw/master</url>
 		</repository>
 	</repositories>
 
