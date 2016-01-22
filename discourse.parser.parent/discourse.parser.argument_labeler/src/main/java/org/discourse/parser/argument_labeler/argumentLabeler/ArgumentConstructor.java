@@ -49,7 +49,7 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 			}
 		}
 		
-		relationFactory.makeAnExplicitRelation(aJCas, "", dc, arg1Tokens, arg2Tokens).addToIndexes();
+		relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens).addToIndexes();
 	}
 	
 }
