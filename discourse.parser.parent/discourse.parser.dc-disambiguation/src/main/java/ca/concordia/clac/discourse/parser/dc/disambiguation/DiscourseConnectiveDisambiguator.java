@@ -27,7 +27,7 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public class DiscourseConnectiveDisambiguator {
-	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/");
+	public static URL DEFAULT_URL = null;
 	public static String DEFAULT_BERKELEY_MODEL_FILE = "eng_sm5.gr";
 
 	private URL model;
@@ -44,10 +44,18 @@ public class DiscourseConnectiveDisambiguator {
 	}
 
 	public DiscourseConnectiveDisambiguator(URL packageDir, String berkeleyModelFile) throws MalformedURLException {
-		model = new URL(packageDir, berkeleyModelFile);
-		dcList = new URL(packageDir, DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
-		discourseVsNonDiscoursePackage =  new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
-		senseLabelerPackage = new URL(packageDir, DiscourseSenseLabeler.PACKAGE_DIR);
+		if (packageDir == null){
+			model = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + berkeleyModelFile);
+			dcList = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
+			discourseVsNonDiscoursePackage =  ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
+			senseLabelerPackage = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + DiscourseSenseLabeler.PACKAGE_DIR);
+
+		} else {
+			model = new URL(packageDir, berkeleyModelFile);
+			dcList = new URL(packageDir, DiscourseVsNonDiscourseClassifier.DC_HEAD_LIST_FILE);
+			discourseVsNonDiscoursePackage =  new URL(packageDir, DiscourseVsNonDiscourseClassifier.PACKAGE_DIR);
+			senseLabelerPackage = new URL(packageDir, DiscourseSenseLabeler.PACKAGE_DIR);
+		}
 	}
 	
 	private AnalysisEngineDescription getTokenizer() throws ResourceInitializationException{
