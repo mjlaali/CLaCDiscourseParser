@@ -23,8 +23,8 @@
 			<version>20090211</version>
 		</dependency>
 		<dependency>
-			<groupId>majid</groupId>
-			<artifactId>tools</artifactId>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>mjtools</artifactId>
 			<version>0.0.1</version>
 		</dependency>
 		<dependency>
