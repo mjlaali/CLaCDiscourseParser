@@ -57,11 +57,10 @@ public class ConllEvaluation {
 		if (options.getInputDataset() == null){
 			mode = DatasetMode.valueOf(options.getMode());
 			inputDataset = "../discourse.conll.dataset/data";
-			outputDirectory = new File("outputs/" + mode + "/");
 		} else {
 			inputDataset = options.getInputDataset();
-			outputDirectory = new File(options.getOutputDir());
 		}
+		outputDirectory = new File(options.getOutputDir());
 		
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(inputDataset), mode);
 
