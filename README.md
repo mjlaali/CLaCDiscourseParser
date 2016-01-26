@@ -13,11 +13,11 @@ Requires JDK 1.7 or higher and Maven 3.0 or higher.
 
 ## Quick Start
 
-# `git clone --recursive git@github.com:mjlaali/CLaCDiscourseParser.git`
-# `cd CLaCDiscourseParser/discourse.parser.parent/`
-# `mvn clean install package dependency:copy-dependencies`
-# `cp -r <SHARED-TASK-DATE> discourse.conll.dataset/data/`
-# `discourse.parser.evaluation/test.sh dev outputs/dev`
+1. `git clone --recursive git@github.com:mjlaali/CLaCDiscourseParser.git`
+2. `cd CLaCDiscourseParser/discourse.parser.parent/`
+3. `mvn clean install package dependency:copy-dependencies`
+4. `cp -r <SHARED-TASK-DATE> discourse.conll.dataset/data/`
+5. `discourse.parser.evaluation/test.sh dev outputs/dev`
 
 
 ## Copyright notice and statement of copying permission
