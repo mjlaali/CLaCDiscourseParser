@@ -9,7 +9,7 @@ ranking in sixth place. For more information please consult with:
 
 <cite> Majid Laali, Elnaz Davoodi, and Leila Kosseim (2015).<b> The CLaC Discourse Parser at CoNLL-2015 </b>. In Proceedings of the Nineteenth Conference on Computational Natural Language Learning: Shared Task. Beijing, China.</cite>
 
-Requires JDK 1.7 or higher and Maven 3.0 or higher.
+Requires JDK 1.7 or higher, Maven 3.0 or higher and Python 2.6 or higher.
 
 ## Quick Start
 
@@ -18,7 +18,7 @@ Requires JDK 1.7 or higher and Maven 3.0 or higher.
 3. `mvn clean install package dependency:copy-dependencies`
 4. `cp -r <SHARED-TASK-DATE> discourse.conll.dataset/data/`
 5. `discourse.parser.evaluation/test.sh dev outputs/dev`
-6. `python discourse.conll.dataset/data/validator/scorer2 discourse.conll.dataset/data/conll15st-train-dev/conll15st_data/conll15-st-03-04-15-dev/pdtb-data.json outputs/dev/pdtb-data.json`
+6. `python discourse.conll.dataset/data/validator/scorer2.sh discourse.conll.dataset/data/conll15st-train-dev/conll15st_data/conll15-st-03-04-15-dev/pdtb-data.json outputs/dev/pdtb-data.json`
 
 
 ## Copyright notice and statement of copying permission

@@ -85,7 +85,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 						getConstituentType().andThen(makeFeature("selfCat")),
 						getParent().andThen(getConstituentType()).andThen(makeFeature("selfCatParent")),
 						getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatLeftSibling")),
-						getRightSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatLeftSibling"))
+						getRightSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatRightSibling"))
 						)));
 				
 

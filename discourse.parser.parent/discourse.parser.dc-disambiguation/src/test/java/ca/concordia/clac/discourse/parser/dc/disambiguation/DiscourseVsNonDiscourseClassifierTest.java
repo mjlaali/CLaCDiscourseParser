@@ -104,7 +104,7 @@ public class DiscourseVsNonDiscourseClassifierTest {
 				, new Feature("CON-POS", "true")
 				, new Feature("selfCat", "ADVP")
 				, new Feature("selfCatLeftSibling", "CC")
-				, new Feature("selfCatLeftSibling", "VP")
+				, new Feature("selfCatRightSibling", "VP")
 				, new Feature("selfCatParent", "VP"));
 	}
 }

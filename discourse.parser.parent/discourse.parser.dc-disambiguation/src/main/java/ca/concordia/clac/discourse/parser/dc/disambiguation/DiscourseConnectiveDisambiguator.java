@@ -120,6 +120,7 @@ public class DiscourseConnectiveDisambiguator {
 	
 	public interface Options{
 		@Option(
+				defaultToNull = true,
 				shortName = "i",
 				longName = "inputDataset", 
 				description = "Specify the input directory")
@@ -132,14 +133,19 @@ public class DiscourseConnectiveDisambiguator {
 		public String getModel();
 		
 		@Option(
+				defaultToNull = true,
 				shortName = "o",
 				longName = "outputDir",
 				description = "Specify the output directory to stores extracted texts")
 		public String getOutputDir();
 	}
-	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
+	public static void main(String[] args) throws Exception {
 		Options options = CliFactory.parseArguments(Options.class, args);
+		
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File(options.getModel()));
-		disambiguator.parseSubdirectory(new File(options.getInputDataset()), new File(options.getOutputDir()));
+		if (options.getInputDataset() == null)
+			disambiguator.train();
+		else
+			disambiguator.parseSubdirectory(new File(options.getInputDataset()), new File(options.getOutputDir()));
 	}
 }
