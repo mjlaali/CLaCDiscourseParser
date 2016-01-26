@@ -18,6 +18,7 @@ Requires JDK 1.7 or higher and Maven 3.0 or higher.
 3. `mvn clean install package dependency:copy-dependencies`
 4. `cp -r <SHARED-TASK-DATE> discourse.conll.dataset/data/`
 5. `discourse.parser.evaluation/test.sh dev outputs/dev`
+6. `python discourse.conll.dataset/data/validator/scorer2 discourse.conll.dataset/data/conll15st-train-dev/conll15st_data/conll15-st-03-04-15-dev/pdtb-data.json outputs/dev/pdtb-data.json`
 
 
 ## Copyright notice and statement of copying permission
