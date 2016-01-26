@@ -62,6 +62,9 @@ public class ConllEvaluation {
 		}
 		outputDirectory = new File(options.getOutputDir());
 		
+		if (outputDirectory.exists())
+			FileUtils.deleteDirectory(outputDirectory);
+		
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(inputDataset), mode);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
@@ -76,7 +79,7 @@ public class ConllEvaluation {
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription(ArgumentSequenceLabeler.DEFAULT_URL);
 		
 		
-		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "ptdb-data.json").getAbsolutePath());
+		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "pdtb-data.json").getAbsolutePath());
 				
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
