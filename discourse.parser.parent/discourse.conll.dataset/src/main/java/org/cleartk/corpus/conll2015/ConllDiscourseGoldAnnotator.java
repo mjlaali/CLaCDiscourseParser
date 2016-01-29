@@ -163,7 +163,12 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 
 		for (JSONToken jsonToken: jsonTokenList){
 			if (docTokens.size() <= jsonToken.getDocOffset())
-				System.out.println("ConllDiscourseGoldAnnotator.convertToTokens(): " + aJCas.getDocumentText());
+				try {
+					System.out.println("ConllDiscourseGoldAnnotator.convertToTokens(): " + Tools.getDocName(aJCas) + "\n" 
+							+ aJCas.getDocumentText());
+				} catch (AnalysisEngineProcessException e) {
+					e.printStackTrace();
+				}
 			Token token = docTokens.get(jsonToken.getDocOffset());
 			tokens.add(token);
 		}

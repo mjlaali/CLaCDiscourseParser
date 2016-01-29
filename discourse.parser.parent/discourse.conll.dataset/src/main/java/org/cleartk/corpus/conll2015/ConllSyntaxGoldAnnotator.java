@@ -19,7 +19,6 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.type.ConllToken;
 import org.cleartk.corpus.conll2015.type.SentenceWithSyntax;
 import org.json.JSONArray;
@@ -177,13 +176,15 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 	}
 	
 	public static void main(String[] args) throws UIMAException, IOException {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("data"), DatasetMode.train);
+		String base = "/Users/majid/Documents/git/french-connective-disambiguation/connective-disambiguation/data/pdtb/";
+		String rawDir = base + "raw";
+		String parseTreeFile = base + "pdtb-parses.json";
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
-				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
+				TextReader.PARAM_SOURCE_LOCATION, rawDir, 
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
-		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
+		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(new File(parseTreeFile));
 
 		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader);
 	}
