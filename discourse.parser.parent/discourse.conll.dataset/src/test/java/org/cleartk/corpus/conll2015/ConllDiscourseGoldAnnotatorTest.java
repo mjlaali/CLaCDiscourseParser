@@ -32,7 +32,7 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ConllDiscourseGoldAnnotatorTest {
 
-	private JCas jCas;
+	protected JCas jCas;
 
 	@Before
 	public void setUp() throws UIMAException, IOException{
