@@ -12,12 +12,13 @@
 		<module>tools</module>
 		<module>discourse.parser.evaluation</module>
 		<module>discourse.parser.argument_labeler</module>
+		<module>discourse.parser.arg_labeler_nn</module>
 	</modules>
 
 	<distributionManagement>
 		<repository>
 			<id>majid-repo</id>
-			<url>file:///Users/majid/Documents/git/mvn-repo</url>
+			<url>file:///Users/majid/Documents/git/maven-repo</url>
 		</repository>
 	</distributionManagement>
 
