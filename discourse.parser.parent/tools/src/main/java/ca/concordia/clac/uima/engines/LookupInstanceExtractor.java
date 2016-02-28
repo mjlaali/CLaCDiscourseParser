@@ -91,7 +91,7 @@ public class LookupInstanceExtractor<T extends Annotation> implements Initializa
 	}
 	
 	@VisibleForTesting
-	void init(List<String> terms, AnnotationFactory<T> annotationFactory) {
+	public void init(List<String> terms, AnnotationFactory<T> annotationFactory) {
 		this.terms = terms;
 		this.annotationFactory = annotationFactory;
 	}
