@@ -33,7 +33,6 @@ import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
 import org.cleartk.ml.jar.DirectoryDataWriterFactory;
 import org.cleartk.ml.jar.Train;
-import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
@@ -128,11 +127,11 @@ public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFa
 		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
 		        outputDirectory,
 		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-		        MalletCrfStringOutcomeDataWriter.class);
+		        DNNStringOutcomeDataWriter.class);
 	}
 	
 	public static void main(String[] args) throws Exception {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
