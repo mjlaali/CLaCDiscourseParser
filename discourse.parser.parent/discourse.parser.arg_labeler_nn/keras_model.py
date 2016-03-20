@@ -5,7 +5,8 @@ import numpy as np
 import socket
 
 def validate_sample(data):
-    '''A function to verify if data is being sent or not
+    '''
+    A function to verify if data is being sent or not
     '''
     if 'exit' in data:
         return False
@@ -62,9 +63,10 @@ if __name__ == '__main__':
         while True:
             data = c.recv(1024)
             if validate_sample(data):
-                y = 'GOT DATA:' + str(data) #model.predict(data, batch_size=1, verbose=1)
-                c.send(y)
-                print(y)
+                y = 'GOT DATA:' + str(data) + ' Predicted:'
+                y_hat = model.predict(data, batch_size=1, verbose=1)
+                c.send(y_hat)
+                print(y+y_hat)
             else:
                 c.send('Quitting...')
                 print('Quitting...')
