@@ -17,7 +17,7 @@
 	<distributionManagement>
 		<repository>
 			<id>majid-repo</id>
-			<url>file:///Users/majid/Documents/git/mvn-repo</url>
+			<url>file:///Users/majid/Documents/git/maven-repo</url>
 		</repository>
 	</distributionManagement>
 

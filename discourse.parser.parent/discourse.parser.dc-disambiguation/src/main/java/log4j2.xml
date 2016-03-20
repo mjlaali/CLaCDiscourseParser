@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="severe" strict="true" name="XMLConfigTest"
+               packages="org.apache.logging.log4j.test">
+  <Properties>
+    <Property name="filename">target/test.log</Property>
+  </Properties>
+  <Filter type="ThresholdFilter" level="severe"/>
+ 
+  <Appenders>
+    <Appender type="Console" name="STDOUT">
+      <Layout type="PatternLayout" pattern="%m %n"/>
+    </Appender>
+    <Appender type="File" name="File" fileName="${filename}">
+      <Layout type="PatternLayout">
+        <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+      </Layout>
+    </Appender>
+  </Appenders>
+ 
+  <Loggers>
+ 	<Logger name="de.tudarmstadt.ukp.dkpro.core.api.io.ResourceCollectionReaderBase" level="error">
+ 		<AppenderRef ref="STDOUT"></AppenderRef>
+ 	</Logger>
+    <Root level="info">
+      <AppenderRef ref="STDOUT"/>
+    </Root>
+  </Loggers>
+ 
+</Configuration>
