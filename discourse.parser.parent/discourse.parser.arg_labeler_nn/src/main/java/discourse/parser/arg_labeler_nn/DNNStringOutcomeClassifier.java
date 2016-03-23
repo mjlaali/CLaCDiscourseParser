@@ -27,9 +27,8 @@ import org.cleartk.ml.jar.SequenceClassifier_ImplBase;
  * @author Sohail Hooda
  */
 public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List<NameNumber>, String, String> {
-	
+
 	Process pyProcess;
-	
 
 	public DNNStringOutcomeClassifier(FeaturesEncoder<List<NameNumber>> featuresEncoder,
 			OutcomeEncoder<String, String> outcomeEncoder) {
@@ -55,39 +54,52 @@ public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List
 		String[][] featureStringArray = toStrings(features);
 
 		if (PyNNRunner.sout == null) {
-			PyNNRunner.executeWithArgs(
-					new String[] { 
-							"--test", "conditionubuntu:7860", 
-							"--model-file", "outputs/resources/package/model.h5" });
+			PyNNRunner.executeWithArgs(new String[] { "--test", "conditionubuntu:7860", "--model-file",
+					"outputs/resources/package/model.h5" });
 			System.out.println("DNNStringOutcomeClassifier.classify()");
 			PyNNRunner.connectToSocket("conditionubuntu", 7860);
 		}
-		
+
 		StringBuilder discourse = new StringBuilder();
+		
+		System.out.println("Java sends " + features.size() + " features.");
 
 		for (List<Feature> instance : features) {
 			String text = (String) instance.get(0).getValue();
 			discourse.append(text);
 			discourse.append(' ');
 		}
-		
+
 		PyNNRunner.sout.println(discourse.toString());
-		
+
 		String returnString = null;
-		try {
-			returnString = PyNNRunner.sin.readLine();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		while (returnString == null) {
+			try {
+				while (!PyNNRunner.sin.ready()) {
+					System.out.println("Waiting for results");
+					Thread.sleep(1000);
+				}
+				System.out.println("READY for results");
+				returnString = PyNNRunner.sin.readLine();
+				
+
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
+		System.out.println(returnString);
 		List<String> returnValues = new ArrayList<String>();
 		for (String instance : returnString.split(" ")) {
 			returnValues.add(instance);
 		}
+		System.out.println("Number of labels Java gets is : " + returnValues.size());
 		return returnValues;
 	}
-	
-	
 
 	private String[][] toStrings(List<List<Feature>> features) throws CleartkEncoderException {
 		List<List<String>> encodedFeatures = new ArrayList<List<String>>(features.size());
