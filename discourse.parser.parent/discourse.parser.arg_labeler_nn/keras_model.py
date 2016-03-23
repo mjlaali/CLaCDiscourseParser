@@ -4,6 +4,7 @@ from keras.utils import np_utils
 import numpy as np
 import socket
 
+
 def validate_sample(data):
     '''
     A function to verify if data is being sent or not
@@ -13,12 +14,16 @@ def validate_sample(data):
     else:
         return True
 
+
 def get_labels(y_hat):
     print("This is what y_hat looks like:")
     print(y_hat.shape)
-    for i in range(len(y_hat)):
-        y_hat[i] = label_classes_inv[numpy.floor(y_hat[i])]
-    return y_hat
+    labels = []
+    for i in range(len(y_hat[0])):
+        k = int(numpy.floor(y_hat[0][i][0]))
+        k = label_classes_inv[k+1]
+        labels.append(k)
+    return labels
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -59,28 +64,42 @@ if __name__ == '__main__':
             print("Model Weights not found! Quitting.")
             exit(1)
 
-        print("Initializing Testing Server...")
-        sock = socket.socket()
-        [host, port] = args.test.split(':')
-        sock.bind((host, int(port)))
-        sock.listen(5)
-        print("Testing Server created. Waiting for input")
-        c, addr = sock.accept()
-        print("Accepted connection from " + str(addr))
-        while True:
-            data = c.recv(1024)
-            if validate_sample(data):
-                y = 'GOT DATA:' + str(data) + ' Predicted:'
-                print('Recieved: ', data)
-                data, _ = preprocess(data)
-                y_hat = model.predict(data, batch_size=1, verbose=1)
-                y_hat = get_labels(y_hat)
-                print('y_hat is:', y_hat)
-                c.send(y_hat)
-                print(y + str(y_hat))
-            else:
-                c.send('Quitting...')
+        if 'trial' not in args.test:
+            print("Initializing Testing Server...")
+            sock = socket.socket()
+            [host, port] = args.test.split(':')
+            sock.bind((host, int(port)))
+            sock.listen(5)
+            print("Testing Server created. Waiting for input")
+            c, addr = sock.accept()
+            print("Accepted connection from " + str(addr))
+            while True:
+                data = c.recv(1024)
+                if validate_sample(data):
+                    y = 'GOT DATA:' + str(data) + ' Predicted:'
+                    print('Recieved: ', data)
+                    data, _ = preprocess(data)
+                    y_hat = model.predict(data, batch_size=1, verbose=1)
+                    y_hat = get_labels(y_hat)
+                    print('y_hat is:', y_hat)
+                    c.send(y_hat)
+                    print(y + str(y_hat))
+                else:
+                    c.send('Quitting...')
+                    print('Quitting...')
+                    sock.close()
+        else:
+            with open('test.data', 'r') as f:
+                data = f.read()
+            test_data = data.split('\n')
+            for data in test_data:
+                if validate_sample(data):
+                    y = 'GOT DATA:' + str(data) + ' Predicted:'
+                    print('Recieved: ', data)
+                    data = data.split(' ')
+                    data, _ = preprocess([data])
+                    y_hat = model.predict(data, batch_size=1, verbose=1)
+                    y_hat = get_labels(y_hat)
+                    print(y + str(y_hat))
                 print('Quitting...')
-                sock.close()
-
-                exit(0)
+        exit(0)
