@@ -81,12 +81,14 @@ def preprocess(discourses, labels=None):
         for word in xrange(len(discourses[discourse])):
             try:
                 text = discourses[discourse][word]
-                if len(text) > 2:
+                if len(text) >= 1:
                     w2v_discourses[discourse][word] = w2v[text]
                     w2v_labels[discourse][word] = labels[discourse][word]
             except KeyError:
                 print('Word2Vec does not have an embedding for {0}'.format(
                     text))
+                w2v_discourses[discourse][word] = numpy.random.randn(w2v_dim)
+                w2v_labels[discourse][word] = labels[discourse][word]
 
     return w2v_discourses, w2v_labels
 

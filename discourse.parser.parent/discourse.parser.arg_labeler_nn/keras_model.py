@@ -78,12 +78,16 @@ if __name__ == '__main__':
                 if validate_sample(data):
                     y = 'GOT DATA:' + str(data) + ' Predicted:'
                     print('Recieved: ', data)
-                    data, _ = preprocess(data)
+                    data = data.split(' ')[:-1]
+                    print('Length of data is:', len(data))
+                    output_size = len(data)
+                    data, _ = preprocess([data])
                     y_hat = model.predict(data, batch_size=1, verbose=1)
-                    y_hat = get_labels(y_hat)
+                    y_hat = ' '.join(get_labels(y_hat)[:output_size])
+                    print('length of y_hat is: ', len(y_hat.split(' ')))
                     print('y_hat is:', y_hat)
-                    c.send(y_hat)
-                    print(y + str(y_hat))
+                    c.send(y_hat + '\n')
+                    print(y + y_hat)
                 else:
                     c.send('Quitting...')
                     print('Quitting...')
