@@ -1,5 +1,7 @@
 package ca.concordia.clac.ml.classifier;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -57,8 +59,18 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 				labeller.accept(outcomes, aSequence, instances);
 			}
 		}
+	}
 	
-		
+	@Override
+	public void collectionProcessComplete() throws AnalysisEngineProcessException {
+		if (algorithmFactory instanceof Closeable){
+			try {
+				((Closeable)algorithmFactory).close();
+			} catch (IOException e) {
+				throw new AnalysisEngineProcessException(e);
+			}
+		}
+		super.collectionProcessComplete();
 	}
 
 }

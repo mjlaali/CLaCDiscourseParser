@@ -41,7 +41,7 @@ model.compile(loss='binary_crossentropy', optimizer='rmsprop')
 ###### DEFINE HOW TO GET THE DATA LOADED ######
 ###############################################
 label_classes = {'arg1': 1, 'arg2': 2, 'dc': 3, 'non': 4}
-
+label_classes_inv = {v: k for k, v in label_classes.iteritems()}
 
 def getData(data_file, data_type=None):
     # X is a 3D Tensor in the form = (number_of_samples, timesteps, input_dim)
@@ -51,14 +51,30 @@ def getData(data_file, data_type=None):
     # print ("X:{0}".format(X))
     # print ("Y:{0}".format(Y))
     # return X,Y
-    print("Loading up Word2Vec")
-    w2v = Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin', binary=True)
     print("Acquiring {0} data from {1}...".format(data_type, data_file))
     discourses, labels = readDataFile(data_file, data_type)
-    print("Data Acquired")
+    X, Y = preprocess(discourses, labels)
+    print('Input Data shape:', X.shape)
+    print(X.shape, 'train samples')
+    print(Y.shape, 'test samples')
+
+    # convert class vectors to binary class matrices
+    # '''PROBLEMS HERE IN THE NEXT LINE SINCE y IS NOW 3D'''
+    Y = Y  # np_utils.to_categorical(y, nb_classes)
+    X = X  # .astype('float32')
+
+    return X, Y
+
+
+def preprocess(discourses, labels=None):
+    if labels is None:
+        labels = numpy.zeros((len(discourses), maxlen, 1))
+    print("Loading up Word2Vec")
+    w2v = Word2Vec.load_word2vec_format(
+            'GoogleNews-vectors-negative300.bin', binary=True)
     print("Acquiring Word2Vec Vectors")
 
-    w2v_discourses= numpy.zeros((len(discourses), maxlen, w2v_dim))
+    w2v_discourses = numpy.zeros((len(discourses), maxlen, w2v_dim))
     w2v_labels = numpy.zeros((len(discourses), maxlen, 1))
 
     for discourse in xrange(len(discourses)):
@@ -69,20 +85,10 @@ def getData(data_file, data_type=None):
                     w2v_discourses[discourse][word] = w2v[text]
                     w2v_labels[discourse][word] = labels[discourse][word]
             except KeyError:
-                print('Word2Vec does not have an embedding for {0}'.format(text))
+                print('Word2Vec does not have an embedding for {0}'.format(
+                    text))
 
-    X = w2v_discourses
-    y = w2v_labels
-    print('Input Data shape:', X.shape)
-    print(X.shape, 'train samples')
-    print(y.shape, 'test samples')
-
-    # convert class vectors to binary class matrices
-    # '''PROBLEMS HERE IN THE NEXT LINE SINCE y IS NOW 3D'''
-    Y = y  # np_utils.to_categorical(y, nb_classes)
-    X = X  # .astype('float32')
-
-    return X, Y
+    return w2v_discourses, w2v_labels
 
 
 def readDataFile(data_file, data_type):

@@ -2,7 +2,9 @@ package discourse.parser.arg_labeler_nn;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
 
+import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -21,17 +23,19 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
+import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.corpus.conll2015.TokenListTools;
-import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.CleartkSequenceAnnotator;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
 import org.cleartk.ml.jar.DirectoryDataWriterFactory;
+import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.jar.Train;
 
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
@@ -75,7 +79,7 @@ class LabelDetector implements BiFunction<List<Token>, DiscourseConnective, List
 	
 }
 
-public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Token> {
+public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Token>, Closeable {
 
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
@@ -114,7 +118,31 @@ public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFa
 
 	@Override
 	public SequenceClassifierConsumer<String, DiscourseConnective, Token> getLabeller(JCas jCas) {
-		return null;
+		return new SequenceClassifierConsumer<String, DiscourseConnective, Token>(){
+
+			DiscourseRelationFactory relationFactory = new DiscourseRelationFactory();
+
+			@Override
+			public void accept(List<String> outcomes, DiscourseConnective aSequence, List<Token> instances) {
+				List<Token> arg1 = new ArrayList<>(); 
+				List<Token> arg2 = new ArrayList<>();
+				for (int i = 0; i < outcomes.size(); i++){
+					switch (outcomes.get(i)) {
+					case "arg1":
+						arg1.add(instances.get(i));
+						break;
+					case "arg2":
+						arg2.add(instances.get(i));
+						break;
+
+					default:
+						break;
+					}
+				}
+				relationFactory.makeAnExplicitRelation(jCas, null, aSequence, arg1, arg2).addToIndexes();
+			}
+			
+		};
 	}
 	
 	
@@ -153,6 +181,22 @@ public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFa
 				);
 
 		 Train.main(outputDirectory);
+	}
+
+	public static AnalysisEngineDescription getClassifierDescription(File outputDirectory) throws ResourceInitializationException {
+		return AnalysisEngineFactory.createEngineDescription(
+		        StringSequenceClassifier.class,
+		        GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
+		        ArgLabelerFeatureExtractor.class.getName(),
+		        GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH,
+		        new File(outputDirectory, "model.jar"));
+	}
+
+	@Override
+	public void close() throws IOException {
+		System.out.println("ArgLabelerFeatureExtractor.close()");
+		PyNNRunner.disconnectFromSocket();
+		
 	}
 	
 

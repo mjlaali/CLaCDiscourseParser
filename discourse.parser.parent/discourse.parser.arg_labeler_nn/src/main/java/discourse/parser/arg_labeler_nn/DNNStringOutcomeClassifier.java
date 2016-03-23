@@ -57,26 +57,37 @@ public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List
 		if (PyNNRunner.sout == null) {
 			PyNNRunner.executeWithArgs(
 					new String[] { 
-							"--test", "conditionubuntu:77", 
+							"--test", "conditionubuntu:7860", 
 							"--model-file", "outputs/resources/package/model.h5" });
-			PyNNRunner.connectToSocket("conditionubuntu", 77);
+			System.out.println("DNNStringOutcomeClassifier.classify()");
+			PyNNRunner.connectToSocket("conditionubuntu", 7860);
 		}
 		
-		List<String> returnValues = new ArrayList<String>();
+		StringBuilder discourse = new StringBuilder();
 
 		for (List<Feature> instance : features) {
-			PyNNRunner.sout.println(instance);
-
-			try {
-				returnValues.add(PyNNRunner.sin.readLine());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			String text = (String) instance.get(0).getValue();
+			discourse.append(text);
+			discourse.append(' ');
 		}
 		
+		PyNNRunner.sout.println(discourse.toString());
+		
+		String returnString = null;
+		try {
+			returnString = PyNNRunner.sin.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		List<String> returnValues = new ArrayList<String>();
+		for (String instance : returnString.split(" ")) {
+			returnValues.add(instance);
+		}
 		return returnValues;
 	}
+	
+	
 
 	private String[][] toStrings(List<List<Feature>> features) throws CleartkEncoderException {
 		List<List<String>> encodedFeatures = new ArrayList<List<String>>(features.size());

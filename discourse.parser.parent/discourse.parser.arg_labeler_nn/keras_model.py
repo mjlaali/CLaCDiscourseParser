@@ -13,6 +13,13 @@ def validate_sample(data):
     else:
         return True
 
+def get_labels(y_hat):
+    print("This is what y_hat looks like:")
+    print(y_hat.shape)
+    for i in range(len(y_hat)):
+        y_hat[i] = label_classes_inv[numpy.floor(y_hat[i])]
+    return y_hat
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-tr" ,"--train", help="Initailize the training process with given training data")
@@ -64,14 +71,16 @@ if __name__ == '__main__':
             data = c.recv(1024)
             if validate_sample(data):
                 y = 'GOT DATA:' + str(data) + ' Predicted:'
+                print('Recieved: ', data)
+                data, _ = preprocess(data)
                 y_hat = model.predict(data, batch_size=1, verbose=1)
+                y_hat = get_labels(y_hat)
+                print('y_hat is:', y_hat)
                 c.send(y_hat)
-                print(y+y_hat)
+                print(y + str(y_hat))
             else:
                 c.send('Quitting...')
                 print('Quitting...')
                 sock.close()
 
                 exit(0)
-
-

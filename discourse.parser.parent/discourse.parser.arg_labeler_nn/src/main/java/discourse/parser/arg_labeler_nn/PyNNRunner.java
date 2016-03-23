@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ProcessBuilder.Redirect;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -12,12 +13,13 @@ import java.util.concurrent.TimeUnit;
 
 public class PyNNRunner {
 
+	static Process pyNNProcess ;
 	static Process executeWithArgs(String[] Args) {
 		ProcessBuilder builder = new ProcessBuilder("sudo", "/usr/bin/python", "keras_model.py", Args[0], Args[1], Args[2],
 				Args[3]).redirectErrorStream(true)
 						.redirectOutput(Redirect.INHERIT)
 						.redirectInput(Redirect.INHERIT);
-		Process pyNNProcess = null;
+		pyNNProcess = null;
 		try {
 			pyNNProcess = builder.start();
 		} catch (IOException e) {
@@ -41,19 +43,29 @@ public class PyNNRunner {
 			}
 		}
 		try {
-			pyNNSocketConn = new Socket(hostname, port);
+			pyNNSocketConn  = null;
+			while (pyNNSocketConn  == null){
+				try {
+					pyNNSocketConn = new Socket(hostname, port);
+				} catch (ConnectException e) {
+					System.out.println("PyNNRunner.connectToSocket() waiting ...");
+				}
+				Thread.sleep(1000);
+			}
 			sout = new PrintWriter(pyNNSocketConn.getOutputStream(), true);
 			sin = new BufferedReader(new InputStreamReader(pyNNSocketConn.getInputStream()));
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} 
 	}
 	
 	static void disconnectFromSocket() {
-		sout.println("exit");
 		try {
+			sout.println("exit");
 			pyNNSocketConn.close();
+			pyNNProcess.destroy();
+		} catch (NullPointerException e){
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
