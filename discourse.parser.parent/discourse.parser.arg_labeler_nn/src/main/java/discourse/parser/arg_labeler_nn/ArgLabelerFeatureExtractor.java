@@ -194,7 +194,6 @@ public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFa
 
 	@Override
 	public void close() throws IOException {
-		System.out.println("ArgLabelerFeatureExtractor.close()");
 		PyNNRunner.disconnectFromSocket();
 		
 	}

@@ -56,13 +56,12 @@ public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List
 		if (PyNNRunner.sout == null) {
 			PyNNRunner.executeWithArgs(new String[] { "--test", "conditionubuntu:7860", "--model-file",
 					"outputs/resources/package/model.h5" });
-			System.out.println("DNNStringOutcomeClassifier.classify()");
 			PyNNRunner.connectToSocket("conditionubuntu", 7860);
 		}
 
 		StringBuilder discourse = new StringBuilder();
 		
-		System.out.println("Java sends " + features.size() + " features.");
+
 
 		for (List<Feature> instance : features) {
 			String text = (String) instance.get(0).getValue();
@@ -76,10 +75,8 @@ public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List
 		while (returnString == null) {
 			try {
 				while (!PyNNRunner.sin.ready()) {
-					System.out.println("Waiting for results");
 					Thread.sleep(1000);
 				}
-				System.out.println("READY for results");
 				returnString = PyNNRunner.sin.readLine();
 				
 
@@ -92,12 +89,11 @@ public class DNNStringOutcomeClassifier extends SequenceClassifier_ImplBase<List
 			}
 
 		}
-		System.out.println(returnString);
 		List<String> returnValues = new ArrayList<String>();
 		for (String instance : returnString.split(" ")) {
 			returnValues.add(instance);
 		}
-		System.out.println("Number of labels Java gets is : " + returnValues.size());
+
 		return returnValues;
 	}
 
