@@ -4,3 +4,9 @@
 [submodule "discourse.parser.parent/discourse.conll.dataset/data/conll15st-train-dev"]
 	path = discourse.parser.parent/discourse.conll.dataset/data/conll15st-train-dev
 	url = git@bitbucket.org:mjlaali/conll2015-dataset.git
+[submodule "discourse.parser.parent/discourse.conll.dataset/data/conll16st"]
+	path = discourse.parser.parent/discourse.conll.dataset/data/conll16st
+	url = https://github.com/attapol/conll16st.git
+[submodule "discourse.parser.parent/discourse.conll.dataset/data/conll2016-dataset"]
+	path = discourse.parser.parent/discourse.conll.dataset/data/conll2016-dataset
+	url = git@bitbucket.org:mjlaali/conll2016-dataset.git
