@@ -26,6 +26,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>discourse.parser.argument_labeler</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.cleartk</groupId>
 			<artifactId>cleartk-ml-weka</artifactId>
 			<version>${cleartk.version.patched}</version>

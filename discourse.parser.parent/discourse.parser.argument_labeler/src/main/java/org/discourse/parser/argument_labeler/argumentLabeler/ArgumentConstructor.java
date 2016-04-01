@@ -8,6 +8,7 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.discourse.type.DiscourseConnective;
+import org.cleartk.discourse.type.DiscourseRelation;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -49,7 +50,11 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 			}
 		}
 		
-		relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens).addToIndexes();
+		DiscourseRelation relation = relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens);
+		relation.getArguments(0).addToIndexes();
+		relation.getArguments(1).addToIndexes();
+		relation.addToIndexes();
+		
 	}
 	
 }

@@ -27,9 +27,12 @@ public class ArgumentSequenceLabeler {
 		return ArgumentLabelerAlgorithmFactory.getWriterDescription(outputDirectory.getAbsolutePath());
 	}
 
+	public static AnalysisEngineDescription getClassifierDescription() throws ResourceInitializationException, MalformedURLException {
+		return getClassifierDescription(DEFAULT_URL);
+	}
+	
 	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
 		URL modelUrl = new URL(packageDir, "model.jar");
-		System.out.println(modelUrl.toString());
 		return ArgumentLabelerAlgorithmFactory.getClassifierDescription(modelUrl.toString());
 	}
 	
