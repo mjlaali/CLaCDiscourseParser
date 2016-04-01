@@ -76,7 +76,7 @@ public class ConllEvaluation {
 
 		AnalysisEngineDescription dcDisambiguator = new DiscourseConnectiveDisambiguator().getParser(CAS.NAME_DEFAULT_SOFA);
 		
-		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription(ArgumentSequenceLabeler.DEFAULT_URL);
+		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
 		
 		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "pdtb-data.json").getAbsolutePath());

@@ -7,27 +7,30 @@ import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 public class ConllDatasetPathFactory {
 	
 	private File baseFld;
-	public ConllDatasetPath makeADataset2016(ConllDatasetPath.DatasetMode mode){
-		File dataFld = new File("data/conll2016-dataset/conll16st-en-zh-dev-train_LDC2016E50/");
+	public ConllDatasetPath makeADataset2016(File dataFld, ConllDatasetPath.DatasetMode mode){
+		File conllDatasetBase = new File(dataFld, "conll2016-dataset/conll16st-en-zh-dev-train_LDC2016E50/");
 		
 		switch (mode) {
 		case train:
-			baseFld = new File(dataFld, "conll16st-en-01-12-16-train/");
+			baseFld = new File(conllDatasetBase, "conll16st-en-01-12-16-train/");
 			break;
 
 		case dev:
-			baseFld = new File(dataFld, "conll16st-en-01-12-16-dev/");
+			baseFld = new File(conllDatasetBase, "conll16st-en-01-12-16-dev/");
 			break;
 		
 		case test:
 			return null;
 			
+		case trial:
+			baseFld = new File(dataFld, "conll16st/tutorial/conll16st-en-01-12-16-trial");
+			break;
 		default:
 			return null;
 		}
 
 		if (baseFld == null || !baseFld.exists())
-			throw new RuntimeException("The base fld is not valid folder for the CoNLL dataset: " + baseFld);
+			throw new RuntimeException("The base fld is not valid folder for the CoNLL dataset: " + baseFld.getAbsolutePath());
 		
 		return new ConllDatasetPath(new File(baseFld, "raw"), new File(baseFld, "relations.json"), new File(baseFld, "parses.json"), mode);
 		
@@ -85,7 +88,7 @@ public class ConllDatasetPathFactory {
 		File dataFld = new File("data");
 		for (ConllDatasetPath.DatasetMode mode: ConllDatasetPath.DatasetMode.values()){
 			factory.makeADataset(dataFld, mode);
-			factory.makeADataset2016(mode);
+			factory.makeADataset2016(dataFld, mode);
 		}
 		System.out.println("ConllDatasetPathFactory.main()");
 	}
