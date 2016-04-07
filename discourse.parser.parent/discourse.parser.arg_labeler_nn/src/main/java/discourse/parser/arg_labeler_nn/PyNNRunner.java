@@ -15,10 +15,18 @@ public class PyNNRunner {
 
 	static Process pyNNProcess ;
 	static Process executeWithArgs(String[] Args) {
-		ProcessBuilder builder = new ProcessBuilder("sudo", "/usr/bin/python", "keras_model.py", Args[0], Args[1], Args[2],
-				Args[3]).redirectErrorStream(true)
-						.redirectOutput(Redirect.INHERIT)
-						.redirectInput(Redirect.INHERIT);
+		String[] processAndArgs = new String[Args.length + 3];
+		int i = 0;
+		processAndArgs[i++] = "sudo";
+		processAndArgs[i++] = "/usr/bin/python";
+		processAndArgs[i++] = "keras_model.py";
+		for (String arg : Args) {
+			processAndArgs[i++] = arg;
+		}
+		ProcessBuilder builder = new ProcessBuilder(processAndArgs)
+				.redirectErrorStream(true)
+				.redirectOutput(Redirect.INHERIT)
+				.redirectInput(Redirect.INHERIT);
 		pyNNProcess = null;
 		try {
 			pyNNProcess = builder.start();
@@ -48,9 +56,8 @@ public class PyNNRunner {
 				try {
 					pyNNSocketConn = new Socket(hostname, port);
 				} catch (ConnectException e) {
-					System.out.println("PyNNRunner.connectToSocket() waiting ...");
 				}
-				Thread.sleep(1000);
+				Thread.sleep(5000);
 			}
 			sout = new PrintWriter(pyNNSocketConn.getOutputStream(), true);
 			sin = new BufferedReader(new InputStreamReader(pyNNSocketConn.getInputStream()));

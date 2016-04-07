@@ -49,12 +49,11 @@ public class ConllEvaluation {
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
 //		Options options = CliFactory.parseArguments(Options.class, args);
 		
-		DatasetMode mode = DatasetMode.test;
+		DatasetMode mode = DatasetMode.dev;
 		String inputDataset = null;
 		File outputDirectory = null;
 //		if (options.getInputDataset() == null){
 //		mode = DatasetMode.valueOf(options.getMode());
-			mode = DatasetMode.valueOf("trial");
 			inputDataset = "../discourse.conll.dataset/data";
 //		} else {
 //			inputDataset = options.getInputDataset();
@@ -65,7 +64,7 @@ public class ConllEvaluation {
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
 		
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(inputDataset), mode);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory2016().makeADataset(new File(inputDataset), mode);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 

@@ -159,7 +159,7 @@ public class ArgLabelerFeatureExtractor implements SequenceClassifierAlgorithmFa
 	}
 	
 	public static void main(String[] args) throws Exception {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory2016().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
