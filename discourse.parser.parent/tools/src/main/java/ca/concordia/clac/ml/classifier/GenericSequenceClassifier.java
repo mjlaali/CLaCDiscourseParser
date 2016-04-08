@@ -53,8 +53,10 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 				List<CLASSIFIER_OUTPUT> outcomes = labelExtractor.apply(instances, aSequence);
 				dataWriter.write(Instances.toInstances(outcomes, featureLists));
 			} else {
-				List<CLASSIFIER_OUTPUT> outcomes = classifier.classify(featureLists);
-				labeller.accept(outcomes, aSequence, instances);
+				if (featureLists.size() > 0) {
+					List<CLASSIFIER_OUTPUT> outcomes = classifier.classify(featureLists);
+					labeller.accept(outcomes, aSequence, instances);
+				}
 			}
 		}
 	
