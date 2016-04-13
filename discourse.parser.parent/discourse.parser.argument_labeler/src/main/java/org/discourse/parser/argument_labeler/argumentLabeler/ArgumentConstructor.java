@@ -13,7 +13,7 @@ import org.cleartk.discourse.type.DiscourseRelation;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
-public class ArgumentConstructor implements SequenceClassifierConsumer<String, DiscourseConnective, ArgumentInstance>{
+public class ArgumentConstructor implements SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance>{
 	private JCas aJCas;
 	private DiscourseRelationFactory relationFactory = new DiscourseRelationFactory();
 	public ArgumentConstructor(JCas aJCas) {
@@ -21,14 +21,14 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 	}
 
 	@Override
-	public void accept(List<String> outcomes, DiscourseConnective dc, List<ArgumentInstance> instances) {
+	public void accept(List<String> outcomes, DiscourseConnective dc, List<DCTreeNodeArgInstance> instances) {
 		List<Token> arg1Tokens = new ArrayList<>();
 		List<Token> arg2Tokens = new ArrayList<>();
 		List<Token> dcTokens = new ArrayList<>();
 		
 		for (int i = 0; i < outcomes.size(); i++){
 			NodeArgType nodeType = NodeArgType.valueOf(outcomes.get(i));
-			Annotation ann = instances.get(i).getInstance();
+			Annotation ann = instances.get(i).getNode();
 			List<Token> tokens = null;
 			if (ann instanceof Token){
 				tokens = new ArrayList<>();

@@ -37,21 +37,21 @@ public class PSCaseArgumenLabelAlgorithmFactoryTest {
 
 	@Test
 	public void whenExtractingInstancesThenTheyAreSix(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		
 		List<String> nodes = instances.stream()
-				.map(ArgumentInstance::getInstance)
+				.map(DCTreeNodeArgInstance::getNode)
 				.map(getConstituentType()).collect(Collectors.toList());
 		assertThat(nodes).containsExactly("ROOT", "RB", ",", "NP", "VP", ".");
 	}
 	
 	@Test
 	public void givenKongExampleWhenLabelingInstancesThenTheyAre1112dc2(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		
-		BiFunction<List<ArgumentInstance>, DiscourseConnective, List<String>> labelExtractor = 
+		BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> labelExtractor = 
 				algorithmFactory.getLabelExtractor(aJCas);
 		List<String> labels = labelExtractor.apply(instances, discourseRelation.getDiscourseConnective());
 		
@@ -60,10 +60,10 @@ public class PSCaseArgumenLabelAlgorithmFactoryTest {
 	
 	@Test
 	public void whenExtractingFeaturesThenTheyAreCorrect(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 
-		BiFunction<List<ArgumentInstance>, DiscourseConnective, List<List<Feature>>> featureExtractor = algorithmFactory.getFeatureExtractor(aJCas);
+		BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<List<Feature>>> featureExtractor = algorithmFactory.getFeatureExtractor(aJCas);
 		List<List<Feature>> features = featureExtractor.apply(instances, discourseRelation.getDiscourseConnective());
 		
 		List<String> strFeatures = features.stream()
@@ -77,11 +77,11 @@ public class PSCaseArgumenLabelAlgorithmFactoryTest {
 	
 	@Test
 	public void givenGoldLableWhenConstructingTheRelationThenItIsCorrect(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		List<String> goldLabels = Arrays.asList("Arg1", "DC", "Arg2", "Arg2", "Arg2", "Arg2");
 		
-		SequenceClassifierConsumer<String, DiscourseConnective, ArgumentInstance> labeller = algorithmFactory.getLabeller(aJCas);
+		SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance> labeller = algorithmFactory.getLabeller(aJCas);
 		
 		labeller.accept(goldLabels, discourseRelation.getDiscourseConnective(), instances);
 		

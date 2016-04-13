@@ -13,9 +13,14 @@ import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -38,8 +43,10 @@ import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import ca.concordia.clac.ml.feature.TreeFeatureExtractor;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
-public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, ArgumentInstance>{
+public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, DCTreeNodeArgInstance>{
 
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
@@ -47,22 +54,33 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 	}
 
 	@Override
-	public Function<DiscourseConnective, List<ArgumentInstance>> getInstanceExtractor(JCas aJCas) {
+	public Function<DiscourseConnective, List<DCTreeNodeArgInstance>> getInstanceExtractor(JCas aJCas) {
 		return new ArgumentInstanceExtractor();
 	}
 	
-	public BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> getArgumentFeatureExtractor(){
-		BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> dcFeatures = 
+	public BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> getArgumentFeatureExtractor(){
+		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> dcFeatures = 
 				(ins, dc) -> DiscourseVsNonDiscourseClassifier.getDiscourseConnectiveFeatures().apply(dc);
 			
-		Function<ArgumentInstance, Annotation> convertToConstituent = ArgumentInstance::getInstance;
-		Function<ArgumentInstance, Feature> childPatterns =
+		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> constituentFeatures = getConstituentFeatures();
+				
+		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, Feature> posFeature = (inst, dc) -> {
+			boolean left = inst.getNode().getBegin() < dc.getBegin();
+			return makeFeature("CON-NT-Position").apply(Boolean.toString(left));
+		};
+		
+		return multiBiFuncMap(dcFeatures, multiBiFuncMap(posFeature), constituentFeatures).andThen(flatMap(Feature.class));
+	}
+
+	private BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> getConstituentFeatures() {
+		Function<DCTreeNodeArgInstance, Annotation> convertToConstituent = DCTreeNodeArgInstance::getNode;
+		Function<DCTreeNodeArgInstance, Feature> childPatterns =
 				convertToConstituent.andThen(
 						TreeFeatureExtractor.getChilderen()).andThen(
 								mapOneByOneTo(TreeFeatureExtractor.getConstituentType())).andThen(
 										collect(Collectors.joining("-"))).andThen(
 												makeFeature("ChildPat"));
-		Function<ArgumentInstance, Feature> ntCtx = convertToConstituent
+		Function<DCTreeNodeArgInstance, Feature> ntCtx = convertToConstituent
 				.andThen(multiMap(
 						getConstituentType(), 
 						getParent().andThen(getConstituentType()), 
@@ -72,43 +90,115 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 				.andThen(collect(Collectors.joining("-")))
 				.andThen(makeFeature("NT-Ctx"));
 		
-		Function<ArgumentInstance, List<Annotation>> pathExtractor = (inst) -> getPath().apply(inst.getImediateDcParent(), inst.getInstance()); 
-		Function<ArgumentInstance, Feature> path = pathExtractor
+		Function<DCTreeNodeArgInstance, List<Annotation>> pathExtractor = 
+				(inst) -> getPath().apply(inst.getImediateDcParent(), inst.getNode()); 
+		Function<DCTreeNodeArgInstance, Feature> path = pathExtractor
 				.andThen(mapOneByOneTo(getConstituentType()))
 				.andThen(collect(Collectors.joining("-")))
 				.andThen(makeFeature("CON-NT-Path"));
 
-		Function<ArgumentInstance, Feature> pathSize = pathExtractor
+		Function<DCTreeNodeArgInstance, Feature> pathSize = pathExtractor
 				.andThen(mapOneByOneTo(getConstituentType()))
 				.andThen(collect(Collectors.counting()))
 				.andThen(makeFeature("CON-NT-Path-Size"));
-		
-		BiFunction<ArgumentInstance, DiscourseConnective, Feature> posFeature = (inst, dc) -> {
-			boolean left = inst.getInstance().getBegin() < dc.getBegin();
-			return makeFeature("CON-NT-Position").apply(Boolean.toString(left));
+
+		Function<? super Annotation, ? extends List<Token>> getTokens = (cns) -> {
+			List<Token> results = null;
+			if (cns instanceof Constituent)
+				results = constituentToCoveredTokens.get(cns);
+			else if (cns instanceof Token)
+				results = Collections.singletonList((Token) cns);
+			
+			return results;
 		};
 		
-		BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> constituentFeatures =
-				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize).apply(inst);
+		Function<Token, Optional<Token>> getPrevToken = (token) -> {
+			Token result = null;
+			List<Token> precedings = JCasUtil.selectPreceding(Token.class, token, 1);
+			if (precedings.size() > 0)
+				result = precedings.get(0);
+			
+			return Optional.ofNullable(result);
+		};
+		
+		Function<Token, Optional<Token>> getNextToken = (token) -> {
+			Token result = null;
+			List<Token> nexts = JCasUtil.selectFollowing(Token.class, token, 1);
+			if (nexts.size() > 0)
+				result = nexts.get(0);
+			
+			return Optional.ofNullable(result);
+		};
+		
+		Function<DCTreeNodeArgInstance, Feature> constituentFirstToken = convertToConstituent.andThen(getTokens)
+				.andThen((childeren) -> childeren.get(0))
+				.andThen(Token::getCoveredText).andThen(String::toLowerCase).andThen(makeFeature("firstToken"));
+		
+		Function<DCTreeNodeArgInstance, Feature> tokenBeforeFirstToken = convertToConstituent.andThen(getTokens)
+				.andThen((childeren) -> childeren.get(0)).andThen(getPrevToken)
+				.andThen((opt) -> opt.map(Token::getCoveredText).orElse("null")).andThen(String::toLowerCase)
+				.andThen(makeFeature("tokenBeforeFirst"));
+
+		Function<DCTreeNodeArgInstance, Feature> constituentLastToken = convertToConstituent.andThen(getTokens)
+				.andThen((childeren) -> childeren.get(childeren.size() - 1))
+				.andThen(Token::getCoveredText).andThen(String::toLowerCase).andThen(makeFeature("lastToken"));
+
+		Function<DCTreeNodeArgInstance, Feature> tokenAfterLastToken = convertToConstituent.andThen(getTokens)
+				.andThen((childeren) -> childeren.get(childeren.size() - 1)).andThen(getNextToken)
+				.andThen((opt) -> opt.map(Token::getCoveredText).orElse("null")).andThen(String::toLowerCase)
+				.andThen(makeFeature("tokenAfterLast"));
+
+		Predicate<Token> isVerb = (token) -> {
+			if (token.getPos().getPosValue().startsWith("V"))
+				return true;
+			return false;
+		};
+		
+		
+		
+		Function<List<Token>, Optional<Token>> getMainVerb = (tokens) -> {
+			List<Token> verbs = tokens.stream().filter(isVerb).collect(Collectors.toList());
+			Token last = null;
+			if (verbs.size() > 0)
+				last = verbs.get(verbs.size() - 1);
+			return Optional.ofNullable(last);
+		};
+		
+		Function<DCTreeNodeArgInstance, Feature> mainVerb = convertToConstituent.andThen(getTokens)
+				.andThen(getMainVerb).andThen((verb) -> verb.map(Token::getCoveredText).orElse("null"))
+				.andThen(makeFeature("mainVerb"));
+
+		
+		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> constituentFeatures =
+				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize, 
+						constituentFirstToken, constituentLastToken,
+						tokenBeforeFirstToken, tokenAfterLastToken, mainVerb).apply(inst);
 				
-		return multiBiFuncMap(dcFeatures, multiBiFuncMap(posFeature), constituentFeatures).andThen(flatMap(Feature.class));
+				
+		return constituentFeatures;
 	}
 	
 
+	Map<Constituent, List<Token>> constituentToCoveredTokens = new HashMap<>();
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public BiFunction<List<ArgumentInstance>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		BiFunction<ArgumentInstance, DiscourseConnective, List<Feature>> biFunc = 
+	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
+		constituentToCoveredTokens.clear();
+		JCasUtil.indexCovered(jCas, Constituent.class, Token.class).forEach((cns, tokens) -> 
+		constituentToCoveredTokens.put(cns, (List)tokens));
+		
+		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> biFunc = 
 				getArgumentFeatureExtractor();
 		return mapOneByOneTo(biFunc);
 	}
 
 	@Override
-	public BiFunction<List<ArgumentInstance>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
+	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
 		return mapOneByOneTo(new LabelExtractor());
 	}
 
 	@Override
-	public SequenceClassifierConsumer<String, DiscourseConnective, ArgumentInstance> getLabeller(JCas jCas) {
+	public SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance> getLabeller(JCas jCas) {
 		return new ArgumentConstructor(jCas);
 	}
 

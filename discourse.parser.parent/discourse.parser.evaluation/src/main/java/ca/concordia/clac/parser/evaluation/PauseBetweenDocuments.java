@@ -1,30 +1,26 @@
 package ca.concordia.clac.parser.evaluation;
 
-import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDescription;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
-import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 

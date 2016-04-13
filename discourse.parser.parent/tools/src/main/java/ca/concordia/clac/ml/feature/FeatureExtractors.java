@@ -32,7 +32,11 @@ public class FeatureExtractors{
 	public static <T> Function<T, Feature> makeFeature(String featureName){
 		return (value) -> new Feature(featureName, value == null ? NULL_STRING : value);
 	}
-	
+
+	public static <T> Function<Optional<T>, Feature> makeFeature(String featureName, T other){
+		return (value) -> new Feature(featureName, value.orElse(other));
+	}
+
 	public static <T> Function<List<List<T>>, List<T>>flatMap(Class<T> cls){
 		return (input) ->
 			input.stream().flatMap((a) -> a.stream()).collect(Collectors.toList());

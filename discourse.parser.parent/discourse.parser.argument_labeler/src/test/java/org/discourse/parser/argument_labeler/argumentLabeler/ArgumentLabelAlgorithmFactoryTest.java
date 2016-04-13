@@ -35,21 +35,21 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 	
 	@Test
 	public void givenKongExampleWhenArgumentInstancesAreExtractedThreAreFiveArgumentInstances(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		
 		List<String> nodes = instances.stream()
-				.map(ArgumentInstance::getInstance)
+				.map(DCTreeNodeArgInstance::getNode)
 				.map(getConstituentType()).collect(Collectors.toList());
 		assertThat(nodes).containsExactly("CC", "NP", "VP", "CC", "RB", "VP");
 	}
 	
 	@Test
 	public void givenKongExampleWhenLabelingInstancesThenTheyAre1112dc2(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		
-		BiFunction<List<ArgumentInstance>, DiscourseConnective, List<String>> labelExtractor = 
+		BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> labelExtractor = 
 				algorithmFactory.getLabelExtractor(aJCas);
 		List<String> labels = labelExtractor.apply(instances, discourseRelation.getDiscourseConnective());
 		
@@ -58,10 +58,10 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 	
 	@Test
 	public void givenKongExampleWhenExtractingFeaturesThenTheyAreCorrect(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 
-		BiFunction<List<ArgumentInstance>, DiscourseConnective, List<List<Feature>>> featureExtractor = algorithmFactory.getFeatureExtractor(aJCas);
+		BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<List<Feature>>> featureExtractor = algorithmFactory.getFeatureExtractor(aJCas);
 		List<List<Feature>> features = featureExtractor.apply(instances, discourseRelation.getDiscourseConnective());
 		
 		List<String> strFeatures = features.stream()
@@ -71,12 +71,12 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 			.collect(Collectors.toList());
 		
 		String[] goldFeatures = new String[]{
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>-<CON-NT-Path-Size:4>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>-<CON-NT-Path-Size:4>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>-<CON-NT-Path-Size:3>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>-<CON-NT-Path-Size:3>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>"
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>-<CON-NT-Path-Size:4>-<firstToken:but>-<lastToken:but>-<tokenBeforeFirst:null>-<tokenAfterLast:its>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>-<CON-NT-Path-Size:4>-<firstToken:its>-<lastToken:competitors>-<tokenBeforeFirst:but>-<tokenAfterLast:have>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:have>-<lastToken:interests>-<tokenBeforeFirst:competitors>-<tokenAfterLast:and>-<mainVerb:have>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>-<CON-NT-Path-Size:3>-<firstToken:and>-<lastToken:and>-<tokenBeforeFirst:interests>-<tokenAfterLast:so>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>-<CON-NT-Path-Size:3>-<firstToken:so>-<lastToken:so>-<tokenBeforeFirst:and>-<tokenAfterLast:are>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:are>-<lastToken:swings>-<tokenBeforeFirst:so>-<tokenAfterLast:null>-<mainVerb:cushioned>"
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);
@@ -84,11 +84,11 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 	
 	@Test
 	public void givenGoldLableWhenConstructingTheRelationThenItIsCorrect(){
-		Function<DiscourseConnective, List<ArgumentInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-		List<ArgumentInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
+		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
 		List<String> goldLabels = Arrays.asList("Arg1", "Arg1", "Arg1", "Arg2", "DC", "Arg2");
 		
-		SequenceClassifierConsumer<String, DiscourseConnective, ArgumentInstance> labeller = algorithmFactory.getLabeller(aJCas);
+		SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance> labeller = algorithmFactory.getLabeller(aJCas);
 		
 		labeller.accept(goldLabels, discourseRelation.getDiscourseConnective(), instances);
 		

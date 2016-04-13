@@ -51,7 +51,7 @@ public class ConllEvaluation {
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
 		Options options = CliFactory.parseArguments(Options.class, args);
 		
-		DatasetMode mode = DatasetMode.test;
+		DatasetMode mode = DatasetMode.dev;
 		String inputDataset = null;
 		File outputDirectory = null;
 		if (options.getInputDataset() == null){

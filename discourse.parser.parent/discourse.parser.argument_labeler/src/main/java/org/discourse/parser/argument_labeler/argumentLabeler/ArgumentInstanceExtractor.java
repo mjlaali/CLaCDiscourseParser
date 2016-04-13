@@ -18,10 +18,10 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.ROOT;
 
-public class ArgumentInstanceExtractor implements Function<DiscourseConnective, List<ArgumentInstance>>{
+public class ArgumentInstanceExtractor implements Function<DiscourseConnective, List<DCTreeNodeArgInstance>>{
 	private int todoCnt;
 
-	public List<ArgumentInstance> apply(DiscourseConnective discourseConnective) {
+	public List<DCTreeNodeArgInstance> apply(DiscourseConnective discourseConnective) {
 		List<Constituent> pathToRoot = getPathFromRoot(DiscourseConnective.class).apply(discourseConnective);
 				
 		if (pathToRoot.size() == 0){
@@ -37,6 +37,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 				.map(getChilderen())
 				.collect(Collectors.toList());
 		
+		//This will keep the order in the chronological order
 		List<Annotation> childeren = new ArrayList<>(pathNodeChilderen.get(0));
 		for (int i = 1; i < pathToRoot.size(); i++){
 			int idxNode = childeren.indexOf(pathToRoot.get(i));
@@ -44,8 +45,8 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 			childeren.addAll(idxNode, pathNodeChilderen.get(i));
 		}
 		
-		List<ArgumentInstance> instances = childeren.stream()
-				.map((child) -> new ArgumentInstance(child, imediateDcParent))
+		List<DCTreeNodeArgInstance> instances = childeren.stream()
+				.map((child) -> new DCTreeNodeArgInstance(child, imediateDcParent))
 				.collect(Collectors.toList());
 		
 		Constituent root = pathToRoot.get(0);
@@ -54,7 +55,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 			Sentence prevSent = prevSents.get(0);
 			List<ROOT> prevSentRoots = JCasUtil.selectCovered(ROOT.class, prevSent);
 			if (prevSentRoots.size() > 0){
-				instances.add(0, new ArgumentInstance(prevSentRoots.get(0), imediateDcParent));
+				instances.add(0, new DCTreeNodeArgInstance(prevSentRoots.get(0), imediateDcParent));
 			}
 		}
 
