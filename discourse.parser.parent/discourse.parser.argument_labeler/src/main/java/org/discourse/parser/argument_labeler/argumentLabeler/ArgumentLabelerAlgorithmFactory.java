@@ -170,9 +170,10 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 		
 		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> constituentFeatures =
-				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize, 
-						constituentFirstToken, constituentLastToken,
-						tokenBeforeFirstToken, tokenAfterLastToken, mainVerb).apply(inst);
+				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize
+//						, constituentFirstToken, constituentLastToken,
+//						tokenBeforeFirstToken, tokenAfterLastToken, mainVerb
+						).apply(inst);
 				
 				
 		return constituentFeatures;
@@ -194,7 +195,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 	@Override
 	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
-		return mapOneByOneTo(new LabelExtractor());
+		return mapOneByOneTo(new LabelExtractor(true, constituentToCoveredTokens));
 	}
 
 	@Override

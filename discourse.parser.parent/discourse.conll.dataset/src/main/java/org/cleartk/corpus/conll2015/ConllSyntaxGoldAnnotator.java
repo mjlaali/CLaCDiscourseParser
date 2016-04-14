@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 @TypeCapability(outputs = {"org.cleartk.token.type.Sentence", "org.cleartk.corpus.conll2015.type.ConllToken"})
@@ -120,7 +121,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 	}
 
 	private void addDependencies(JSONObject jsonSent, List<Token> sentTokens, JCas aJCas, int sentBegin, int sentEnd) throws JSONException, AnalysisEngineProcessException {
-//		JSONArray dependencies = jsonSent.getJSONArray("dependencies");
+		JSONArray dependencies = jsonSent.getJSONArray("dependencies");
 
 //		ArrayListMultimap<DependencyNode, DependencyRelation> headRelations = ArrayListMultimap.create();
 //		ArrayListMultimap<DependencyNode, DependencyRelation> childRelations = ArrayListMultimap.create();
@@ -132,32 +133,35 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 //			nodes.add(aNode);
 //		}
 //		
-//		for (int i = 0; i < dependencies.length(); i++){
-//			JSONArray aJsonDepRel = dependencies.getJSONArray(i);
-//			String relationType = aJsonDepRel.getString(0);
-//			String govern = aJsonDepRel.getString(1);
-//			String dep = aJsonDepRel.getString(2);
-//
-//			int governIdx = Integer.parseInt(govern.substring(govern.lastIndexOf('-') + 1));
-//			int depIdx = Integer.parseInt(dep.substring(dep.lastIndexOf('-') + 1));
-//			
-//			DependencyNode head = nodes.get(governIdx);
-//			DependencyNode child = nodes.get(depIdx);
-//			
-//			if (governIdx != 0 && (!head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-'))) ||
-//					!child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-')))))
-//				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
-//					String.format("out of sync: %s <> %s, %s <> %s", head.getCoveredText(), govern, child.getCoveredText(), dep));
-//			
-//			DependencyRelation relation = new DependencyRelation(aJCas);
-//
-//			relation.setHead(head);
-//			relation.setChild(child);
-//			relation.setRelation(relationType);
-//			relation.addToIndexes();
+		for (int i = 0; i < dependencies.length(); i++){
+			JSONArray aJsonDepRel = dependencies.getJSONArray(i);
+			String relationType = aJsonDepRel.getString(0);
+			String govern = aJsonDepRel.getString(1);
+			String dep = aJsonDepRel.getString(2);
+
+			int governIdx = Integer.parseInt(govern.substring(govern.lastIndexOf('-') + 1));
+			int depIdx = Integer.parseInt(dep.substring(dep.lastIndexOf('-') + 1));
+			
+			//we do not have root token therefore we model it as a null value.
+			Token head = governIdx == 0 ? null : sentTokens.get(governIdx - 1);
+			Token child = depIdx == 0 ? null : sentTokens.get(depIdx - 1);
+			
+			if ((head != null && !head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-')))) ||
+					(child != null  && !child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-'))))){
+				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
+					String.format("out of sync: %s <> %s, %s <> %s", head.getCoveredText(), govern, child.getCoveredText(), dep));
+				continue;
+			}
+			
+			Dependency relation = new Dependency(aJCas);
+
+			relation.setGovernor(head);
+			relation.setDependent(child);
+			relation.setDependencyType(relationType);
+			relation.addToIndexes();
 //			headRelations.put(child, relation);
 //			childRelations.put(head, relation);
-//		}
+		}
 //
 //		// set the relations for each node annotation
 //		for (DependencyNode node : nodes) {

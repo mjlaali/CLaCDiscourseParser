@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.conll.dataset" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.conll.dataset.analysis" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.conll.dataset.analysis/target/classes/META-INF/maven/clac.concordia.ca/discourse.conll.dataset.analysis" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.conll.dataset/target/classes/META-INF/maven/clac.concordia.ca/discourse.conll.dataset" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.argument_labeler" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.argument_labeler/target/classes/META-INF/maven/clac.concordia.ca/discourse.parser.argument_labeler" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.dc-disambiguation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.dc-disambiguation/target/classes/META-INF/maven/clac.concordia.ca/discourse.parser.dc-disambiguation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.evaluation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/discourse.parser.evaluation/target/classes/META-INF/maven/clac.concordia.ca/discourse.parser.evaluation" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tools" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/tools/target/classes/META-INF/maven/clac.concordia.ca/tools" charset="UTF-8" />
+    <file url="PROJECT" charset="UTF-8" />
+  </component>
+</project>

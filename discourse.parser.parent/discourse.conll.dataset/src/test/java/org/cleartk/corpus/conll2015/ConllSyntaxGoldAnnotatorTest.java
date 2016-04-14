@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -20,10 +22,14 @@ import org.cleartk.corpus.conll2015.type.ConllToken;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.ROOT;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ConllSyntaxGoldAnnotatorTest {
@@ -121,24 +127,26 @@ public class ConllSyntaxGoldAnnotatorTest {
 			
 	}
 	
-//	@Test
-//	public void whenReadingDataThenDependenciesAreSet(){
-//		assertThat(JCasUtil.exists(jCas, DependencyRelation.class)).isTrue();
-//		String word = " cut ";
-//		
-//		int idxWord = jCas.getDocumentText().indexOf(word);
-//		List<DependencyNode> dependenciesNodes = JCasUtil.selectCovered(jCas, DependencyNode.class, idxWord, idxWord + word.length());
-//		assertThat(dependenciesNodes.size()).isEqualTo(1);
-//		
-//		DependencyNode wordDependencyNode = dependenciesNodes.get(0);
-//		assertThat(wordDependencyNode.getCoveredText()).isEqualTo(word.trim());
-//		
-//		assertThat(wordDependencyNode.getHeadRelations().size()).isEqualTo(1);
-//		assertThat(wordDependencyNode.getHeadRelations(0).getChild()).isEqualTo(wordDependencyNode);
-//		assertThat(wordDependencyNode.getChildRelations().size()).isEqualTo(5);
-//		for (int i = 0; i < wordDependencyNode.getChildRelations().size(); i++){
-//			assertThat(wordDependencyNode.getChildRelations(i).getHead()).isEqualTo(wordDependencyNode);
-//		}
-//		
-//	}
+	@Test
+	public void whenReadingDataThenDependenciesAreSet(){
+		assertThat(JCasUtil.exists(jCas, Dependency.class)).isTrue();
+		String word = " cut ";
+		
+		int idxWord = jCas.getDocumentText().indexOf(word);
+		Token token = JCasUtil.selectCovered(jCas, Token.class, idxWord, idxWord + word.length()).iterator().next();
+		ListMultimap<Token, Dependency> dependencies = ArrayListMultimap.create();
+		Set<Token> dependents = new HashSet<>();
+		for (Dependency dependency: JCasUtil.select(jCas, Dependency.class)){
+			dependencies.put(dependency.getGovernor(), dependency);
+			assertThat(dependents).doesNotContain(dependency.getDependent());
+			dependents.add(dependency.getDependent());
+		}
+		
+		List<Dependency> wordDependencies = dependencies.get(token);
+		assertThat(wordDependencies.size()).isEqualTo(5);
+		assertThat(wordDependencies).extracting(Dependency::getDependent).extracting(Token::getCoveredText).
+			containsOnly("Inc.", "charging", "off", "firms", "from");
+		
+		assertThat(dependencies.get(null)).isNotEmpty();
+	}
 }

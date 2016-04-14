@@ -62,6 +62,10 @@ public class TreeFeatureExtractorTest {
 	}
 	
 	private Constituent findFirstConstituent(String constituentType) {
+		return findFirstConstituent(constituentType, aJCas);
+	}
+	
+	public static Constituent findFirstConstituent(String constituentType, JCas aJCas) {
 		Collection<Constituent> constituents = JCasUtil.select(aJCas, Constituent.class);
 		for (Constituent constituent: constituents){
 			if (constituent.getConstituentType().equals(constituentType))

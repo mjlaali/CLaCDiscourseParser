@@ -6,8 +6,10 @@ import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -151,4 +153,16 @@ public class TreeFeatureExtractor {
 		};
 	}
 
+	
+	public static Function<Annotation, Collection<Token>> getTokenList(Map<Constituent, ? extends Collection<Token>> constituentsToTokens){
+		return (ann) -> {
+			if (ann instanceof Token)
+				return Collections.singletonList((Token) ann);
+			if (ann instanceof Constituent){
+				return constituentsToTokens.get(ann);
+			}
+			return null;
+		};
+		
+	}
 }

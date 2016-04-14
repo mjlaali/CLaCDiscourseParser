@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <resourceExtensions />
+    <wildcardResourcePatterns>
+      <entry name="!?*.java" />
+      <entry name="!?*.form" />
+      <entry name="!?*.class" />
+      <entry name="!?*.groovy" />
+      <entry name="!?*.scala" />
+      <entry name="!?*.flex" />
+      <entry name="!?*.kt" />
+      <entry name="!?*.clj" />
+      <entry name="!?*.aj" />
+    </wildcardResourcePatterns>
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="false">
+        <processorPath useClasspath="true" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.argument_labeler (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.argument_labeler (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.evaluation (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.evaluation (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.conll.dataset.analysis (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.conll.dataset.analysis (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.evaluation (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.evaluation (1)" />
+      </profile>
+      <profile default="false" name="Annotation profile for tools (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="tools (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.dc-disambiguation (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.dc-disambiguation (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for tools (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="tools (1)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.dc-disambiguation (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.dc-disambiguation (1)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.conll.dataset (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.conll.dataset (1)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.conll.dataset (2)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.conll.dataset (2)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.parser.argument_labeler (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.parser.argument_labeler (1)" />
+      </profile>
+      <profile default="false" name="Annotation profile for discourse.conll.dataset.analysis (1)" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="discourse.conll.dataset.analysis (1)" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="discourse.conll.dataset (1)" target="1.8" />
+      <module name="discourse.conll.dataset (2)" target="1.8" />
+      <module name="discourse.conll.dataset.analysis (1)" target="1.8" />
+      <module name="discourse.conll.dataset.analysis (2)" target="1.8" />
+      <module name="discourse.parser.argument_labeler (1)" target="1.8" />
+      <module name="discourse.parser.argument_labeler (2)" target="1.8" />
+      <module name="discourse.parser.dc-disambiguation (1)" target="1.8" />
+      <module name="discourse.parser.dc-disambiguation (2)" target="1.8" />
+      <module name="discourse.parser.evaluation (1)" target="1.8" />
+      <module name="discourse.parser.evaluation (2)" target="1.8" />
+      <module name="discourse.parser.parent" target="1.5" />
+      <module name="tools (1)" target="1.8" />
+      <module name="tools (2)" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
