@@ -1,0 +1,1 @@
+classpath*:org/discourse/parser/argument_labeler/argumentLabeler/TypeSystem.xml

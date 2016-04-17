@@ -10,8 +10,8 @@ import org.apache.uima.jcas.cas.TOP_Type;
 
 
 /** 
- * Updated by JCasGen Thu Nov 19 12:08:03 EST 2015
- * XML source: /Users/majid/Documents/workspace/clac-parser/clac.discourse.parser/conll.dataset/src/main/resources/org/cleartk/discourse/TypeSystem.xml
+ * Updated by JCasGen Fri Apr 15 12:41:45 EDT 2016
+ * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/discourse/type/DiscourseArgument.xml
  * @generated */
 public class DiscourseConnective extends TokenList {
   /** @generated

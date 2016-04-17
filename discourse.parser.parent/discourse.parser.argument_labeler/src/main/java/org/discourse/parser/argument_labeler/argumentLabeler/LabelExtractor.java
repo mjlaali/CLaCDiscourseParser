@@ -3,7 +3,6 @@ package org.discourse.parser.argument_labeler.argumentLabeler;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
@@ -20,6 +19,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
+import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
@@ -65,10 +65,29 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 				if (res != NodeArgType.None)
 					printPattern(arg1Tokens, arg2Tokens, dcTokens, ann, 0);
 			}
+		} else {
+			createArgTreeNode(instance, dc, res);
 		}
 
 		output.close();
 		return res.toString();
+	}
+
+	public static void createArgTreeNode(DCTreeNodeArgInstance instance, DiscourseConnective dc, NodeArgType res) {
+		ArgumentTreeNode argTreeNode = instance.getArgTreeNode(); 
+		switch (res) {
+		case Arg1:
+			argTreeNode.setDiscourseArgument(dc.getDiscourseRelation().getArguments(0));
+			break;
+		case Arg2:
+			argTreeNode.setDiscourseArgument(dc.getDiscourseRelation().getArguments(1));
+			break;
+
+		default:
+			// does not matter
+			break;
+		}
+		argTreeNode.addToIndexes();
 	}
 
 	private NodeArgType secondLevelAnalysis(List<Token> arg1Tokens, List<Token> arg2Tokens,

@@ -144,18 +144,10 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 
 			DiscourseRelation discourseRelation = discourseRelationFactory.makeDiscourseRelation(aJCas,
 					type, sense, discourseConnectiveText, discourseConnectiveTokenList, arg1Tokens, arg2Tokens);
-			addToIndex(discourseRelation);
+			discourseRelation.addToIndexes();
 			if (!addMultipleSenses)
 				break;
 		}
-	}
-
-	protected void addToIndex(DiscourseRelation discourseRelation) {
-		discourseRelation.addToIndexes();
-		if (discourseRelation.getRelationType().equals(RelationType.Explicit.toString()))
-			discourseRelation.getDiscourseConnective().addToIndexes();
-		discourseRelation.getArguments(0).addToIndexes();
-		discourseRelation.getArguments(1).addToIndexes();
 	}
 
 	private List<Token> convertToTokens(List<JSONToken> jsonTokenList) {

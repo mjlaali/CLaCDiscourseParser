@@ -1,9 +1,12 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import java.util.ArrayList;
-import java.util.List;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 
-import org.apache.uima.fit.util.JCasUtil;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
@@ -12,12 +15,15 @@ import org.cleartk.discourse.type.DiscourseRelation;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class ArgumentConstructor implements SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance>{
 	private JCas aJCas;
 	private DiscourseRelationFactory relationFactory = new DiscourseRelationFactory();
-	public ArgumentConstructor(JCas aJCas) {
+	private Map<Constituent, ? extends Collection<Token>> constituentToTokens;
+	public ArgumentConstructor(JCas aJCas, Map<Constituent, ? extends Collection<Token>> constituentToTokens) {
 		this.aJCas = aJCas;
+		this.constituentToTokens = constituentToTokens;
 	}
 
 	@Override
@@ -28,19 +34,17 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 		
 		for (int i = 0; i < outcomes.size(); i++){
 			NodeArgType nodeType = NodeArgType.valueOf(outcomes.get(i));
-			Annotation ann = instances.get(i).getNode();
-			List<Token> tokens = null;
-			if (ann instanceof Token){
-				tokens = new ArrayList<>();
-				tokens.add((Token)ann);
-			} else
-				tokens = JCasUtil.selectCovered(Token.class, ann);
+			DCTreeNodeArgInstance instance = instances.get(i);
+			Annotation ann = instance.getNode();
+			Collection<Token> tokens = getTokenList(constituentToTokens).apply(ann);
 			switch (nodeType) {
 			case Arg1:
 				arg1Tokens.addAll(tokens);
+				LabelExtractor.createArgTreeNode(instance, dc, NodeArgType.Arg1);
 				break;
 			case Arg2:
 				arg2Tokens.addAll(tokens);
+				LabelExtractor.createArgTreeNode(instance, dc, NodeArgType.Arg2);
 				break;
 			case DC:
 				dcTokens.addAll(tokens);
@@ -51,8 +55,6 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 		}
 		
 		DiscourseRelation relation = relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens);
-		relation.getArguments(0).addToIndexes();
-		relation.getArguments(1).addToIndexes();
 		relation.addToIndexes();
 		
 	}

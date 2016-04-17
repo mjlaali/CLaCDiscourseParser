@@ -10,18 +10,32 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.uima.UIMAException;
+import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
+import org.cleartk.corpus.conll2015.DiscourseRelationExample;
+import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
+import org.junit.Before;
 import org.junit.Test;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 
-public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
+public class ArgumentLabelAlgorithmFactoryTest{
 	private ArgumentLabelerAlgorithmFactory algorithmFactory = new ArgumentLabelerAlgorithmFactory();
+	private JCas aJCas;
+	private DiscourseRelation discourseRelation;
+	private KongExample example = new KongExample(); 
+	
+	@Before
+	public void setup() throws UIMAException{
+		aJCas = JCasFactory.createJCas();
+		discourseRelation = new DiscourseRelationFactory().makeDiscourseRelationFrom(aJCas, example);
+	}
 	
 	@Test
 	public void whenExtractingSequencesThenOnlyOneSequenceIsExtracted(){
@@ -96,9 +110,9 @@ public class ArgumentLabelAlgorithmFactoryTest extends KongExampleTest{
 		assertThat(relations).hasSize(1);
 		DiscourseRelation relation = relations.iterator().next();
 		
-		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(arg1);
-		assertThat(TokenListTools.getTokenListText(relation.getArguments(1))).isEqualTo(arg2);
-		assertThat(TokenListTools.getTokenListText(relation.getDiscourseConnective())).isEqualTo(dc);
+		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(example.getArg1());
+		assertThat(TokenListTools.getTokenListText(relation.getArguments(1))).isEqualTo(DiscourseRelationExample.toString(example.getArg2()));
+		assertThat(TokenListTools.getTokenListText(relation.getDiscourseConnective())).isEqualTo(example.getDiscourseConnective());
 
 	}
 }

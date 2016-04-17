@@ -6,6 +6,7 @@
     <vendor/>
   <imports>
     <import name="org.cleartk.discourse.type.TokenList"/>
+  <import name="org.cleartk.discourse.type.DiscourseRelation"/>
   </imports>
   <types>
     <typeDescription>
@@ -17,6 +18,11 @@
           <name>argumentType</name>
           <description>Label's of the argumen, (i.e. arg1 or arg2)</description>
           <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
+      <featureDescription>
+          <name>discouresRelation</name>
+          <description/>
+          <rangeTypeName>org.cleartk.discourse.type.DiscourseRelation</rangeTypeName>
         </featureDescription>
       </features>
     </typeDescription>

@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
+import org.cleartk.util.treebank.TopTreebankNode;
+import org.cleartk.util.treebank.TreebankFormatParser;
+import org.cleartk.util.treebank.TreebankNode;
 
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProvider;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
@@ -26,34 +29,6 @@ public class SyntaxReader{
 				posMappingProvider, 
 				constituentMappingProvider);
 	}
-	
-//	public String initJCas(JCas jCas, String parseTree) {
-//		 String text = TreebankFormatParser.inferPlainText(parseTree);
-//		 String tokens = getTokens(text, parseTree);
-//		 initJCas(jCas, text, tokens, null, parseTree);
-//		 return tokens;
-//	}
-//	
-//	private String getTokens(String text, String parseTree) {
-//		List<TopTreebankNode> parseDocument = TreebankFormatParser.parseDocument(parseTree, 0, text);
-//		StringBuilder sb = new StringBuilder();
-//		for (TopTreebankNode aNode: parseDocument){
-//			addTokens(sb, aNode);
-//		}
-//		return sb.toString();
-//	}
-//
-//	private void addTokens(StringBuilder sb, TreebankNode aNode) {
-//		if (aNode.isLeaf()){
-//			if (sb.length() != 0)
-//				sb.append(" ");
-//			sb.append(aNode.getText());
-//		} else
-//			for (TreebankNode node: aNode.getChildren()){
-//				addTokens(sb, node);
-//			}
-//	}
-//
 	
 	public void initJCas(JCas jCas, String[] parseTrees) throws AnalysisEngineProcessException{
 		posMappingProvider.configure(jCas.getCas());
@@ -94,7 +69,51 @@ public class SyntaxReader{
 		}
 	
 	}
+	
+	public void addSyntaxInformation(JCas aJCas, String[] parseTrees) throws AnalysisEngineProcessException{
+		int begin = 0;
+		for (String parseTree: parseTrees){
+			int end = tokenize(aJCas, begin, parseTree);
+			Sentence aSentence = new Sentence(aJCas, begin, end);
+			aSentence.addToIndexes();
+			begin = end;
+			posMappingProvider.configure(aSentence.getCAS());
+			constituentMappingProvider.configure(aSentence.getCAS());
+			PennTreeNode parsePennTree = PennTreeUtils.parsePennTree(parseTree);
+			converter.setCreatePosTags(true);
+			try {
+				converter.convertPennTree(aSentence, parsePennTree);
+			} catch (Exception e) {
+				System.err.println("\n\n**************************");
+				System.err.println(parseTree);
+				e.printStackTrace();
+			}
+		}
+	}
 
+	private int tokenize(JCas aJCas, int begin, String parseTree) {
+		List<TopTreebankNode> parseDocument = TreebankFormatParser.parseDocument(parseTree, begin, aJCas.getDocumentText());
+		int endOffset = 0;
+		for (TopTreebankNode aNode: parseDocument){
+			endOffset = addTokens(aJCas, aNode);
+		}
+		
+		return endOffset;
+	}
+
+	private int addTokens(JCas aJCas, TreebankNode aNode) {
+		if (aNode.isLeaf()){
+			new Token(aJCas, aNode.getTextBegin(), aNode.getTextEnd()).addToIndexes();
+			return aNode.getTextEnd();
+		} else{
+			int endOffset = -1;
+			for (TreebankNode node: aNode.getChildren()){
+				endOffset = addTokens(aJCas, node);
+			}
+			return endOffset;
+		}
+	}
+	
 	public void addSyntacticConstituents(Sentence aSentence, String parseTree) throws AnalysisEngineProcessException{
 		//create fragment parser if there is no parser. It makes the program simpler
 		List<Token> sentTokens = JCasUtil.selectCovering(Token.class, aSentence);

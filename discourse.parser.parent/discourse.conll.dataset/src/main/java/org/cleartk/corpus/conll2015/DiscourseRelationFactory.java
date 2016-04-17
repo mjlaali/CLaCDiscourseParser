@@ -1,8 +1,14 @@
 package org.cleartk.corpus.conll2015;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.util.FSCollectionFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
@@ -15,6 +21,44 @@ import org.cleartk.discourse.type.DiscourseRelation;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class DiscourseRelationFactory {
+	
+	public DiscourseRelation makeDiscourseRelationFrom(JCas aJCas, DiscourseRelationExample anExample) throws AnalysisEngineProcessException{
+		aJCas.setDocumentText(anExample.getText());
+		String text = aJCas.getDocumentText(); 
+		new SyntaxReader().addSyntaxInformation(aJCas,anExample.getParseTree());;
+		List<Token> tokens = new ArrayList<Token>(JCasUtil.select(aJCas, Token.class));
+		List<String> strTokens = tokens.stream().map(Token::getCoveredText).collect(Collectors.toList());
+		int dcIndex = strTokens.indexOf(anExample.getDiscourseConnective());
+		int begin;
+		
+		begin = text.indexOf(anExample.getArg1());
+		if (begin == -1)
+			throw new RuntimeException(String.format("<%s> cannot be found in <%s>.", anExample.getArg1(), anExample.getText()));
+		List<Token> arg1Tokens = JCasUtil.selectCovered(aJCas, Token.class, begin, begin + anExample.getArg1().length());
+
+		List<Token> arg2Tokens = new ArrayList<>();
+		for (String arg2Part: anExample.getArg2()){
+			begin = text.indexOf(arg2Part);
+			if (begin == -1)
+				throw new RuntimeException(String.format("<%s> cannot be found in <%s>.", anExample.getArg2(), anExample.getText()));
+			arg2Tokens.addAll(JCasUtil.selectCovered(aJCas, Token.class, begin, begin + arg2Part.length()));
+		}
+		
+		DiscourseRelation discourseRelation = new DiscourseRelationFactory().makeDiscourseRelation(aJCas, 
+				RelationType.Explicit, anExample.getSense(), anExample.getDiscourseConnective(), 
+				Collections.singletonList(tokens.get(dcIndex)), 
+				arg1Tokens, 
+				arg2Tokens);
+		
+		discourseRelation.getDiscourseConnective();
+		
+		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(0))).isEqualTo(anExample.getArg1());
+		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(1))).isEqualTo(
+				DiscourseRelationExample.toString(anExample.getArg2()));
+		assertThat(TokenListTools.getTokenListText(discourseRelation.getDiscourseConnective())).isEqualTo(anExample.getDiscourseConnective());
+		return discourseRelation;
+	}
+	
 	public DiscourseRelation makeSimpleRelation(JCas aJCas, String arg1, String arg2, String dc){
 		String text = aJCas.getDocumentText();
 		int idxArg1 = text.indexOf(arg1);
@@ -96,6 +140,7 @@ public class DiscourseRelationFactory {
 			DiscourseArgument discourseArgument = new DiscourseArgument(aJCas);
 			discourseArgument.setArgumentType(argType.toString());
 			TokenListTools.initTokenList(aJCas, discourseArgument, args.get(idx++));
+			discourseArgument.setDiscouresRelation(discourseRelation);
 			arguments.add(discourseArgument);
 		}
 		

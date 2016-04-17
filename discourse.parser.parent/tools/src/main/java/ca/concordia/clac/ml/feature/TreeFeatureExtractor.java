@@ -154,12 +154,12 @@ public class TreeFeatureExtractor {
 	}
 
 	
-	public static Function<Annotation, Collection<Token>> getTokenList(Map<Constituent, ? extends Collection<Token>> constituentsToTokens){
+	public static Function<Annotation, Collection<Token>> getTokenList(Map<Constituent, ? extends Collection<Token>> constituentToTokens){
 		return (ann) -> {
 			if (ann instanceof Token)
 				return Collections.singletonList((Token) ann);
 			if (ann instanceof Constituent){
-				return constituentsToTokens.get(ann);
+				return constituentToTokens.get(ann);
 			}
 			return null;
 		};

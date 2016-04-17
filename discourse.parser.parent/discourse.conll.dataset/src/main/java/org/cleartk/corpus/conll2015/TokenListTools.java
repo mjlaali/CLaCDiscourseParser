@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.uima.cas.CASException;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.fit.util.FSCollectionFactory;
@@ -38,9 +39,16 @@ public class TokenListTools {
 
 	public static String getTokenListText(TokenList tokenList){
 		List<Token> tokens = TokenListTools.convertToTokens(tokenList);
+		String text;
+		try {
+			text = tokenList.getCAS().getJCas().getDocumentText();
+		} catch (CASException e) {
+			throw new RuntimeException(e);
+		}
 		StringBuilder sb = new StringBuilder();
 		for (Token token: tokens){
-			if (sb.length() != 0)
+			if (token.getBegin() > 0 && sb.length() > 0 && 
+					Character.isWhitespace(text.charAt(token.getBegin() - 1)))
 				sb.append(" ");
 			sb.append(token.getCoveredText());
 		}

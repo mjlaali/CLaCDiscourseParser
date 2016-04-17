@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.uima.fit.util.JCasUtil;
+import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
@@ -20,6 +21,11 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.ROOT;
 
 public class ArgumentInstanceExtractor implements Function<DiscourseConnective, List<DCTreeNodeArgInstance>>{
 	private int todoCnt;
+	private JCas aJCas;
+	
+	public ArgumentInstanceExtractor(JCas aJCas) {
+		this.aJCas = aJCas;
+	}
 
 	public List<DCTreeNodeArgInstance> apply(DiscourseConnective discourseConnective) {
 		List<Constituent> pathToRoot = getPathFromRoot(DiscourseConnective.class).apply(discourseConnective);
@@ -46,7 +52,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 		}
 		
 		List<DCTreeNodeArgInstance> instances = childeren.stream()
-				.map((child) -> new DCTreeNodeArgInstance(child, imediateDcParent))
+				.map((child) -> new DCTreeNodeArgInstance(child, imediateDcParent, aJCas))
 				.collect(Collectors.toList());
 		
 		Constituent root = pathToRoot.get(0);
@@ -55,7 +61,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 			Sentence prevSent = prevSents.get(0);
 			List<ROOT> prevSentRoots = JCasUtil.selectCovered(ROOT.class, prevSent);
 			if (prevSentRoots.size() > 0){
-				instances.add(0, new DCTreeNodeArgInstance(prevSentRoots.get(0), imediateDcParent));
+				instances.add(0, new DCTreeNodeArgInstance(prevSentRoots.get(0), imediateDcParent, aJCas));
 			}
 		}
 

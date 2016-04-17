@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typeSystemDescription xmlns="http://uima.apache.org/resourceSpecifier">
+    <name>ArgumentTreeNode</name>
+    <description/>
+    <version>1.0</version>
+    <vendor/>
+  <imports>
+    <import name="org.cleartk.discourse.type.DiscourseRelation"/>
+    <import name="desc.type.Constituency"/>
+  </imports>
+  <types>
+    <typeDescription>
+      <name>org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode</name>
+      <description/>
+      <supertypeName>uima.tcas.Annotation</supertypeName>
+      <features>
+        <featureDescription>
+          <name>treeNode</name>
+          <description/>
+          <rangeTypeName>uima.tcas.Annotation</rangeTypeName>
+        </featureDescription>
+        <featureDescription>
+          <name>discourseArgument</name>
+          <description/>
+          <rangeTypeName>org.cleartk.discourse.type.DiscourseArgument</rangeTypeName>
+        </featureDescription>
+      </features>
+    </typeDescription>
+  </types>
+</typeSystemDescription>

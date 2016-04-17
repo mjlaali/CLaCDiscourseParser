@@ -109,6 +109,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			if (wordEnd > sentEnd)
 				sentEnd = wordEnd;
 			sentTokens.add(conllToken);
+//			System.out.println("ConllSyntaxGoldAnnotator.addSyntaxInfo() " + i + " " + conllToken.getCoveredText() + " " + jsonWordInfo.toString());
 		}
 		
 		addDependencies(jsonSent, sentTokens, aJCas, sentBegin, sentEnd);
@@ -132,7 +133,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 //			DependencyNode aNode = new DependencyNode(aJCas, sentTokens.get(i).getBegin(), sentTokens.get(i).getEnd());
 //			nodes.add(aNode);
 //		}
-//		
+//		5
 		for (int i = 0; i < dependencies.length(); i++){
 			JSONArray aJsonDepRel = dependencies.getJSONArray(i);
 			String relationType = aJsonDepRel.getString(0);
@@ -149,7 +150,9 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			if ((head != null && !head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-')))) ||
 					(child != null  && !child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-'))))){
 				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
-					String.format("out of sync: %s <> %s, %s <> %s", head.getCoveredText(), govern, child.getCoveredText(), dep));
+					String.format("out of sync: %s <> %s, %s <> %s", 
+							head != null ? head.getCoveredText() : "null", govern, 
+							child != null ? child.getCoveredText() : "null", dep));
 				continue;
 			}
 			

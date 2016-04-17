@@ -47,6 +47,18 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, DCTreeNodeArgInstance>{
+	Map<Constituent, List<Token>> constituentToCoveredTokens = new HashMap<>();
+	JCas jcas = null;
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public Map<Constituent, List<Token>> initConstituentToCoveredTokens(JCas jCas) {
+		if (!jCas.equals(jcas)){
+			constituentToCoveredTokens.clear();
+			JCasUtil.indexCovered(jCas, Constituent.class, Token.class).forEach((cns, tokens) -> 
+			constituentToCoveredTokens.put(cns, (List)tokens));
+		}
+		return constituentToCoveredTokens;
+	}
 
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
@@ -55,7 +67,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 	@Override
 	public Function<DiscourseConnective, List<DCTreeNodeArgInstance>> getInstanceExtractor(JCas aJCas) {
-		return new ArgumentInstanceExtractor();
+		return new ArgumentInstanceExtractor(aJCas);
 	}
 	
 	public BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> getArgumentFeatureExtractor(){
@@ -171,8 +183,8 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 		
 		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> constituentFeatures =
 				(inst, dc) -> multiMap(childPatterns, ntCtx, path, pathSize
-//						, constituentFirstToken, constituentLastToken,
-//						tokenBeforeFirstToken, tokenAfterLastToken, mainVerb
+						, constituentFirstToken, constituentLastToken,
+						tokenBeforeFirstToken, tokenAfterLastToken, mainVerb
 						).apply(inst);
 				
 				
@@ -180,14 +192,9 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 	}
 	
 
-	Map<Constituent, List<Token>> constituentToCoveredTokens = new HashMap<>();
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		constituentToCoveredTokens.clear();
-		JCasUtil.indexCovered(jCas, Constituent.class, Token.class).forEach((cns, tokens) -> 
-		constituentToCoveredTokens.put(cns, (List)tokens));
-		
+		initConstituentToCoveredTokens(jCas);
 		BiFunction<DCTreeNodeArgInstance, DiscourseConnective, List<Feature>> biFunc = 
 				getArgumentFeatureExtractor();
 		return mapOneByOneTo(biFunc);
@@ -195,12 +202,14 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 	@Override
 	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
+		initConstituentToCoveredTokens(jCas);
 		return mapOneByOneTo(new LabelExtractor(true, constituentToCoveredTokens));
 	}
 
 	@Override
 	public SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance> getLabeller(JCas jCas) {
-		return new ArgumentConstructor(jCas);
+		initConstituentToCoveredTokens(jCas);
+		return new ArgumentConstructor(jCas, constituentToCoveredTokens);
 	}
 
 

@@ -6,13 +6,13 @@ package org.cleartk.discourse.type;
 import org.apache.uima.jcas.JCas; 
 import org.apache.uima.jcas.JCasRegistry;
 import org.apache.uima.jcas.cas.TOP_Type;
-
+import org.cleartk.corpus.conll2015.RelationType;
 import org.apache.uima.jcas.cas.FSArray;
 
 
 /** 
- * Updated by JCasGen Thu Nov 19 12:08:03 EST 2015
- * XML source: /Users/majid/Documents/workspace/clac-parser/clac.discourse.parser/conll.dataset/src/main/resources/org/cleartk/discourse/TypeSystem.xml
+ * Updated by JCasGen Fri Apr 15 12:41:45 EDT 2016
+ * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/discourse/type/DiscourseArgument.xml
  * @generated */
 public class DiscourseRelation extends TokenList {
   /** @generated
@@ -63,6 +63,16 @@ public class DiscourseRelation extends TokenList {
     readObject();
   }   
 
+  @Override
+	public void addToIndexes(JCas jcas) {
+		super.addToIndexes(jcas);
+		if (getDiscourseConnective() != null)
+			getDiscourseConnective().addToIndexes(jcas);
+		for (int i = 0; i < getArguments().size(); i++){
+			getArguments(i).addToIndexes();
+		}
+	}
+  
   /** 
    * <!-- begin-user-doc -->
    * Write your own initialization here

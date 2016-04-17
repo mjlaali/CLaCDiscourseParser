@@ -13,7 +13,7 @@ import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
 
 /** 
- * Updated by JCasGen Thu Nov 19 12:08:03 EST 2015
+ * Updated by JCasGen Fri Apr 15 12:41:45 EDT 2016
  * @generated */
 public class DiscourseArgument_Type extends TokenList_Type {
   /** @generated 
@@ -66,6 +66,30 @@ public class DiscourseArgument_Type extends TokenList_Type {
     ll_cas.ll_setStringValue(addr, casFeatCode_argumentType, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_discouresRelation;
+  /** @generated */
+  final int     casFeatCode_discouresRelation;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getDiscouresRelation(int addr) {
+        if (featOkTst && casFeat_discouresRelation == null)
+      jcas.throwFeatMissing("discouresRelation", "org.cleartk.discourse.type.DiscourseArgument");
+    return ll_cas.ll_getRefValue(addr, casFeatCode_discouresRelation);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setDiscouresRelation(int addr, int v) {
+        if (featOkTst && casFeat_discouresRelation == null)
+      jcas.throwFeatMissing("discouresRelation", "org.cleartk.discourse.type.DiscourseArgument");
+    ll_cas.ll_setRefValue(addr, casFeatCode_discouresRelation, v);}
+    
+  
 
 
 
@@ -81,6 +105,10 @@ public class DiscourseArgument_Type extends TokenList_Type {
  
     casFeat_argumentType = jcas.getRequiredFeatureDE(casType, "argumentType", "uima.cas.String", featOkTst);
     casFeatCode_argumentType  = (null == casFeat_argumentType) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_argumentType).getCode();
+
+ 
+    casFeat_discouresRelation = jcas.getRequiredFeatureDE(casType, "discouresRelation", "org.cleartk.discourse.type.DiscourseRelation", featOkTst);
+    casFeatCode_discouresRelation  = (null == casFeat_discouresRelation) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_discouresRelation).getCode();
 
   }
 }
