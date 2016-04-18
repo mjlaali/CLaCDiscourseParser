@@ -7,6 +7,7 @@ import java.net.URL;
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -23,8 +24,14 @@ public class ArgumentSequenceLabeler {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
 	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + PACKAGE_DIR);
 	
+	public static final String SEQUENCE_TAGGER = "sequenceTagger";
+	public static final String NONE_NODE_TAGGER = "noneNodeTagger";
+	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
-		return ArgumentLabelerAlgorithmFactory.getWriterDescription(outputDirectory.getAbsolutePath());
+		AggregateBuilder aggregateBuilder = new AggregateBuilder();
+		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath()));
+		aggregateBuilder.add(NoneNodeLabeller.getWriterDescription(new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath()));
+		return aggregateBuilder.createAggregateDescription();
 	}
 
 	public static AnalysisEngineDescription getClassifierDescription() throws ResourceInitializationException, MalformedURLException {
@@ -32,14 +39,20 @@ public class ArgumentSequenceLabeler {
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
-		URL modelUrl = new URL(packageDir, "model.jar");
-		return ArgumentLabelerAlgorithmFactory.getClassifierDescription(modelUrl.toString());
+		URL sequenceTaggerModel = new URL(packageDir, SEQUENCE_TAGGER + "/model.jar");
+		URL noneNodeTaggerModel = new URL(packageDir, NONE_NODE_TAGGER + "/model.jar");
+		
+		AggregateBuilder aggregateBuilder = new AggregateBuilder();
+		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getClassifierDescription(sequenceTaggerModel.toString()));
+		aggregateBuilder.add(NoneNodeLabeller.getClassifierDescription(noneNodeTaggerModel.toString()));
+		
+		return aggregateBuilder.createAggregateDescription();
 	}
 	
 	
 	public static void main(String[] args) throws Exception {
 		new File("outputs/patterns.txt").delete();
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
@@ -60,7 +73,8 @@ public class ArgumentSequenceLabeler {
 				getWriterDescription(outputDirectory)
 				);
 
-		 Train.main(outputDirectory);
+		for (File aComponent: outputDirectory.listFiles())
+			Train.main(aComponent);
 	}
 
 }

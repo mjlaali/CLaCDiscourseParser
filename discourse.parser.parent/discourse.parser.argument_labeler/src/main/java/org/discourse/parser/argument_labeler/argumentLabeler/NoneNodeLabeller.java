@@ -19,15 +19,25 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseRelation;
+import org.cleartk.ml.CleartkSequenceAnnotator;
 import org.cleartk.ml.Feature;
+import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
+import org.cleartk.ml.jar.DirectoryDataWriterFactory;
+import org.cleartk.ml.jar.GenericJarClassifierFactory;
+import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
+import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
+import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
@@ -83,12 +93,23 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 		Map<Token, Dependency> dependencies = getDependantDependency().apply(jCas);
 		Function<Annotation, Token> headFinder = getHead(dependencies, getTokenList(constituentToCoveredTokens));
 		
-		BiFunction<Annotation, ArgumentTreeNode, Feature> nodeHead = makeBiFunc(headFinder.andThen(Token::getCoveredText)
+		BiFunction<Annotation, ArgumentTreeNode, Feature> nodeHead = makeBiFunc(headFinder.andThen((h) -> h == null ? "null" : h.getCoveredText())
 				.andThen(String::toLowerCase).andThen(makeFeature("nodeHead")));
 		
 		BiFunction<Annotation, ArgumentTreeNode, Feature> consType = makeBiFunc(getConstituentType().andThen(makeFeature("consType")));
 		
-		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> annotationFeatureExtractor = multiBiFuncMap(nodeHead, consType);
+		BiFunction<Annotation, ArgumentTreeNode, String> position = (ann, nodeInstance) -> {
+			Annotation node = nodeInstance.getTreeNode();
+			if (node.getBegin() == ann.getBegin())
+				return "left";
+			if (node.getEnd() == ann.getEnd())
+				return "right";
+			return "middle";
+		};
+		BiFunction<Annotation, ArgumentTreeNode, Feature> positionFeature = position.andThen(makeFeature("position")); 
+		
+		
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> annotationFeatureExtractor = multiBiFuncMap(nodeHead, consType, positionFeature);
 		return mapOneByOneTo(annotationFeatureExtractor);
 	}
 
@@ -110,5 +131,27 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 	public SequenceClassifierConsumer<String, ArgumentTreeNode, Annotation> getLabeller(JCas jCas) {
 		return new PurifyDiscourseRelations();
 	}
+
+	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
+		return AnalysisEngineFactory.createEngineDescription(StringSequenceClassifier.class,
+				GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
+				NoneNodeLabeller.class.getName(),
+				CleartkSequenceAnnotator.PARAM_IS_TRAINING,
+		        true,
+		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
+		        outputDirectory,
+		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
+		        MalletCrfStringOutcomeDataWriter.class);
+	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(String modelFileName) throws ResourceInitializationException {
+		return AnalysisEngineFactory.createEngineDescription(
+		        StringSequenceClassifier.class,
+		        GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
+		        NoneNodeLabeller.class.getName(),
+		        GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH,
+		        modelFileName);
+	}
+	
 
 }

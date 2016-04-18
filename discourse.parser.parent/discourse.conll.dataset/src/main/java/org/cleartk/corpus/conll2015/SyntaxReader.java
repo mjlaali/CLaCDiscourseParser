@@ -116,8 +116,8 @@ public class SyntaxReader{
 			
 			if ((head != null && !head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-')))) ||
 					(child != null  && !child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-'))))){
-				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
-					String.format("out of sync: %s <> %s, %s <> %s", 
+				System.err.println("SyntaxReader.addDependency() " + 
+					String.format("Out of sync: %s <> %s, %s <> %s", 
 							head != null ? head.getCoveredText() : "null", govern, 
 							child != null ? child.getCoveredText() : "null", dep));
 				continue;

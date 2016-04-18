@@ -1,8 +1,5 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +23,7 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 	private boolean errorAnalysis; 
 //	private Set<String> uniqWords = new HashSet<>();
 	private Map<Constituent, Set<Token>> constituentsToTokens = new HashMap<>();
-	private PrintStream output = null;
+//	private PrintStream output = null;
 	
 	public LabelExtractor(boolean errorAnalysis, Map<Constituent, List<Token>> constituentsToTokens) {
 		this.errorAnalysis = errorAnalysis;
@@ -36,11 +33,11 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 
 	@Override
 	public String apply(DCTreeNodeArgInstance instance, DiscourseConnective dc) {
-		try {
-			output = new PrintStream(new FileOutputStream("outputs/patterns.txt", true));
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		}
+//		try {
+//			output = new PrintStream(new FileOutputStream("outputs/patterns.txt", true));
+//		} catch (FileNotFoundException e) {
+//			throw new RuntimeException(e);
+//		}
 		
 
 		DiscourseRelation discourseRelation = dc.getDiscourseRelation();
@@ -53,7 +50,7 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 			createArgTreeNode(instance, dc, res);
 		}
 		
-		output.close();
+//		output.close();
 		return res.toString();
 	}
 

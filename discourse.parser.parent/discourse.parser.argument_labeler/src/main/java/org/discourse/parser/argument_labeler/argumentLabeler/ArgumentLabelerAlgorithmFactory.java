@@ -203,7 +203,7 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 	@Override
 	public BiFunction<List<DCTreeNodeArgInstance>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
 		initConstituentToCoveredTokens(jCas);
-		return mapOneByOneTo(new LabelExtractor(true, constituentToCoveredTokens));
+		return mapOneByOneTo(new LabelExtractor(false, constituentToCoveredTokens));
 	}
 
 	@Override

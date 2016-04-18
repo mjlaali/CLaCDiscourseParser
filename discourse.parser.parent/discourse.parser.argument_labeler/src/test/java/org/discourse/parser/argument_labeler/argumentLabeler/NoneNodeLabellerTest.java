@@ -97,16 +97,15 @@ public class NoneNodeLabellerTest{
 					.collect(Collectors.joining("-")))
 			.collect(Collectors.toList());
 		
-		System.out.println(strFeatures);
 		String[] goldFeatures = new String[]{
-				"<nodeHead:impression>-<consType:NP>",
-				"<nodeHead:impression>-<consType:NP>",
-				"<nodeHead:the>-<consType:DT>",
-				"<nodeHead:impression>-<consType:NN>",
-				"<nodeHead:got>-<consType:SBAR>",
-				"<nodeHead:got>-<consType:S>",
-				"<nodeHead:i>-<consType:NP>",
-				"<nodeHead:i>-<consType:PRP>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>",
+				"<nodeHead:the>-<consType:DT>-<position:left>",
+				"<nodeHead:impression>-<consType:NN>-<position:middle>",
+				"<nodeHead:got>-<consType:SBAR>-<position:middle>",
+				"<nodeHead:got>-<consType:S>-<position:middle>",
+				"<nodeHead:i>-<consType:NP>-<position:middle>",
+				"<nodeHead:i>-<consType:PRP>-<position:middle>",
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);
