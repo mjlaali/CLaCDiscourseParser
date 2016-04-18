@@ -3,7 +3,6 @@ package org.cleartk.corpus.conll2015;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ public class DiscourseRelationFactory {
 	public DiscourseRelation makeDiscourseRelationFrom(JCas aJCas, DiscourseRelationExample anExample) throws AnalysisEngineProcessException{
 		aJCas.setDocumentText(anExample.getText());
 		String text = aJCas.getDocumentText(); 
-		new SyntaxReader().addSyntaxInformation(aJCas,anExample.getParseTree());;
+		new SyntaxReader().addSyntaxInformation(aJCas, anExample.getParseTree(), anExample.getDependencies());;
 		List<Token> tokens = new ArrayList<Token>(JCasUtil.select(aJCas, Token.class));
 		List<String> strTokens = tokens.stream().map(Token::getCoveredText).collect(Collectors.toList());
 		int dcIndex = strTokens.indexOf(anExample.getDiscourseConnective());

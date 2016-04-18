@@ -74,7 +74,9 @@ public class TerminalOutputWriter extends JCasAnnotator_ImplBase{
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		featureToId.clear();
+//		prune(aJCas);
 		Collection<TokenList> selected = JCasUtil.select(aJCas, TokenList.class);
+		selected.stream().forEach((fs) -> featureToId.put(fs, featureToId.size())); 
 		
 		List<TokenList> sortedByStart = new ArrayList<>(selected);
 		List<TokenList> sortedByEnd = new ArrayList<>(selected);
@@ -83,17 +85,23 @@ public class TerminalOutputWriter extends JCasAnnotator_ImplBase{
 			int diff = a.getBegin() - b.getBegin();
 			if (diff == 0){
 				diff = b.getEnd() - a.getEnd();
-			}
+			} 
 				
+			if (diff == 0){
+				diff = featureToId.get(a) - featureToId.get(b);
+			}
 			return diff;
 		});
 
 		Collections.sort(sortedByEnd, (a, b) -> {
 			int diff = a.getEnd() - b.getEnd();
 			if (diff == 0){
-				diff = a.getBegin() - b.getBegin();
+				diff = b.getBegin() - a.getBegin();
 			}
-				
+			if (diff == 0){
+				diff = featureToId.get(b) - featureToId.get(a);
+			}
+
 			return diff;
 		});
 
@@ -120,6 +128,18 @@ public class TerminalOutputWriter extends JCasAnnotator_ImplBase{
 		}
 		
 	}
+
+//	private void prune(JCas aJCas) {
+//		List<DiscourseRelation> relations = new ArrayList<>(JCasUtil.select(aJCas, DiscourseRelation.class));
+//		for (DiscourseRelation rel: relations){
+//			if (rel.getRelationType().equals("Explicit")){
+//				rel.removeFromIndexes();
+//				rel.getDiscourseConnective().removeFromIndexes();
+//				for (int i = 0; i < 2; i++)
+//					rel.getArguments(i).removeFromIndexes();
+//			}
+//		}
+//	}
 
 	private void printTokenList(List<TokenList> sortedTokenList, int activeTokenList) {
 		TokenList toBePrinted = sortedTokenList.get(activeTokenList);

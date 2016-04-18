@@ -31,7 +31,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 		List<Constituent> pathToRoot = getPathFromRoot(DiscourseConnective.class).apply(discourseConnective);
 				
 		if (pathToRoot.size() == 0){
-			System.out.println("Arg2Labeler.process(): TODO [" + (todoCnt++)
+			System.out.println("ArgumentInstanceExtractor.apply(): TODO [" + (todoCnt++)
 					+ "]\t<" + TokenListTools.getTokenListText(discourseConnective) +
 					">\t:" + discourseConnective.getCoveredText());
 			return Collections.emptyList();

@@ -27,7 +27,6 @@ import org.json.JSONObject;
 
 import de.tudarmstadt.ukp.dkpro.core.api.lexmorph.type.pos.POS;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 @TypeCapability(outputs = {"org.cleartk.token.type.Sentence", "org.cleartk.corpus.conll2015.type.ConllToken"})
@@ -109,7 +108,6 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			if (wordEnd > sentEnd)
 				sentEnd = wordEnd;
 			sentTokens.add(conllToken);
-//			System.out.println("ConllSyntaxGoldAnnotator.addSyntaxInfo() " + i + " " + conllToken.getCoveredText() + " " + jsonWordInfo.toString());
 		}
 		
 		addDependencies(jsonSent, sentTokens, aJCas, sentBegin, sentEnd);
@@ -123,64 +121,11 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 
 	private void addDependencies(JSONObject jsonSent, List<Token> sentTokens, JCas aJCas, int sentBegin, int sentEnd) throws JSONException, AnalysisEngineProcessException {
 		JSONArray dependencies = jsonSent.getJSONArray("dependencies");
-
-//		ArrayListMultimap<DependencyNode, DependencyRelation> headRelations = ArrayListMultimap.create();
-//		ArrayListMultimap<DependencyNode, DependencyRelation> childRelations = ArrayListMultimap.create();
-//		List<DependencyNode> nodes = new ArrayList<DependencyNode>();
-//
-//		nodes.add(new TopDependencyNode(aJCas, sentBegin, sentEnd));
-//		for (int i = 0; i < sentTokens.size(); i++){
-//			DependencyNode aNode = new DependencyNode(aJCas, sentTokens.get(i).getBegin(), sentTokens.get(i).getEnd());
-//			nodes.add(aNode);
-//		}
-//		5
-		for (int i = 0; i < dependencies.length(); i++){
-			JSONArray aJsonDepRel = dependencies.getJSONArray(i);
-			String relationType = aJsonDepRel.getString(0);
-			String govern = aJsonDepRel.getString(1);
-			String dep = aJsonDepRel.getString(2);
-
-			int governIdx = Integer.parseInt(govern.substring(govern.lastIndexOf('-') + 1));
-			int depIdx = Integer.parseInt(dep.substring(dep.lastIndexOf('-') + 1));
-			
-			//we do not have root token therefore we model it as a null value.
-			Token head = governIdx == 0 ? null : sentTokens.get(governIdx - 1);
-			Token child = depIdx == 0 ? null : sentTokens.get(depIdx - 1);
-			
-			if ((head != null && !head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-')))) ||
-					(child != null  && !child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-'))))){
-				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
-					String.format("out of sync: %s <> %s, %s <> %s", 
-							head != null ? head.getCoveredText() : "null", govern, 
-							child != null ? child.getCoveredText() : "null", dep));
-				continue;
-			}
-			
-			Dependency relation = new Dependency(aJCas);
-
-			relation.setGovernor(head);
-			relation.setDependent(child);
-			relation.setDependencyType(relationType);
-			relation.addToIndexes();
-//			headRelations.put(child, relation);
-//			childRelations.put(head, relation);
-		}
-//
-//		// set the relations for each node annotation
-//		for (DependencyNode node : nodes) {
-//			List<DependencyRelation> heads = headRelations.get(node);
-//			node.setHeadRelations(new FSArray(aJCas, heads == null ? 0 : heads.size()));
-//			if (heads != null) {
-//				FSCollectionFactory.fillArrayFS(node.getHeadRelations(), heads);
-//			}
-//			List<DependencyRelation> children = childRelations.get(node);
-//			node.setChildRelations(new FSArray(aJCas, children == null ? 0 : children.size()));
-//			if (children != null) {
-//				FSCollectionFactory.fillArrayFS(node.getChildRelations(), children);
-//			}
-//			node.addToIndexes();
-//		}
+		List<List<String>> dependeciesValues = DiscourseRelationExample.jSonToList(dependencies);
+		syntaxReader.addDependency(sentTokens, aJCas, dependeciesValues);
 	}
+
+	
 	
 	public static void main(String[] args) throws UIMAException, IOException {
 		String base = "/Users/majid/Documents/git/french-connective-disambiguation/connective-disambiguation/data/pdtb/";

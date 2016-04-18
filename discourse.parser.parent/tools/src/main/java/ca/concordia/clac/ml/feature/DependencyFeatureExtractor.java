@@ -29,7 +29,7 @@ public class DependencyFeatureExtractor {
 		};
 	}
 	
-	public static Function<Annotation, Token> getHead(Map<Token, Dependency> dependantToDependencies,
+	public static Function<Annotation, Token> getHead(final Map<Token, Dependency> dependantToDependencies,
 			Function<Annotation, ? extends Collection<Token>> getTokens){
 		return (ann) -> {
 			if (ann instanceof Token)
@@ -47,6 +47,10 @@ public class DependencyFeatureExtractor {
 					if (dependency == null){	//not valid token. it does not attach to anyone!
 						if (remaining.size() > 0)
 							aToken = remaining.iterator().next();
+						else{
+							head = null;
+							break;
+						}
 					} else {
 						aToken = dependency.getGovernor();
 					}

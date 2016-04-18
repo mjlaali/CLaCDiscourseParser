@@ -1,5 +1,7 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
+import java.util.List;
+
 import org.cleartk.corpus.conll2015.DiscourseRelationExample;
 
 public class KongExample implements DiscourseRelationExample{
@@ -37,6 +39,11 @@ public class KongExample implements DiscourseRelationExample{
 	@Override
 	public String getSense() {
 		return "???";
+	}
+
+	@Override
+	public List<List<List<String>>> getDependencies() {
+		return null;
 	}
 	
 }

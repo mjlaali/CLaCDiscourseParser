@@ -1,5 +1,7 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
+import java.util.List;
+
 import org.apache.uima.jcas.JCas;
 import org.cleartk.corpus.conll2015.DiscourseRelationExample;
 import org.cleartk.discourse.type.DiscourseRelation;
@@ -49,4 +51,10 @@ public class AdditionallyExample implements DiscourseRelationExample {
 		return text;
 	}
 
+	@Override
+	public List<List<List<String>>> getDependencies() {
+		return null;
+	}
+
+	
 }

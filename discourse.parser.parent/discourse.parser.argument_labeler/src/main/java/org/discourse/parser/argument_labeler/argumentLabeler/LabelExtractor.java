@@ -1,18 +1,16 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
-import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.uima.jcas.tcas.Annotation;
@@ -26,13 +24,13 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, DiscourseConnective, String>{
 	private boolean errorAnalysis; 
-	private Set<String> uniqWords = new HashSet<>();
-	private Map<Constituent, List<Token>> constituentsToTokens;
+//	private Set<String> uniqWords = new HashSet<>();
+	private Map<Constituent, Set<Token>> constituentsToTokens = new HashMap<>();
 	private PrintStream output = null;
 	
 	public LabelExtractor(boolean errorAnalysis, Map<Constituent, List<Token>> constituentsToTokens) {
 		this.errorAnalysis = errorAnalysis;
-		this.constituentsToTokens = constituentsToTokens;
+		constituentsToTokens.forEach((k, v) -> this.constituentsToTokens.put(k, new HashSet<Token>(v)));
 		
 	}
 
@@ -44,33 +42,62 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 			throw new RuntimeException(e);
 		}
 		
-		NodeArgType res;
 
 		DiscourseRelation discourseRelation = dc.getDiscourseRelation();
 		if (discourseRelation == null)
 			return null;
 
-		List<Token> arg1Tokens = TokenListTools.convertToTokens(discourseRelation.getArguments(0));
-		List<Token> arg2Tokens = TokenListTools.convertToTokens(discourseRelation.getArguments(1));
-		List<Token> dcTokens = TokenListTools.convertToTokens(dc);
-
-		Annotation ann = instance.getNode();
-		List<Token> nodeTokens = getCoveredToken(ann);
-
-		res = extractLabel(arg1Tokens, arg2Tokens, dcTokens, nodeTokens);
-
-		if (res == NodeArgType.None){
-			if (errorAnalysis){
-				res = secondLevelAnalysis(arg1Tokens, arg2Tokens, dcTokens, ann, nodeTokens);
-				if (res != NodeArgType.None)
-					printPattern(arg1Tokens, arg2Tokens, dcTokens, ann, 0);
-			}
-		} else {
+		NodeArgType res = getNodeLabel(instance.getNode(), discourseRelation, constituentsToTokens, errorAnalysis);
+		
+		if (res == NodeArgType.Arg1 || res == NodeArgType.Arg2){
 			createArgTreeNode(instance, dc, res);
 		}
-
+		
 		output.close();
 		return res.toString();
+	}
+
+	public static NodeArgType getNodeLabel(Annotation ann, DiscourseRelation discourseRelation, 
+			Map<Constituent, Set<Token>> constituentsToTokens, boolean errorAnalysis) {
+		Set<Token> arg1Tokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getArguments(0)));
+		Set<Token> arg2Tokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getArguments(1)));
+		Set<Token> dcTokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getDiscourseConnective()));
+
+		Set<Token> nodeTokens = getCoveredToken(ann, constituentsToTokens);
+		
+		Set<Token> noneTokens = new HashSet<>(nodeTokens);
+		noneTokens.removeAll(arg1Tokens);
+		noneTokens.removeAll(arg2Tokens);
+		noneTokens.removeAll(dcTokens);
+		
+		//divide node's tokens into different sets
+		arg1Tokens.retainAll(nodeTokens);
+		arg2Tokens.retainAll(nodeTokens);
+		dcTokens.retainAll(nodeTokens);
+		noneTokens.retainAll(nodeTokens);
+
+		int[] cnts = {arg1Tokens.size(), arg2Tokens.size(), dcTokens.size(), noneTokens.size()};
+		NodeArgType[] labels = {NodeArgType.Arg1, NodeArgType.Arg2, NodeArgType.DC, NodeArgType.None};
+		
+		NodeArgType res = NodeArgType.None;
+		int max = 0;
+		for (int i = 0; i < cnts.length; i++){
+			if (cnts[i] > max){
+				max = cnts[i];
+				res = labels[i];
+			}
+		}
+		
+		if (errorAnalysis && nodeTokens.size() > max){
+			System.out.println("LabelExtractor.apply()");
+			System.out.println(Arrays.toString(cnts));
+			Function<Set<Token>, String> convertToStr = (lst) -> lst.stream().map(Token::getCoveredText).collect(Collectors.joining(" "));
+			System.out.printf("<%s> <%s> <%s> <%s>\n", convertToStr.apply(arg1Tokens), 
+					convertToStr.apply(arg2Tokens), 
+					convertToStr.apply(dcTokens), 
+					convertToStr.apply(noneTokens));
+		}
+		return res;
 	}
 
 	public static void createArgTreeNode(DCTreeNodeArgInstance instance, DiscourseConnective dc, NodeArgType res) {
@@ -90,59 +117,11 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 		argTreeNode.addToIndexes();
 	}
 
-	private NodeArgType secondLevelAnalysis(List<Token> arg1Tokens, List<Token> arg2Tokens,
-			List<Token> dcTokens, Annotation ann, List<Token> nodeTokens) {
-		int cntArg1, cntArg2, cntDC;
-		int size = nodeTokens.size();
-		List<Token> nonNodes = new ArrayList<>(nodeTokens);
-		nonNodes.removeAll(arg2Tokens);
-		cntArg2 = size - nonNodes.size();
-		nonNodes.removeAll(arg1Tokens);
-		cntArg1 = size - nonNodes.size() - cntArg2;
-		nonNodes.removeAll(dcTokens);
-		cntDC = size - nonNodes.size() - cntArg2 - cntArg1;
-
-		NodeArgType res = NodeArgType.None;
-		int[] cnts = {cntArg1, cntArg2, cntDC};
-		NodeArgType[] labels = {NodeArgType.Arg1, NodeArgType.Arg2, NodeArgType.DC};
-		int max = 0;
-		for (int i = 0; i < cnts.length; i++){
-			if (cnts[i] > max){
-				max = cnts[i];
-				res = labels[i];
-			}
-		}
-		
-		
-		if (errorAnalysis){
-//					System.out.println(Arrays.toString(cnts));
-			if (res != NodeArgType.None){
-				List<String> words = nonNodes.stream().map(Token::getCoveredText).collect(Collectors.toList());
-				uniqWords.addAll(words);
-				String toStr = words.stream().collect(Collectors.joining(" "));
-				System.out.printf("None tokens: %s\n", toStr);
-				System.out.printf("Constituent Text: %s\n", ann.getCoveredText());
-				System.out.println();
-				
-				switch (res) {
-				case Arg1:
-					return NodeArgType.None_Arg1;
-				case Arg2:
-					return NodeArgType.None_Arg2;
-				case DC:
-					return NodeArgType.None_DC;
-
-				default:
-				}
-			}
-		}
-		return res;
-	}
-
-	private List<Token> getCoveredToken(Annotation ann) {
-		List<Token> nodeTokens;
+	private static Set<Token> getCoveredToken(Annotation ann, Map<Constituent, Set<Token>> constituentsToTokens ) {
+		Set<Token> nodeTokens;
 		if (ann instanceof Token){
-			nodeTokens = Collections.singletonList((Token)ann);
+			nodeTokens = new HashSet<Token>();
+			nodeTokens.add((Token)ann);
 		} else if (ann instanceof Constituent)
 			nodeTokens = constituentsToTokens.get(ann);
 		else 
@@ -150,40 +129,41 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 		return nodeTokens;
 	}
 
-	private void printPattern(List<Token> arg1Tokens, List<Token> arg2Tokens, List<Token> dcTokens,
-			Annotation constituent, int level) {
-		List<Annotation> childeren = getChilderen().apply(constituent);
-		StringBuilder sb = new StringBuilder();
-		for (Annotation child: childeren){
-			String type = getConstituentType().apply(child);
-			List<Token> nodeTokens = getCoveredToken(child);
-			NodeArgType label = extractLabel(arg1Tokens, arg2Tokens, dcTokens, nodeTokens);
-			if (label == NodeArgType.None)
-				label = secondLevelAnalysis(arg1Tokens, arg2Tokens, dcTokens, constituent, nodeTokens);
-			
-			sb.append(" (" + type + ":" + label + ")");
-		}
-		if (sb.length() > 0)
-			output.println(level + "\t" + sb.toString());
-		
-		for (Annotation child: childeren){
-			printPattern(arg1Tokens, arg2Tokens, dcTokens, child, level + 1);
-		}
-	}
+//	private void printPattern(Set<Token> arg1Tokens, Set<Token> arg2Tokens, Set<Token> dcTokens,
+//			Annotation constituent, int level) {
+//		List<Annotation> childeren = getChilderen().apply(constituent);
+//		StringBuilder sb = new StringBuilder();
+//		for (Annotation child: childeren){
+//			String type = getConstituentType().apply(child);
+//			Set<Token> nodeTokens = getCoveredToken(child);
+//			NodeArgType label = extractLabel(arg1Tokens, arg2Tokens, dcTokens, nodeTokens);
+//			if (label == NodeArgType.None_Mixed)
+//				label = secondLevelAnalysis(arg1Tokens, arg2Tokens, dcTokens, constituent, nodeTokens);
+//			
+//			sb.append(" (" + type + ":" + label + ")");
+//		}
+//		if (sb.length() > 0)
+//			output.println(level + "\t" + sb.toString());
+//		
+//		for (Annotation child: childeren){
+//			printPattern(arg1Tokens, arg2Tokens, dcTokens, child, level + 1);
+//		}
+//	}
 
-	private NodeArgType extractLabel(List<Token> arg1Tokens, List<Token> arg2Tokens, List<Token> dcTokens,
-			List<Token> nodeTokens) {
-		NodeArgType res;
-		if (arg1Tokens.containsAll(nodeTokens))
-			res = NodeArgType.Arg1;
-		else if (arg2Tokens.containsAll(nodeTokens))
-			res = NodeArgType.Arg2;
-		else if (dcTokens.containsAll(nodeTokens)){
-			res = NodeArgType.DC;
-		} else {
-			res = NodeArgType.None;
-		}
-		return res;
-	}
+//	private NodeArgType extractLabel(Set<Token> arg1Tokens, Set<Token> arg2Tokens, Set<Token> dcTokens, Set<Token> noneTokens,
+//			Set<Token> nodeTokens) {
+//		NodeArgType res;
+//		if (arg1Tokens.containsAll(nodeTokens))
+//			res = NodeArgType.Arg1;
+//		else if (arg2Tokens.containsAll(nodeTokens))
+//			res = NodeArgType.Arg2;
+//		else if (dcTokens.containsAll(nodeTokens)){
+//			res = NodeArgType.DC;
+//		} else if (noneTokens.containsAll(nodeTokens)){
+//			res = NodeArgType.None;
+//		} else
+//			res = NodeArgType.Mixed;
+//		return res;
+//	}
 
 }

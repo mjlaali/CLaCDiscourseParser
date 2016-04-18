@@ -1,7 +1,9 @@
 package org.cleartk.corpus.conll2015;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.util.JCasUtil;
@@ -15,6 +17,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.resources.MappingProviderFactory;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.ROOT;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeNode;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeToJCasConverter;
 import de.tudarmstadt.ukp.dkpro.core.io.penntree.PennTreeUtils;
@@ -70,7 +73,7 @@ public class SyntaxReader{
 	
 	}
 	
-	public void addSyntaxInformation(JCas aJCas, String[] parseTrees) throws AnalysisEngineProcessException{
+	public void addSyntaxInformation(JCas aJCas, String[] parseTrees, List<List<List<String>>> sentencesDependencies) throws AnalysisEngineProcessException{
 		int begin = 0;
 		for (String parseTree: parseTrees){
 			int end = tokenize(aJCas, begin, parseTree);
@@ -88,6 +91,44 @@ public class SyntaxReader{
 				System.err.println(parseTree);
 				e.printStackTrace();
 			}
+		}
+		
+		List<Sentence> sentences = new ArrayList<>(JCasUtil.select(aJCas, Sentence.class));
+		Map<Sentence, Collection<Token>> indexCovered = JCasUtil.indexCovered(aJCas, Sentence.class, Token.class);
+		
+		for (int i = 0; sentencesDependencies != null && i < sentencesDependencies.size(); i++){
+			ArrayList<Token> sentTokens = new ArrayList<>(indexCovered.get(sentences.get(i)));
+			addDependency(sentTokens, aJCas, sentencesDependencies.get(i));
+		}
+	}
+	
+	public void addDependency(List<Token> sentTokens, JCas aJCas, List<List<String>> dependeciesValues) {
+		for (List<String> aDependencyValue: dependeciesValues){
+			String relationType = aDependencyValue.get(0);
+			String govern = aDependencyValue.get(1);
+			String dep = aDependencyValue.get(2);
+			int governIdx = Integer.parseInt(govern.substring(govern.lastIndexOf('-') + 1));
+			int depIdx = Integer.parseInt(dep.substring(dep.lastIndexOf('-') + 1));
+			
+			//we do not have root token therefore we model it as a null value.
+			Token head = governIdx == 0 ? null : sentTokens.get(governIdx - 1);
+			Token child = depIdx == 0 ? null : sentTokens.get(depIdx - 1);
+			
+			if ((head != null && !head.getCoveredText().equals(govern.substring(0, govern.lastIndexOf('-')))) ||
+					(child != null  && !child.getCoveredText().equals(dep.substring(0, dep.lastIndexOf('-'))))){
+				System.err.println("ConllSyntaxGoldAnnotator.addDependencies()" + 
+					String.format("out of sync: %s <> %s, %s <> %s", 
+							head != null ? head.getCoveredText() : "null", govern, 
+							child != null ? child.getCoveredText() : "null", dep));
+				continue;
+			}
+			
+			Dependency relation = new Dependency(aJCas);
+
+			relation.setGovernor(head);
+			relation.setDependent(child);
+			relation.setDependencyType(relationType);
+			relation.addToIndexes();
 		}
 	}
 
