@@ -65,7 +65,7 @@ public class ConllEvaluation {
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
 		
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File(inputDataset), mode);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File(inputDataset), mode);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 

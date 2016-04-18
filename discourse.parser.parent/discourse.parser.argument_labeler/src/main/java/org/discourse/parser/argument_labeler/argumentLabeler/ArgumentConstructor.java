@@ -32,6 +32,9 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 		List<Token> arg2Tokens = new ArrayList<>();
 		List<Token> dcTokens = new ArrayList<>();
 		
+		List<DCTreeNodeArgInstance> nodesToBeAdded = new ArrayList<>();
+		List<NodeArgType> types = new ArrayList<>();
+		
 		for (int i = 0; i < outcomes.size(); i++){
 			NodeArgType nodeType = NodeArgType.valueOf(outcomes.get(i));
 			DCTreeNodeArgInstance instance = instances.get(i);
@@ -40,11 +43,13 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 			switch (nodeType) {
 			case Arg1:
 				arg1Tokens.addAll(tokens);
-				LabelExtractor.createArgTreeNode(instance, dc, NodeArgType.Arg1);
+				nodesToBeAdded.add(instance);
+				types.add(NodeArgType.Arg1);
 				break;
 			case Arg2:
 				arg2Tokens.addAll(tokens);
-				LabelExtractor.createArgTreeNode(instance, dc, NodeArgType.Arg2);
+				nodesToBeAdded.add(instance);
+				types.add(NodeArgType.Arg2);
 				break;
 			case DC:
 				dcTokens.addAll(tokens);
@@ -56,6 +61,13 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 		
 		DiscourseRelation relation = relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens);
 		relation.addToIndexes();
+		relation.getArguments(0).addToIndexes();
+		relation.getArguments(1).addToIndexes();
+		
+
+		for (int i = 0; i < nodesToBeAdded.size(); i++){
+			LabelExtractor.createArgTreeNode(nodesToBeAdded.get(i), dc, types.get(i));
+		}
 		
 	}
 	

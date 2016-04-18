@@ -62,18 +62,15 @@ public class DiscourseRelation extends TokenList {
     readObject();
   }   
 
-  @Override
-	public void addToIndexes(JCas jcas) {
-		super.addToIndexes(jcas);
-		if (getDiscourseConnective() != null){
-			getDiscourseConnective().removeFromIndexes();
-			getDiscourseConnective().addToIndexes(jcas);
-		}
-		for (int i = 0; i < getArguments().size(); i++){
-			getArguments(i).removeFromIndexes();
-			getArguments(i).addToIndexes();
-		}
-	}
+  public void addToIndexesRecursively() {
+	  super.addToIndexes();
+	  if (getDiscourseConnective() != null){
+		  getDiscourseConnective().addToIndexes();
+	  }
+	  for (int i = 0; i < getArguments().size(); i++){
+		  getArguments(i).addToIndexes();
+	  }
+  }
   
   /** 
    * <!-- begin-user-doc -->

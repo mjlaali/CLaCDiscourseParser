@@ -39,7 +39,7 @@ public class ArgumentLabelAlgorithmFactoryTest{
 	
 	@Test
 	public void whenExtractingSequencesThenOnlyOneSequenceIsExtracted(){
-		discourseRelation.addToIndexes();
+		discourseRelation.addToIndexesRecursively();
 		Function<JCas, ? extends Collection<? extends DiscourseConnective>> sequenceExtractor = algorithmFactory.getSequenceExtractor(aJCas);
 		Collection<? extends DiscourseConnective> sequences = sequenceExtractor.apply(aJCas);
 		assertThat(sequences).hasSize(1);
