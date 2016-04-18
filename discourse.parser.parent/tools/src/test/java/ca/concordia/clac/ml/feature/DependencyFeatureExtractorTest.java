@@ -6,6 +6,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -60,7 +61,7 @@ public class DependencyFeatureExtractorTest {
 	@Test
 	public void whenExtractingTheHeadOfTheSentenceThenTheHeadIsHave(){
 		Map<Constituent, Collection<Token>> constituentsToTokens = JCasUtil.indexCovered(aJCas, Constituent.class, Token.class);
-		Function<Annotation, Token> headFinder = getHead(getDependantDependency().apply(aJCas), getTokenList(constituentsToTokens));
+		Function<Annotation, Token> headFinder = getHead(getDependantDependency().apply(aJCas), getTokenList(constituentsToTokens, List.class));
 		
 		Constituent root = TreeFeatureExtractorTest.findFirstConstituent("ROOT", aJCas);
 		assertThat(headFinder.apply(root).getCoveredText()).isEqualTo("have");

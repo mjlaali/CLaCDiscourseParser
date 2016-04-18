@@ -91,7 +91,7 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 	public BiFunction<List<Annotation>, ArgumentTreeNode, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
 		initConstituentToCoveredTokens(jCas);
 		Map<Token, Dependency> dependencies = getDependantDependency().apply(jCas);
-		Function<Annotation, Token> headFinder = getHead(dependencies, getTokenList(constituentToCoveredTokens));
+		Function<Annotation, Token> headFinder = getHead(dependencies, getTokenList(constituentToCoveredTokens, Set.class));
 		
 		BiFunction<Annotation, ArgumentTreeNode, Feature> nodeHead = makeBiFunc(headFinder.andThen((h) -> h == null ? "null" : h.getCoveredText())
 				.andThen(String::toLowerCase).andThen(makeFeature("nodeHead")));
@@ -129,7 +129,8 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 
 	@Override
 	public SequenceClassifierConsumer<String, ArgumentTreeNode, Annotation> getLabeller(JCas jCas) {
-		return new PurifyDiscourseRelations();
+		initConstituentToCoveredTokens(jCas);
+		return new PurifyDiscourseRelations(constituentToCoveredTokens);
 	}
 
 	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {

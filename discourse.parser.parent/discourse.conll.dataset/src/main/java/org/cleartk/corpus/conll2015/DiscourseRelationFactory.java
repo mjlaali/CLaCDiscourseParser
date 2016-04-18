@@ -90,7 +90,7 @@ public class DiscourseRelationFactory {
 		tokens.addAll(TokenListTools.convertToTokens(discourseConnective));
 		
 		initArguments(aJCas, arg1, arg2, tokens, discourseRelation);
-		TokenListTools.initTokenList(aJCas, discourseRelation, tokens);
+		TokenListTools.initTokenList(discourseRelation, tokens);
 
 		return discourseRelation;
 	}
@@ -114,7 +114,7 @@ public class DiscourseRelationFactory {
 		discourseRelation.setDiscourseConnectiveText(discourseConnectiveText);
 		if (type == RelationType.Explicit){
 			DiscourseConnective discourseConnective = new DiscourseConnective(aJCas);
-			TokenListTools.initTokenList(aJCas, discourseConnective, discourseConnectiveTokens);
+			TokenListTools.initTokenList(discourseConnective, discourseConnectiveTokens);
 			discourseRelation.setDiscourseConnective(discourseConnective);
 			discourseConnective.setDiscourseRelation(discourseRelation);
 			discourseConnective.setSense(sense);
@@ -123,7 +123,7 @@ public class DiscourseRelationFactory {
 		
 		initArguments(aJCas, arg1, arg2, tokens, discourseRelation);
 		
-		TokenListTools.initTokenList(aJCas, discourseRelation, tokens);
+		TokenListTools.initTokenList(discourseRelation, tokens);
 		return discourseRelation;
 	}
 
@@ -138,7 +138,7 @@ public class DiscourseRelationFactory {
 		for (ArgType argType: ArgType.values()){
 			DiscourseArgument discourseArgument = new DiscourseArgument(aJCas);
 			discourseArgument.setArgumentType(argType.toString());
-			TokenListTools.initTokenList(aJCas, discourseArgument, args.get(idx++));
+			TokenListTools.initTokenList(discourseArgument, args.get(idx++));
 			discourseArgument.setDiscouresRelation(discourseRelation);
 			arguments.add(discourseArgument);
 		}

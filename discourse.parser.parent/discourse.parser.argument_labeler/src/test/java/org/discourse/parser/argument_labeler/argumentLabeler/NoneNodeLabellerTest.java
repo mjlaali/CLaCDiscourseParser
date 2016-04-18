@@ -3,6 +3,7 @@ package org.discourse.parser.argument_labeler.argumentLabeler;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -16,11 +17,16 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.DiscourseRelationExample;
 import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
+import org.cleartk.corpus.conll2015.TokenListTools;
+import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 import org.junit.Before;
 import org.junit.Test;
+
+import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class NoneNodeLabellerTest{
 	private NoneNodeLabeller algorithmFactory = new NoneNodeLabeller();
@@ -34,7 +40,6 @@ public class NoneNodeLabellerTest{
 	public void setup() throws UIMAException{
 		aJCas = JCasFactory.createJCas();
 		discourseRelation = new DiscourseRelationFactory().makeDiscourseRelationFrom(aJCas, example);
-//		discourseRelation.addToIndexes();
 		List<DCTreeNodeArgInstance> instances = argumentLabelerAlgorithmFactory.getInstanceExtractor(aJCas).apply(discourseRelation.getDiscourseConnective());
 		argumentLabelerAlgorithmFactory.getLabelExtractor(aJCas).apply(instances, discourseRelation.getDiscourseConnective());
 		
@@ -44,6 +49,13 @@ public class NoneNodeLabellerTest{
 		//only nodes that is arg1 or arg2 will be analyzed.
 		assertThat(candidates).containsExactly("S", "S");
 	}
+
+
+//	private void labelWithGoldData(List<DCTreeNodeArgInstance> instances) {
+//		List<String> outcomes = Arrays.asList("None", "Arg1", "None", "DC", "Arg2", "None", "None", "None", "None", "None");
+//		assertThat(outcomes.size()).isEqualTo(instances.size());
+//		argumentLabelerAlgorithmFactory.getLabeller(aJCas).accept(outcomes, discourseRelation.getDiscourseConnective(), instances);;
+//	}
 
 	
 	@Test
@@ -76,6 +88,8 @@ public class NoneNodeLabellerTest{
 				algorithmFactory.getLabelExtractor(aJCas);
 		
 		List<String> labels = labelExtractor.apply(instances, sequences.iterator().next());
+//		System.out.println(labels);
+//		System.out.println(instances.stream().map(getConstituentType()).collect(Collectors.toList()));
 		
 		long count = labels.stream().filter((l) -> l.equals(NodeArgType.None.toString())).count();
 		assertThat(count).isEqualTo(13);
@@ -111,25 +125,38 @@ public class NoneNodeLabellerTest{
 		assertThat(strFeatures).containsExactly(goldFeatures);
 	}
 	
-//	@Test
-//	public void givenGoldLableWhenConstructingTheRelationThenItIsCorrect(){
-//		Function<DiscourseConnective, List<DCTreeNodeArgInstance>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
-//		List<DCTreeNodeArgInstance> instances = instanceExtractor.apply(discourseRelation.getDiscourseConnective());
-//		List<String> goldLabels = Arrays.asList("Arg1", "Arg1", "Arg1", "Arg2", "DC", "Arg2");
-//		
-//		SequenceClassifierConsumer<String, DiscourseConnective, DCTreeNodeArgInstance> labeller = algorithmFactory.getLabeller(aJCas);
-//		
-//		labeller.accept(goldLabels, discourseRelation.getDiscourseConnective(), instances);
-//		
-//		Collection<DiscourseRelation> relations = JCasUtil.select(aJCas, DiscourseRelation.class);
-//		assertThat(relations).hasSize(1);
-//		DiscourseRelation relation = relations.iterator().next();
-//		
-//		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(arg1);
-//		assertThat(TokenListTools.getTokenListText(relation.getArguments(1))).isEqualTo(arg2);
-//		assertThat(TokenListTools.getTokenListText(relation.getDiscourseConnective())).isEqualTo(dc);
-//
-//	}
-//	
+	@Test
+	public void givenGoldLableWhenConstructingTheRelationThenItIsCorrect(){
+		Function<ArgumentTreeNode, List<Annotation>> instanceExtractor = algorithmFactory.getInstanceExtractor(aJCas);
+		Function<JCas, ? extends Collection<? extends ArgumentTreeNode>> sequenceExtractor = algorithmFactory.getSequenceExtractor(aJCas);
+		Collection<? extends ArgumentTreeNode> sequences = sequenceExtractor.apply(aJCas);
+		ArgumentTreeNode aSeqeunce = sequences.iterator().next();
+		List<Annotation> instances = instanceExtractor.apply(aSeqeunce);
+		
+		SequenceClassifierConsumer<String, ArgumentTreeNode, Annotation> labeller = algorithmFactory.getLabeller(aJCas);
+		DiscourseArgument arg1 = discourseRelation.getArguments(0);
+		List<Token> tokens = JCasUtil.selectCovered(Token.class, aSeqeunce.getTreeNode());
+		TokenListTools.initTokenList(arg1, tokens);
+		discourseRelation.addToIndexes();
+		
+		List<String> goldLabels = new ArrayList<>();
+		for (int i = 0; i < instances.size(); i++){
+			if (i < 12 || i == 13)
+				goldLabels.add("None");
+			else
+				goldLabels.add("Arg1");
+		}
+		labeller.accept(goldLabels, aSeqeunce, instances);
+		
+		Collection<DiscourseRelation> relations = JCasUtil.select(aJCas, DiscourseRelation.class);
+		assertThat(relations).hasSize(1);
+		DiscourseRelation relation = relations.iterator().next();
+		
+		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(example.getArg1());
+		assertThat(TokenListTools.getTokenListText(relation.getArguments(1))).isEqualTo(DiscourseRelationExample.toString(example.getArg2()));
+		assertThat(TokenListTools.getTokenListText(relation.getDiscourseConnective())).isEqualTo(example.getDiscourseConnective());
+
+	}
+	
 	
 }

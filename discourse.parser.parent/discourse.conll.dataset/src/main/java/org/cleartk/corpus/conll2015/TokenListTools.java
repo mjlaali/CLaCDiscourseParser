@@ -9,7 +9,6 @@ import org.apache.uima.cas.CASException;
 import org.apache.uima.cas.text.AnnotationFS;
 import org.apache.uima.cas.text.AnnotationIndex;
 import org.apache.uima.fit.util.FSCollectionFactory;
-import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
 import org.cleartk.discourse.type.TokenList;
 
@@ -17,7 +16,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class TokenListTools {
 
-	public static void initTokenList(JCas aJCas, TokenList tokenList, List<Token> tokens) {
+	public static void initTokenList(TokenList tokenList, List<Token> tokens) {
 		int begin = Integer.MAX_VALUE; 
 		int end = -1;
 		for (Token token: tokens){
@@ -31,7 +30,11 @@ public class TokenListTools {
 			begin = 0; end = 0;
 		}
 		
-	    tokenList.setTokens(new FSArray(aJCas, tokens.size()));
+	    try {
+			tokenList.setTokens(new FSArray(tokenList.getCAS().getJCas(), tokens.size()));
+		} catch (CASException e) {
+			throw new RuntimeException(e);
+		}
 	    FSCollectionFactory.fillArrayFS(tokenList.getTokens(), tokens);
 	    tokenList.setBegin(begin);
 	    tokenList.setEnd(end);

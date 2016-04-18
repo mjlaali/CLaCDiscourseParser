@@ -36,7 +36,7 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 			NodeArgType nodeType = NodeArgType.valueOf(outcomes.get(i));
 			DCTreeNodeArgInstance instance = instances.get(i);
 			Annotation ann = instance.getNode();
-			Collection<Token> tokens = getTokenList(constituentToTokens).apply(ann);
+			Collection<Token> tokens = getTokenList(constituentToTokens, List.class).apply(ann);
 			switch (nodeType) {
 			case Arg1:
 				arg1Tokens.addAll(tokens);

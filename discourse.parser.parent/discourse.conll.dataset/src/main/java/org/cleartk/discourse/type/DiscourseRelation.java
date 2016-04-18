@@ -3,11 +3,10 @@
 /* First created by JCasGen Thu Nov 19 12:08:03 EST 2015 */
 package org.cleartk.discourse.type;
 
-import org.apache.uima.jcas.JCas; 
+import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.JCasRegistry;
-import org.apache.uima.jcas.cas.TOP_Type;
-import org.cleartk.corpus.conll2015.RelationType;
 import org.apache.uima.jcas.cas.FSArray;
+import org.apache.uima.jcas.cas.TOP_Type;
 
 
 /** 
@@ -66,9 +65,12 @@ public class DiscourseRelation extends TokenList {
   @Override
 	public void addToIndexes(JCas jcas) {
 		super.addToIndexes(jcas);
-		if (getDiscourseConnective() != null)
+		if (getDiscourseConnective() != null){
+			getDiscourseConnective().removeFromIndexes();
 			getDiscourseConnective().addToIndexes(jcas);
+		}
 		for (int i = 0; i < getArguments().size(); i++){
+			getArguments(i).removeFromIndexes();
 			getArguments(i).addToIndexes();
 		}
 	}

@@ -16,7 +16,7 @@ public class DiscourseAnnotationFactory implements AnnotationFactory<DiscourseCo
 	public DiscourseConnective buildAnnotation(JCas aJCas, int start, int end) {
 		DiscourseConnective discourseConnective = new DiscourseConnective(aJCas);
 		List<Token> tokens = JCasUtil.selectCovered(aJCas, Token.class, start, end);
-		TokenListTools.initTokenList(aJCas, discourseConnective, tokens);
+		TokenListTools.initTokenList(discourseConnective, tokens);
 		return discourseConnective;
 	}
 
