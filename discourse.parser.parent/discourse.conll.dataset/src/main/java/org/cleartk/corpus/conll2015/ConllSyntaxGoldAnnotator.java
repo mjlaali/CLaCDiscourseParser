@@ -100,6 +100,9 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			ConllToken conllToken = new ConllToken(aJCas, wordBegin, wordEnd);
 			POS pos = new POS(aJCas, wordBegin, wordEnd);
 			pos.setPosValue(jsonWordInfo.getString("PartOfSpeech"));
+			if (jsonWordInfo.getJSONArray("Linkers") != null){
+				throw new RuntimeException("Linkers exists in the dataset");
+			}
 			conllToken.setPos(pos);
 			conllToken.setDocumentOffset(tokenIdx++);
 			conllToken.addToIndexes();
