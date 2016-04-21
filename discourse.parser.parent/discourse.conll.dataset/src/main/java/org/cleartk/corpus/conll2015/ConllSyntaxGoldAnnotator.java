@@ -78,7 +78,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 
 			JSONArray jsonSentences = jsonDoc.getJSONArray("sentences");
 			for (int i = 0; i < jsonSentences.length(); i++)
-				addSyntaxInfo(jsonSentences.getJSONObject(i), aJCas);
+				addSyntaxInfo(jsonSentences.getJSONObject(i), aJCas, i);
 
 		} catch (JSONException | CASException e) {
 			throw new AnalysisEngineProcessException(e);
@@ -86,7 +86,7 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 
 	}
 
-	private void addSyntaxInfo(JSONObject jsonSent, JCas aJCas) throws JSONException, AnalysisEngineProcessException, CASException {
+	private void addSyntaxInfo(JSONObject jsonSent, JCas aJCas, int sentenceOffset) throws JSONException, AnalysisEngineProcessException, CASException {
 		JSONArray jsonWords = jsonSent.getJSONArray("words");
 		int sentBegin = Integer.MAX_VALUE;
 		int sentEnd = -1;
@@ -102,6 +102,8 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			pos.setPosValue(jsonWordInfo.getString("PartOfSpeech"));
 			conllToken.setPos(pos);
 			conllToken.setDocumentOffset(tokenIdx++);
+			conllToken.setSentenceOffset(sentenceOffset);
+			conllToken.setOffsetInSentence(i);
 			conllToken.addToIndexes();
 			if (wordBegin < sentBegin)
 				sentBegin = wordBegin;

@@ -11,8 +11,8 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 
 /** 
- * Updated by JCasGen Thu Nov 19 12:11:45 EST 2015
- * XML source: /Users/majid/Documents/workspace/clac-parser/clac.discourse.parser/conll.dataset/src/main/resources/org/cleartk/corpus/conll2015/TypeSystem.xml
+ * Updated by JCasGen Thu Apr 21 15:12:04 EDT 2016
+ * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/corpus/conll2015/type/ConllToken.xml
  * @generated */
 public class ConllToken extends Token {
   /** @generated
@@ -92,6 +92,50 @@ public class ConllToken extends Token {
     if (ConllToken_Type.featOkTst && ((ConllToken_Type)jcasType).casFeat_documentOffset == null)
       jcasType.jcas.throwFeatMissing("documentOffset", "org.cleartk.corpus.conll2015.type.ConllToken");
     jcasType.ll_cas.ll_setIntValue(addr, ((ConllToken_Type)jcasType).casFeatCode_documentOffset, v);}    
+   
+    
+  //*--------------*
+  //* Feature: sentenceOffset
+
+  /** getter for sentenceOffset - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public int getSentenceOffset() {
+    if (ConllToken_Type.featOkTst && ((ConllToken_Type)jcasType).casFeat_sentenceOffset == null)
+      jcasType.jcas.throwFeatMissing("sentenceOffset", "org.cleartk.corpus.conll2015.type.ConllToken");
+    return jcasType.ll_cas.ll_getIntValue(addr, ((ConllToken_Type)jcasType).casFeatCode_sentenceOffset);}
+    
+  /** setter for sentenceOffset - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setSentenceOffset(int v) {
+    if (ConllToken_Type.featOkTst && ((ConllToken_Type)jcasType).casFeat_sentenceOffset == null)
+      jcasType.jcas.throwFeatMissing("sentenceOffset", "org.cleartk.corpus.conll2015.type.ConllToken");
+    jcasType.ll_cas.ll_setIntValue(addr, ((ConllToken_Type)jcasType).casFeatCode_sentenceOffset, v);}    
+   
+    
+  //*--------------*
+  //* Feature: offsetInSentence
+
+  /** getter for offsetInSentence - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public int getOffsetInSentence() {
+    if (ConllToken_Type.featOkTst && ((ConllToken_Type)jcasType).casFeat_offsetInSentence == null)
+      jcasType.jcas.throwFeatMissing("offsetInSentence", "org.cleartk.corpus.conll2015.type.ConllToken");
+    return jcasType.ll_cas.ll_getIntValue(addr, ((ConllToken_Type)jcasType).casFeatCode_offsetInSentence);}
+    
+  /** setter for offsetInSentence - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setOffsetInSentence(int v) {
+    if (ConllToken_Type.featOkTst && ((ConllToken_Type)jcasType).casFeat_offsetInSentence == null)
+      jcasType.jcas.throwFeatMissing("offsetInSentence", "org.cleartk.corpus.conll2015.type.ConllToken");
+    jcasType.ll_cas.ll_setIntValue(addr, ((ConllToken_Type)jcasType).casFeatCode_offsetInSentence, v);}    
   }
 
     

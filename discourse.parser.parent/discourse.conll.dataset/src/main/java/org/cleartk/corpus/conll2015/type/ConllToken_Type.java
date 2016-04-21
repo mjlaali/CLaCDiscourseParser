@@ -15,7 +15,7 @@ import org.apache.uima.jcas.JCasRegistry;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token_Type;
 
 /** 
- * Updated by JCasGen Thu Nov 19 12:11:45 EST 2015
+ * Updated by JCasGen Thu Apr 21 15:12:04 EDT 2016
  * @generated */
 public class ConllToken_Type extends Token_Type {
   /** @generated 
@@ -70,6 +70,54 @@ public class ConllToken_Type extends Token_Type {
     ll_cas.ll_setIntValue(addr, casFeatCode_documentOffset, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_sentenceOffset;
+  /** @generated */
+  final int     casFeatCode_sentenceOffset;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getSentenceOffset(int addr) {
+        if (featOkTst && casFeat_sentenceOffset == null)
+      jcas.throwFeatMissing("sentenceOffset", "org.cleartk.corpus.conll2015.type.ConllToken");
+    return ll_cas.ll_getIntValue(addr, casFeatCode_sentenceOffset);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setSentenceOffset(int addr, int v) {
+        if (featOkTst && casFeat_sentenceOffset == null)
+      jcas.throwFeatMissing("sentenceOffset", "org.cleartk.corpus.conll2015.type.ConllToken");
+    ll_cas.ll_setIntValue(addr, casFeatCode_sentenceOffset, v);}
+    
+  
+ 
+  /** @generated */
+  final Feature casFeat_offsetInSentence;
+  /** @generated */
+  final int     casFeatCode_offsetInSentence;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public int getOffsetInSentence(int addr) {
+        if (featOkTst && casFeat_offsetInSentence == null)
+      jcas.throwFeatMissing("offsetInSentence", "org.cleartk.corpus.conll2015.type.ConllToken");
+    return ll_cas.ll_getIntValue(addr, casFeatCode_offsetInSentence);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setOffsetInSentence(int addr, int v) {
+        if (featOkTst && casFeat_offsetInSentence == null)
+      jcas.throwFeatMissing("offsetInSentence", "org.cleartk.corpus.conll2015.type.ConllToken");
+    ll_cas.ll_setIntValue(addr, casFeatCode_offsetInSentence, v);}
+    
+  
 
 
 
@@ -85,6 +133,14 @@ public class ConllToken_Type extends Token_Type {
  
     casFeat_documentOffset = jcas.getRequiredFeatureDE(casType, "documentOffset", "uima.cas.Integer", featOkTst);
     casFeatCode_documentOffset  = (null == casFeat_documentOffset) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_documentOffset).getCode();
+
+ 
+    casFeat_sentenceOffset = jcas.getRequiredFeatureDE(casType, "sentenceOffset", "uima.cas.Integer", featOkTst);
+    casFeatCode_sentenceOffset  = (null == casFeat_sentenceOffset) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_sentenceOffset).getCode();
+
+ 
+    casFeat_offsetInSentence = jcas.getRequiredFeatureDE(casType, "offsetInSentence", "uima.cas.Integer", featOkTst);
+    casFeatCode_offsetInSentence  = (null == casFeat_offsetInSentence) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_offsetInSentence).getCode();
 
   }
 }
