@@ -2,12 +2,19 @@ package org.discourse.parser.argument_labeler.argumentLabeler;
 
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependency;
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.makeBiFunc;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.multiBiFuncMap;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getProductRule;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,12 +33,9 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseRelation;
-import org.cleartk.ml.CleartkSequenceAnnotator;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
-import org.cleartk.ml.jar.DirectoryDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
-import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
@@ -81,11 +85,6 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 		
 		return Collections.emptyList();
 	}
-	
-	public static <T, U, R> BiFunction<T, U, R> makeBiFunc(final Function<T, R> func){
-		return (t, u) -> func.apply(t);
-	}
-	
 
 	@Override
 	public BiFunction<List<Annotation>, ArgumentTreeNode, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
@@ -106,10 +105,27 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 				return "right";
 			return "middle";
 		};
-		BiFunction<Annotation, ArgumentTreeNode, Feature> positionFeature = position.andThen(makeFeature("position")); 
 		
+		BiFunction<Annotation, ArgumentTreeNode, Feature> positionFeature = position.andThen(makeFeature("position"));
 		
-		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> annotationFeatureExtractor = multiBiFuncMap(nodeHead, consType, positionFeature);
+		BiFunction<Annotation, ArgumentTreeNode, Feature> parentPattern = makeBiFunc(
+				getParent().andThen(getProductRule()).andThen(makeFeature("parentPattern")));
+
+		BiFunction<Annotation, ArgumentTreeNode, Feature> grandParentPattern = makeBiFunc(
+				getParent().andThen(getParent()).andThen(getProductRule()).andThen(makeFeature("grandParentPattern")));
+		
+		BiFunction<Annotation, ArgumentTreeNode, String> f = (ann, argTreeNode) -> argTreeNode.getDiscourseArgument().getArgumentType();
+		BiFunction<Annotation, ArgumentTreeNode, Feature> argumentType = 
+				getFunction(f).andThen(makeFeature("argumentType")); 
+		
+
+		BiFunction<Annotation, ArgumentTreeNode, Feature> leftSibling = makeBiFunc(getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("leftSibling"))); 
+		BiFunction<Annotation, ArgumentTreeNode, Feature> rightSibling = makeBiFunc(getRightSibling().andThen(getConstituentType()).andThen(makeFeature("leftSibling"))); 
+
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> annotationFeatureExtractor = multiBiFuncMap(
+				nodeHead, consType, positionFeature, parentPattern, grandParentPattern, argumentType,
+				leftSibling, rightSibling);
+		
 		return mapOneByOneTo(annotationFeatureExtractor);
 	}
 
@@ -134,15 +150,10 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 	}
 
 	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
-		return AnalysisEngineFactory.createEngineDescription(StringSequenceClassifier.class,
-				GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
-				NoneNodeLabeller.class.getName(),
-				CleartkSequenceAnnotator.PARAM_IS_TRAINING,
-		        true,
-		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
-		        outputDirectory,
-		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-		        MalletCrfStringOutcomeDataWriter.class);
+//		return StringSequenceClassifier.getWriterDescription(NoneNodeLabeller.class,
+//				MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory)); 
+		return StringSequenceClassifier.getViterbiWriterDescription(NoneNodeLabeller.class,
+				WekaStringOutcomeDataWriter.class, new File(outputDirectory)); 
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(String modelFileName) throws ResourceInitializationException {

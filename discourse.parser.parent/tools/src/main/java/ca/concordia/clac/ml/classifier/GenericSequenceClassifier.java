@@ -1,5 +1,8 @@
 package ca.concordia.clac.ml.classifier;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -7,15 +10,23 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.uima.UimaContext;
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.initializable.InitializableFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.ml.CleartkSequenceAnnotator;
+import org.cleartk.ml.DataWriter;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.Instance;
 import org.cleartk.ml.Instances;
+import org.cleartk.ml.jar.DefaultDataWriterFactory;
+import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
+import org.cleartk.ml.jar.DirectoryDataWriterFactory;
+import org.cleartk.ml.viterbi.DefaultOutcomeFeatureExtractor;
+import org.cleartk.ml.viterbi.ViterbiDataWriterFactory;
 
 public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANCE_TYPE> extends CleartkSequenceAnnotator<CLASSIFIER_OUTPUT>{
 	
@@ -62,5 +73,42 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 	
 		
 	}
+	
+	public static <T, U> AnalysisEngineDescription getViterbiWriterDescription(
+			Class<? extends SequenceClassifierAlgorithmFactory<String, T, U>> classifierAlgorithmFactoryCls,
+					Class<? extends DataWriter<String>> dataWriterCls, File outputDirectory, Object... otherParams) throws ResourceInitializationException{
+		List<Object> params = new ArrayList<>();
+		params.addAll(Arrays.asList(
+				CleartkSequenceAnnotator.PARAM_DATA_WRITER_FACTORY_CLASS_NAME, ViterbiDataWriterFactory.class.getName(), 
+				ViterbiDataWriterFactory.PARAM_DELEGATED_DATA_WRITER_FACTORY_CLASS, DefaultDataWriterFactory.class.getName(), 
+				ViterbiDataWriterFactory.PARAM_OUTCOME_FEATURE_EXTRACTOR_NAMES, new String[] { DefaultOutcomeFeatureExtractor.class.getName() }) 
+				);
+		params.addAll(Arrays.asList(otherParams));
+		
+		return getWriterDescription(classifierAlgorithmFactoryCls, dataWriterCls, outputDirectory,
+				params.toArray(new Object[params.size()]));
+	}
+
+	
+	public static <T, U> AnalysisEngineDescription getWriterDescription(
+			Class<? extends SequenceClassifierAlgorithmFactory<String, T, U>> classifierAlgorithmFactoryCls,
+			Class<?> dataWriterCls, File outputDirectory, Object... otherParams) throws ResourceInitializationException {
+		List<Object> params = new ArrayList<>();
+		params.addAll(Arrays.asList(
+				GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
+				classifierAlgorithmFactoryCls.getName(),
+				CleartkSequenceAnnotator.PARAM_IS_TRAINING,
+		        true,
+		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
+		        outputDirectory,
+		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
+		        dataWriterCls)
+				);
+		
+		params.addAll(Arrays.asList(otherParams));
+		return AnalysisEngineFactory.createEngineDescription(StringSequenceClassifier.class, params.toArray(new Object[params.size()]));
+	}
+	
+	
 
 }
