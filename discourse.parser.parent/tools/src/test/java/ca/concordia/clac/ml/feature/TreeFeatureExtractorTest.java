@@ -7,6 +7,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPath;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;
+import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getProductRule;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.joinInScope;
@@ -179,4 +180,14 @@ public class TreeFeatureExtractorTest {
 		String path = getPath().apply(np, s).stream().map(getConstituentType()).collect(Collectors.joining("-"));
 		assertThat(path).isEqualTo("NP-S-null");
 	}
+	
+
+	@Test
+	public void givenSWhenCalculatingTheProductRuleOfTheNodeThenThePatternIsS_CC_NP_VP(){
+		Constituent s = findFirstConstituent("S");
+		
+		String path = getProductRule().apply(s);
+		assertThat(path).isEqualTo("S->CC-NP-VP-.");
+	}
+
 }

@@ -2,6 +2,7 @@ package ca.concordia.clac.ml.feature;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.convertToList;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.tcas.Annotation;
@@ -25,6 +27,16 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class TreeFeatureExtractor {
 
+	public static Function<Annotation, String> getProductRule(){
+		final Function<Annotation, String> childerenPattern = getChilderen()
+				.andThen(mapOneByOneTo(getConstituentType())).andThen(collect(Collectors.joining("-")));
+		return (ann) ->{
+			if (ann == null)
+				return null;
+			return getConstituentType().apply(ann) + "->" + childerenPattern.apply(ann);
+		};
+	}
+	
 	public static Function<Annotation, Constituent> getParent(){
 		return (ann) -> {
 			if (ann instanceof Token)

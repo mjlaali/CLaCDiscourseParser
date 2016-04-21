@@ -98,6 +98,10 @@ public class FeatureExtractors{
 	public static <T, R> Function<T, R> getFunction(Function<T, R> f){
 		return f;
 	}
+
+	public static <T, U, R> BiFunction<T, U, R> getFunction(BiFunction<T, U, R> f){
+		return f;
+	}
 	
 	public static <T, R> Function<T, R> getFunction(Function<T, R> f, Class<T> clsT, Class<R> clsR){
 		return f;
@@ -116,6 +120,10 @@ public class FeatureExtractors{
 			}
 			return res;
 		};
+	}
+	
+	public static <T, U, R> BiFunction<T, U, R> makeBiFunc(final Function<T, R> func){
+		return (t, u) -> func.apply(t);
 	}
 	
 }
