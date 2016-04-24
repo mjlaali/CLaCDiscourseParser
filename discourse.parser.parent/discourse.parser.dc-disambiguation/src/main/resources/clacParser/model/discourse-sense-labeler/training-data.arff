@@ -6,7 +6,7 @@
 @attribute selfCatLeftSibling {'','\'\'',',',-LRB-,:,ADJP,ADVP,CC,DT,IN,JJ,JJR,LST,MD,NN,NNS,NP,PP,PRN,PRT,RB,S,SBAR,TO,VB,VBD,VBG,VBN,VBP,VBZ,VP,WHADVP,WHNP,WHPP,WRB,``,null}
 @attribute selfCatParent {'',ADJP,ADVP,FRAG,NP,PP,PRN,ROOT,RRC,S,SBAR,SBARQ,SINV,SQ,UCP,VP,WHADJP,X}
 @attribute selfCatRightSibling {'','\'\'',',',-RRB-,.,:,ADJP,ADVP,CC,FRAG,IN,NNS,NP,PP,PRN,PRT,RB,S,SBAR,SQ,UCP,VB,VBD,VBG,VBN,VBP,VBZ,VP,WHNP,X,``,null}
-@attribute outcome {Comparison,Comparison.Concession,Comparison.Contrast,Contingency,Contingency.Cause.Reason,Contingency.Cause.Result,Contingency.Condition,Expansion,Expansion.Alternative,'Expansion.Alternative.Chosen alternative',Expansion.Conjunction,Expansion.Exception,Expansion.Instantiation,Expansion.Restatement,Temporal,Temporal.Asynchronous,Temporal.Asynchronous.Precedence,Temporal.Asynchronous.Succession,Temporal.Synchrony}
+@attribute outcome {Comparison,Comparison.Concession,Comparison.Contrast,Contingency,Contingency.Cause.Reason,Contingency.Cause.Result,Contingency.Condition,Expansion.Alternative,'Expansion.Alternative.Chosen alternative',Expansion.Conjunction,Expansion.Exception,Expansion.Instantiation,Expansion.Restatement,Temporal,Temporal.Asynchronous,Temporal.Asynchronous.Precedence,Temporal.Asynchronous.Succession,Temporal.Synchrony}
 
 @data
 {0 also,1 false,2 ADVP,3 null,4 S,5 VP,6 Expansion.Conjunction}
@@ -17,7 +17,7 @@
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 also,1 true,2 ADVP,3 '\'\'',4 S,5 VP,6 Expansion.Conjunction}
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
-{0 'as if',1 false,2 SBAR,3 ',',4 S,5 ',',6 Expansion}
+{0 'as if',1 false,2 SBAR,3 ',',4 S,5 ',',6 Expansion.Conjunction}
 {0 and,1 true,2 SBAR,3 VBD,4 VP,5 null,6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
@@ -392,7 +392,7 @@
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
 {0 since,1 true,2 SBAR,3 ',',4 VP,5 null,6 Contingency.Cause.Reason}
-{0 ultimately,1 false,2 ADVP,3 null,4 S,5 PRN,6 Expansion}
+{0 ultimately,1 false,2 ADVP,3 null,4 S,5 PRN,6 Expansion.Conjunction}
 {0 'as a result',1 false,2 PP,3 null,4 S,5 ',',6 Contingency.Cause.Result}
 {0 so,1 false,2 S,3 null,4 ROOT,5 null,6 Contingency.Cause.Result}
 {0 so,1 true,2 SBAR,3 NP,4 VP,5 null,6 Contingency.Cause.Result}
@@ -600,7 +600,7 @@
 {0 though,1 false,2 SBAR,3 null,4 S,5 ',',6 Comparison.Concession}
 {0 while,1 false,2 SBAR,3 null,4 S,5 ',',6 Comparison.Concession}
 {0 because,1 true,2 SBAR,3 PP,4 VP,5 null,6 Contingency.Cause.Reason}
-{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion}
+{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
 {0 if,1 false,2 SBAR,3 null,4 S,5 ',',6 Contingency.Condition}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
@@ -2735,7 +2735,7 @@
 {0 because,1 true,2 SBAR,3 VBD,4 VP,5 null,6 Contingency.Cause.Reason}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Asynchronous.Succession}
-{0 'as if',1 false,2 SBAR,3 NP,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 NP,4 VP,5 null,6 Expansion.Conjunction}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Contingency.Cause.Reason}
 {0 as,1 false,2 SBAR,3 null,4 S,5 ',',6 Contingency.Cause.Reason}
 {0 after,1 true,2 SBAR,3 PP,4 VP,5 null,6 Temporal.Asynchronous.Succession}
@@ -3564,7 +3564,7 @@
 {0 but,1 true,2 S,3 null,4 S,5 ',',6 Comparison.Concession}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 and,1 true,2 S,3 IN,4 SBAR,5 null,6 Expansion.Conjunction}
-{0 but,1 false,2 SBARQ,3 null,4 ROOT,5 null,6 Expansion}
+{0 but,1 false,2 SBARQ,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 as,1 true,2 SBAR,3 PP,4 VP,5 null,6 Contingency.Cause.Reason}
 {0 'for example',1 false,2 PP,3 ',',4 PRN,5 ',',6 Expansion.Instantiation}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
@@ -3820,7 +3820,7 @@
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
-{0 as,1 true,2 SBAR,3 ',',4 VP,5 null,6 Expansion}
+{0 as,1 true,2 SBAR,3 ',',4 VP,5 null,6 Expansion.Conjunction}
 {0 because,1 true,2 SBAR,3 PP,4 VP,5 null,6 Contingency.Cause.Reason}
 {0 and,1 true,2 S,3 VB,4 VP,5 null,6 Expansion.Conjunction}
 {0 'in addition',1 false,2 PP,3 null,4 S,5 ',',6 Expansion.Conjunction}
@@ -4163,7 +4163,7 @@
 {0 'two days before',1 false,2 PP,3 ',',4 S,5 ',',6 Temporal.Asynchronous.Precedence}
 {0 as,1 true,2 SBAR,3 ',',4 S,5 ',',6 Temporal.Synchrony}
 {0 as,1 false,2 SBAR,3 null,4 S,5 ',',6 Temporal.Synchrony}
-{0 'in the end',1 false,2 PP,3 ``,4 S,5 ',',6 Expansion}
+{0 'in the end',1 false,2 PP,3 ``,4 S,5 ',',6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Contingency.Cause.Reason}
 {0 because,1 true,2 SBAR,3 PP,4 VP,5 null,6 Contingency.Cause.Reason}
@@ -5022,7 +5022,7 @@
 {0 but,1 true,2 VP,3 null,4 S,5 null,6 Comparison.Contrast}
 {0 or,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Restatement}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Contingency.Condition}
-{0 or,1 true,2 S,3 null,4 S,5 CC,6 Expansion}
+{0 or,1 true,2 S,3 null,4 S,5 CC,6 Expansion.Conjunction}
 {0 however,1 true,2 ADVP,3 ',',4 S,5 ',',6 Comparison.Contrast}
 {0 if,1 true,2 SBAR,3 null,4 SBAR,5 CC,6 Contingency.Condition}
 {0 if,1 false,2 SBAR,3 null,4 S,5 ',',6 Contingency.Condition}
@@ -5470,7 +5470,7 @@
 {0 though,1 true,2 ADVP,3 ',',4 S,5 ',',6 Comparison.Contrast}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 because,1 true,2 SBAR,3 ',',4 VP,5 null,6 Contingency.Cause.Reason}
-{0 'as if',1 false,2 SBAR,3 ',',4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 ',',4 VP,5 null,6 Expansion.Conjunction}
 {0 regardless,1 true,2 ADVP,3 ',',4 VP,5 null,6 Comparison.Concession}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 while,1 true,2 SBAR,3 PP,4 VP,5 null}
@@ -6287,7 +6287,7 @@
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Contingency.Condition}
 {0 instead,1 true,2 ADVP,3 null,4 S,5 ',',6 'Expansion.Alternative.Chosen alternative'}
-{0 'as if',1 false,2 SBAR,3 VB,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 VB,4 VP,5 null,6 Expansion.Conjunction}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 'only when',1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 thus,1 false,2 ADVP,3 null,4 S,5 NP,6 Contingency.Cause.Result}
@@ -7006,7 +7006,7 @@
 {0 meanwhile,1 false,2 ADVP,3 null,4 S,5 ',',6 Temporal.Synchrony}
 {0 and,1 true,2 SBAR,3 ',',4 NP,5 null,6 Expansion.Conjunction}
 {0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
-{0 'as if',1 false,2 SBAR,3 NP,4 VP,5 ',',6 Expansion}
+{0 'as if',1 false,2 SBAR,3 NP,4 VP,5 ',',6 Expansion.Conjunction}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
@@ -7760,7 +7760,7 @@
 {0 but,1 true,2 S,3 null,4 S,5 CC,6 Comparison.Concession}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 then,1 false,2 S,3 null,4 ROOT,5 null,6 Temporal.Asynchronous.Precedence}
-{0 'as if',1 false,2 SBAR,3 null,4 S,5 ',',6 Expansion}
+{0 'as if',1 false,2 SBAR,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Concession}
 {0 'in fact',1 false,2 PP,3 null,4 S,5 ',',6 Expansion.Restatement}
 {0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Restatement}
@@ -8365,7 +8365,7 @@
 {0 and,1 true,2 NP,3 VBD,4 VP,5 null,6 Expansion.Conjunction}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
-{0 finally,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion}
+{0 finally,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 also,1 true,2 ADVP,3 NP,4 S,5 VP,6 Expansion.Conjunction}
 {0 nonetheless,1 true,2 ADVP,3 ',',4 VP,5 ',',6 Comparison.Concession}
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
@@ -9412,7 +9412,7 @@
 {0 also,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null}
 {0 still,1 false,2 ADVP,3 null,4 S,5 ',',6 Comparison.Concession}
-{0 ultimately,1 true,2 ADVP,3 MD,4 VP,5 VP,6 Expansion}
+{0 ultimately,1 true,2 ADVP,3 MD,4 VP,5 VP,6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Restatement}
 {0 ultimately,1 true,2 ADVP,3 MD,4 VP,5 VP,6 Temporal.Asynchronous.Precedence}
@@ -9524,7 +9524,7 @@
 {0 'particularly if',1 false,2 SBAR,3 '\'\'',4 VP,5 null,6 Contingency.Condition}
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
-{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion}
+{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 so,1 false,2 ADVP,3 ``,4 S,5 SBAR,6 Contingency.Cause.Result}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 also,1 true,2 ADVP,3 NP,4 S,5 VP,6 Expansion.Conjunction}
@@ -9680,7 +9680,7 @@
 {0 before,1 true,2 PP,3 PP,4 VP,5 null,6 Temporal.Asynchronous.Precedence}
 {0 before,1 true,2 SBAR,3 null,4 S,5 ',',6 Temporal.Asynchronous.Precedence}
 {0 however,1 false,2 ADVP,3 null,4 S,5 ','}
-{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion}
+{0 indeed,1 false,2 ADVP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 S,5 ','}
 {0 while,1 false,2 SBAR,3 null,4 S,5 ',',6 Comparison.Contrast}
@@ -9776,13 +9776,13 @@
 {0 while,1 false,2 SBAR,3 null,4 S,5 ',',6 Comparison.Concession}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 while,1 true,2 SBAR,3 CC,4 S,5 ',',6 Comparison.Contrast}
-{0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion}
+{0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 if,1 false,2 SBAR,3 null,4 S,5 ',',6 Contingency.Condition}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 'as if',1 false,2 SBAR,3 ',',4 VP,5 null,6 Comparison.Concession}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 though,1 true,2 ADVP,3 ',',4 VP,5 ','}
-{0 'in fact',1 false,2 PP,3 null,4 S,5 ',',6 Expansion}
+{0 'in fact',1 false,2 PP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 if,1 true,2 SBAR,3 null,4 S,5 ',',6 Contingency.Condition}
 {0 while,1 true,2 SBAR,3 CC,4 S,5 ',',6 Temporal.Synchrony}
 {0 so,1 false,2 S,3 null,4 ROOT,5 null,6 Contingency.Cause.Result}
@@ -9878,7 +9878,7 @@
 {0 'apparently because',1 false,2 SBAR,3 PRN,4 VP,5 null,6 Contingency.Cause.Reason}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Contingency.Cause.Result}
-{0 'in fact',1 false,2 PP,3 null,4 S,5 ',',6 Expansion}
+{0 'in fact',1 false,2 PP,3 null,4 S,5 ',',6 Expansion.Conjunction}
 {0 if,1 true,2 SBAR,3 S,4 VP,5 null,6 Contingency.Condition}
 {0 however,1 true,2 ADVP,3 ',',4 S,5 ',',6 Comparison.Contrast}
 {0 instead,1 false,2 ADVP,3 null,4 S,5 PRN,6 'Expansion.Alternative.Chosen alternative'}
@@ -10845,7 +10845,7 @@
 {0 if,1 true,2 SBAR,3 NP,4 VP,5 null,6 Contingency.Condition}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 so,1 false,2 S,3 null,4 ROOT,5 null,6 Contingency.Cause.Result}
-{0 'as if',1 false,2 SBAR,3 PP,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 PP,4 VP,5 null,6 Expansion.Conjunction}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Contingency.Cause.Reason}
 {0 while,1 false,2 SBAR,3 null,4 S,5 ',',6 Comparison.Contrast}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
@@ -11041,7 +11041,7 @@
 {0 as,1 true,2 SBAR,3 ',',4 VP,5 null,6 Contingency.Cause.Reason}
 {0 still,1 false,2 ADVP,3 null,4 S,5 ',',6 Comparison.Contrast}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
-{0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion}
+{0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 as,1 true,2 SBAR,3 ',',4 VP,5 null,6 Contingency.Cause.Reason}
 {0 'an average of six months before',1 false,2 NP,3 VBD,4 VP,5 null,6 Temporal.Asynchronous.Precedence}
 {0 until,1 true,2 SBAR,3 VBN,4 VP,5 null,6 Temporal.Asynchronous.Precedence}
@@ -12301,19 +12301,19 @@
 {0 as,1 true,2 SBAR,3 ADJP,4 VP,5 null,6 Temporal.Synchrony}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 then,1 true,2 ADVP,3 CC,4 S,5 S,6 Temporal.Asynchronous.Precedence}
-{0 'as if',1 false,2 SBAR,3 ADVP,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 ADVP,4 VP,5 null,6 Expansion.Conjunction}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 afterwards,1 true,2 VP,3 NP,4 S,5 .,6 Temporal.Asynchronous.Precedence}
 {0 although,1 true,2 SBAR,3 ',',4 VP,5 null,6 Comparison.Contrast}
 {0 'as though',1 false,2 SBAR,3 ADVP,4 VP,5 null}
 {0 but,1 true,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
-{0 'as if',1 false,2 SBAR,3 VBG,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 VBG,4 VP,5 null,6 Expansion.Conjunction}
 {0 as,1 true,2 SBAR,3 PP,4 NP,5 null,6 Temporal.Synchrony}
 {0 although,1 true,2 SBAR,3 ',',4 VP,5 null,6 Comparison.Contrast}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
 {0 because,1 true,2 SBAR,3 ',',4 VP,5 null,6 Contingency.Cause.Reason}
 {0 when,1 false,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Synchrony}
-{0 'as if',1 false,2 SBAR,3 ',',4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 ',',4 VP,5 null,6 Expansion.Conjunction}
 {0 then,1 false,2 ADVP,3 null,4 S,5 S,6 Temporal.Asynchronous.Precedence}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 then,1 true,2 ADVP,3 CC,4 S,5 S,6 Temporal.Asynchronous.Precedence}
@@ -14849,7 +14849,7 @@
 {0 though,1 true,2 SBAR,3 ',',4 VP,5 null,6 Comparison.Concession}
 {0 when,1 true,2 WHADVP,3 null,4 SBAR,5 S,6 Temporal.Asynchronous.Succession}
 {0 and,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
-{0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion}
+{0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}
 {0 also,1 true,2 ADVP,3 NP,4 S,5 VP,6 Expansion.Conjunction}
 {0 but,1 false,2 S,3 null,4 ROOT,5 null,6 Comparison.Contrast}
 {0 'even though',1 false,2 SBAR,3 PP,4 VP,5 null,6 Comparison.Concession}
@@ -15272,7 +15272,7 @@
 {0 after,1 true,2 PP,3 ',',4 S,5 ',',6 Temporal.Asynchronous.Succession}
 {0 'for example',1 false,2 PP,3 ',',4 S,5 ',',6 Expansion.Instantiation}
 {0 thereby,1 true,2 ADVP,3 null,4 VP,5 VBZ,6 Contingency.Cause.Result}
-{0 'as if',1 false,2 SBAR,3 VBZ,4 VP,5 null,6 Expansion}
+{0 'as if',1 false,2 SBAR,3 VBZ,4 VP,5 null,6 Expansion.Conjunction}
 {0 because,1 true,2 SBAR,3 ADJP,4 VP,5 null,6 Contingency.Cause.Reason}
 {0 as,1 false,2 SBAR,3 null,4 S,5 ',',6 Temporal.Synchrony}
 {0 and,1 true,2 S,3 null,4 ROOT,5 null,6 Expansion.Conjunction}

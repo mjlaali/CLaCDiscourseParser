@@ -60,7 +60,7 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 
 	@Override
 	public BiConsumer<String, DiscourseConnective> getLabeller(JCas aJCas) {
-		return (sense, dc) -> dc.setSense(sense);
+		return (sense, dc) -> dc.setSense(sense.replaceAll("'", ""));
 	}
 
 	public static AnalysisEngineDescription getWriterDescription(File outputFld) throws ResourceInitializationException{
