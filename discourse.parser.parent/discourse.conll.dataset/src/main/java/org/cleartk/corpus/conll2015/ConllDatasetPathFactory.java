@@ -20,7 +20,8 @@ public class ConllDatasetPathFactory {
 			break;
 		
 		case test:
-			return null;
+			baseFld = dataFld;
+			break;
 			
 		case trial:
 			baseFld = new File(dataFld, "conll16st/tutorial/conll16st-en-01-12-16-trial");
