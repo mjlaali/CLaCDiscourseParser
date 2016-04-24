@@ -77,7 +77,7 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 				);
 	}
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset(new File("../discourse.conll.dataset/data"), DatasetMode.train);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
