@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.uima.UimaContext;
@@ -66,9 +69,9 @@ class ConllGoldTokenList{
 		
 	}
 
-	int[][] CharacterSpanList;
-	String RawText;
-	int[][] TokenList;
+	int[][] CharacterSpanList = new int[0][];
+	String RawText = "";
+	int[][] TokenList = new int[0][];
 	
 }
 
@@ -85,22 +88,32 @@ class ConllGoldDiscourseRelation{
 
 public class ConllJSonGoldExporter extends JCasAnnotator_ImplBase{
 	public static final String PARAM_JSON_OUT_FILE = "PARAM_JSON_OUT_FILE";
-	public static final String JSON_OUT_FILE_DESCRIPTION = "Specify the json output file.";
+	public static final String PARAM_EXCLUDE_RELATION_TYPES = "excludeRelationType";
 
 	@ConfigurationParameter(
 			name = PARAM_JSON_OUT_FILE,
-			description = JSON_OUT_FILE_DESCRIPTION,
+			description = "Specify the json output file.",
 			mandatory = true)
 	private String jsonOutFilePath;
 
+	@ConfigurationParameter(
+			name = PARAM_EXCLUDE_RELATION_TYPES,
+			description = "Specify the relation types that are excluded from the output",
+			mandatory = false)
+	private String[] excludeRelationTypes;
+
 	private PrintWriter jsonFile;
+	private Set<String> toBeExcluded = new HashSet<>();
 
 	private XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
-	public static AnalysisEngineDescription getDescription(File jsonOuFilePath) throws ResourceInitializationException {
+	
+	public static AnalysisEngineDescription getDescription(File jsonOuFilePath, String... excludeRelationTypes) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
 				ConllJSonGoldExporter.class,
 				PARAM_JSON_OUT_FILE,
-				jsonOuFilePath);
+				jsonOuFilePath,
+				PARAM_EXCLUDE_RELATION_TYPES,
+				excludeRelationTypes);
 	}
 
 	public void initialize(UimaContext context)
@@ -117,10 +130,15 @@ public class ConllJSonGoldExporter extends JCasAnnotator_ImplBase{
 		} catch (FileNotFoundException e) {
 			throw new ResourceInitializationException(e); 
 		}
+		
+		if (excludeRelationTypes != null)
+			toBeExcluded.addAll(Arrays.asList(excludeRelationTypes));
 	}
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		for (DiscourseRelation discourseRelation: JCasUtil.select(aJCas, DiscourseRelation.class)){
+			if (toBeExcluded.contains(discourseRelation.getRelationType()))
+				continue;
 			String line = convertToJSon(discourseRelation, aJCas);
 			jsonFile.println(line);
 			jsonFile.flush();

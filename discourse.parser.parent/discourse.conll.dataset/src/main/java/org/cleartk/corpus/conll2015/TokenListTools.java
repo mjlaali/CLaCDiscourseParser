@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.uima.cas.CASException;
 import org.apache.uima.cas.text.AnnotationFS;
@@ -15,6 +16,7 @@ import org.cleartk.discourse.type.TokenList;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class TokenListTools {
+	public static Function<Character, Boolean> isWhiteSpace = Character::isWhitespace;
 
 	public static void initTokenList(TokenList tokenList, List<Token> tokens) {
 		int begin = Integer.MAX_VALUE; 
@@ -41,6 +43,10 @@ public class TokenListTools {
 	}
 
 	public static String getTokenListText(TokenList tokenList){
+		return getTokenListText(tokenList, isWhiteSpace);
+	}
+	
+	public static String getTokenListText(TokenList tokenList, Function<Character, Boolean> isWhiteSpace){
 		List<Token> tokens = TokenListTools.convertToTokens(tokenList);
 		String text;
 		try {
@@ -48,10 +54,11 @@ public class TokenListTools {
 		} catch (CASException e) {
 			throw new RuntimeException(e);
 		}
+		
 		StringBuilder sb = new StringBuilder();
 		for (Token token: tokens){
 			if (token.getBegin() > 0 && sb.length() > 0 && 
-					Character.isWhitespace(text.charAt(token.getBegin() - 1)))
+					isWhiteSpace.apply(text.charAt(token.getBegin() - 1)))
 				sb.append(" ");
 			sb.append(token.getCoveredText());
 		}

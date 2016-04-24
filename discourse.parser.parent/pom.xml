@@ -23,7 +23,7 @@
 		<module>discourse.parser.evaluation</module>
 		<module>discourse.parser.argument_labeler</module>
 		<module>discourse.conll.dataset.analysis</module>
-    <module>discourse.parser.implicit.parser</module>
+    <module>discourse.parser.implicit</module>
   </modules>
 
 	<distributionManagement>

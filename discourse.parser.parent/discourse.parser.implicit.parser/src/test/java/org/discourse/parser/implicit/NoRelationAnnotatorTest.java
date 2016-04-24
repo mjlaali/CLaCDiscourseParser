@@ -1,4 +1,4 @@
-package org.cleartk.corpus.conll2015;
+package org.discourse.parser.implicit;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,13 @@ import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
+import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
+import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
+import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
+import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
+import org.discourse.parser.implicit.NoRelationAnnotator;
 import org.junit.Test;
 
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
