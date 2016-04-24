@@ -1,4 +1,4 @@
-package org.discourse.parser.implicit.parser;
+package org.discourse.parser.implicit;
 
 import java.io.File;
 import java.io.IOException;

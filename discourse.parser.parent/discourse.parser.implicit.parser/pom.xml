@@ -8,7 +8,7 @@
 		<artifactId>discourse.parser.parent</artifactId>
 		<version>0.1.1</version>
 	</parent>
-	<artifactId>discourse.parser.implicit.parser</artifactId>
+	<artifactId>discourse.parser.implicit</artifactId>
 	<name>discourse.parser.implicit.parser</name>
 	<url>http://maven.apache.org</url>
 	<properties>
