@@ -133,6 +133,14 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 		@SuppressWarnings("unchecked")
 		List<String> senses = (List<String>)jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_SENSE);
 		for (String sense: senses){
+			if (sense.contains("'")){
+				System.err.println("ConllDiscourseGoldAnnotator.addDiscourseRelation(): There is invalid sense in the dataset: " + sense);
+				sense.replaceAll("'", "");
+			}
+			
+			if (sense.equals("Expansion"))	//this is invalid sense.
+				sense = "Expansion.Conjunction";
+			
 			RelationType type = textToRelation.get(jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_TYPE).toString().toLowerCase());
 			Map<String, JSONComplexAnnotation> annotaions = jsonDiscourseRelation.getAnnotaions();
 			JSONComplexAnnotation jsonDiscourseConnective = annotaions.get(ConllJSON.CONNECTIVE);

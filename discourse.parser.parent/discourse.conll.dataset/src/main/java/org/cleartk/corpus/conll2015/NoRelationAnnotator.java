@@ -119,7 +119,7 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 	
 	public static void main(String[] args) throws UIMAException, IOException {
 		File dataFld = new File("data/");
-		DatasetMode mode = DatasetMode.trial;
+		DatasetMode mode = DatasetMode.dev;
 		ConllDatasetPath datasetPath = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
