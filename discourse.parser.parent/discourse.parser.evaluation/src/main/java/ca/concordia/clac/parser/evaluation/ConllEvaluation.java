@@ -39,7 +39,7 @@ public class ConllEvaluation {
 				defaultToNull = true,
 				shortName = "m",
 				longName = "mode", 
-				description = "Specify the mode {dev, trial}")
+				description = "Specify the mode {dev, trial, test}")
 		public String getMode();
 		
 		@Option(
@@ -54,8 +54,11 @@ public class ConllEvaluation {
 		DatasetMode mode = DatasetMode.dev;
 		String inputDataset = null;
 		File outputDirectory = null;
-		if (options.getInputDataset() == null){
+		
+		if (options.getMode() != null)
 			mode = DatasetMode.valueOf(options.getMode());
+		
+		if (options.getInputDataset() == null){
 			inputDataset = "../discourse.conll.dataset/data";
 		} else {
 			inputDataset = options.getInputDataset();
@@ -66,7 +69,9 @@ public class ConllEvaluation {
 			FileUtils.deleteDirectory(outputDirectory);
 		
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File(inputDataset), mode);
-
+		if (dataset == null)
+			throw new RuntimeException();
+		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
 				TextReader.PARAM_LANGUAGE, "en",
@@ -79,7 +84,7 @@ public class ConllEvaluation {
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
 		
 		
-		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "pdtb-data.json").getAbsolutePath());
+		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());
 				
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);

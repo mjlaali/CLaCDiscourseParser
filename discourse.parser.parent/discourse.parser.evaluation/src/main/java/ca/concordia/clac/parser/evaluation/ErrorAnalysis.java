@@ -1,6 +1,5 @@
 package ca.concordia.clac.parser.evaluation;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -18,7 +17,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	public static final String GOLD_VIEW = "goldView";
 	public static final String SYSTEM_VIEW = "systemView";
 	
-	private PrintStream output;
+//	private PrintStream output;
 
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
