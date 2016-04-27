@@ -16,8 +16,10 @@ import org.cleartk.corpus.conll2015.ConllDatasetPath;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllJSONExporter;
+import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSequenceLabeler;
+import org.discourse.parser.implicit.NoRelationAnnotator;
 
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
@@ -83,8 +85,10 @@ public class ConllEvaluation {
 		
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
 		
-		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());
+		
+		AnalysisEngineDescription noRelDetector = NoRelationAnnotator.getDescription();
+		AnalysisEngineDescription noRelExporter = ConllJSonGoldExporter.getDescription(new File(outputDirectory, "no-relation.json"), "Explicit");
 				
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
@@ -92,7 +96,9 @@ public class ConllEvaluation {
 				conllSyntaxJsonReader, 
 				dcDisambiguator, 
 				argumentLabeler,
-				jsonExporter
+				jsonExporter,
+				noRelDetector, 
+				noRelExporter
 				);
 	}
 }

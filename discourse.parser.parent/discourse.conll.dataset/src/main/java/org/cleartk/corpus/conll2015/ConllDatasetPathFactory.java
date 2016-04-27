@@ -86,7 +86,7 @@ public class ConllDatasetPathFactory {
 	
 	public static void main(String[] args) {
 		ConllDatasetPathFactory factory = new ConllDatasetPathFactory();
-		File dataFld = new File("data");
+		File dataFld = new File("../discourse.conll.dataset/data");
 		for (ConllDatasetPath.DatasetMode mode: ConllDatasetPath.DatasetMode.values()){
 			factory.makeADataset(dataFld, mode);
 			factory.makeADataset2016(dataFld, mode);

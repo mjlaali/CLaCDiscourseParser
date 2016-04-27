@@ -91,7 +91,8 @@ public class TestCoreferenceResolution {
                 AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
                         StanfordCoreferenceResolver.PARAM_SIEVES, Constants.SIEVEPASSES)));
 
-        String aText = "John bought a car. He is very happy with it.";
+        String aText = "Kemper also blasted the Big Board for ignoring the interests of individual and institutional holders. \"The New York Stock Exchange has vested interests\" in its big member securities firms \"that cloud its objectivity,\" Mr. Timbers said.";
+//        String aText = "John bought a car. He is very happy with it.";
         // Set up a simple example
         JCas jcas = engine.newJCas();
         jcas.setDocumentLanguage("en");

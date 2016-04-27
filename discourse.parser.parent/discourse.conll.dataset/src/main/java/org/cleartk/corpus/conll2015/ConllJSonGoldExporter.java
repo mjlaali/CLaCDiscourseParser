@@ -5,8 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,7 +22,6 @@ import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.cleartk.corpus.conll2015.type.ConllToken;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
@@ -28,11 +30,12 @@ import org.cleartk.discourse.type.TokenList;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 class ConllGoldTokenList{
 
-	public ConllGoldTokenList(TokenList tokenList) {
+	public ConllGoldTokenList(TokenList tokenList, final Map<Token, TokenPosition> tokenPositions) {
 		if (tokenList == null)
 			return ;
 		
@@ -41,9 +44,9 @@ class ConllGoldTokenList{
 		List<int[]> tokenLists = new ArrayList<>();
 		
 		List<Token> tokens = TokenListTools.convertToTokens(tokenList);
-		tokenLists = tokens.stream().map((t) -> {
-			ConllToken token = (ConllToken)t;
-			return new int[]{token.getBegin(), token.getEnd(), token.getDocumentOffset(), token.getSentenceOffset(), token.getOffsetInSentence()};
+		tokenLists = tokens.stream().map((token) -> {
+			TokenPosition tokenPosition = tokenPositions.get(token);
+			return new int[]{token.getBegin(), token.getEnd(), tokenPosition.getDocumentOffset(), tokenPosition.getSentenceOffset(), tokenPosition.getOffsetInSentence()};
 		}).collect(Collectors.toList());
 		
 
@@ -86,9 +89,41 @@ class ConllGoldDiscourseRelation{
 	
 }
 
+class TokenPosition{
+	int documentOffset;
+	int sentenceOffset;
+	int offsetInSentence;
+	
+	public TokenPosition(int documentOffset) {
+		super();
+		this.documentOffset = documentOffset;
+	}
+	
+	public void setOffsetInSentence(int indexInSentence) {
+		this.offsetInSentence = indexInSentence;
+	}
+	
+	public void setSentenceOffset(int sentenceOffset) {
+		this.sentenceOffset = sentenceOffset;
+	}
+	
+	public int getDocumentOffset() {
+		return documentOffset;
+	}
+	
+	public int getOffsetInSentence() {
+		return offsetInSentence;
+	}
+	
+	public int getSentenceOffset() {
+		return sentenceOffset;
+	}
+}
+
 public class ConllJSonGoldExporter extends JCasAnnotator_ImplBase{
 	public static final String PARAM_JSON_OUT_FILE = "PARAM_JSON_OUT_FILE";
 	public static final String PARAM_EXCLUDE_RELATION_TYPES = "excludeRelationType";
+	
 
 	@ConfigurationParameter(
 			name = PARAM_JSON_OUT_FILE,
@@ -136,27 +171,55 @@ public class ConllJSonGoldExporter extends JCasAnnotator_ImplBase{
 	}
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
+		Map<Token, TokenPosition> tokenToDocumentOffset = getTokenOffsets(aJCas);
+		
 		for (DiscourseRelation discourseRelation: JCasUtil.select(aJCas, DiscourseRelation.class)){
 			if (toBeExcluded.contains(discourseRelation.getRelationType()))
 				continue;
-			String line = convertToJSon(discourseRelation, aJCas);
+			String line = convertToJSon(discourseRelation, tokenToDocumentOffset, aJCas);
 			jsonFile.println(line);
 			jsonFile.flush();
 		}
 	}
 	
-	private String convertToJSon(DiscourseRelation discourseRelation, JCas aJCas) throws AnalysisEngineProcessException {
+	private Map<Token, TokenPosition> getTokenOffsets(JCas aJCas) {
+		Map<Token, TokenPosition> tokenPositions = new HashMap<>();
+		
+		Collection<Token> tokens = JCasUtil.select(aJCas, Token.class);
+		int docOffset = 0; 
+		for (Token token: tokens){
+			tokenPositions.put(token, new TokenPosition(docOffset++));
+		}
+		
+		Map<Sentence, Collection<Token>> sentTokens = JCasUtil.indexCovered(aJCas, Sentence.class, Token.class);
+		Collection<Sentence> sents = JCasUtil.select(aJCas, Sentence.class);
+		
+		int sentOffset = 0;
+		for (Sentence sent: sents){
+			int indexInSentence = 0;
+			for (Token token: sentTokens.get(sent)){
+				TokenPosition tokenPosition = tokenPositions.get(token);
+				tokenPosition.setSentenceOffset(sentOffset);
+				tokenPosition.setOffsetInSentence(indexInSentence++);
+			}
+			sentOffset++;
+		}
+		
+		return tokenPositions;
+	}
+
+	private String convertToJSon(DiscourseRelation discourseRelation, Map<Token, TokenPosition> tokenPositions, JCas aJCas) throws AnalysisEngineProcessException {
 		ConllGoldDiscourseRelation conllDiscourseRelation = new ConllGoldDiscourseRelation();
 		conllDiscourseRelation.DocID = Tools.getDocName(aJCas);
 
 		DiscourseConnective discourseConnective = discourseRelation.getDiscourseConnective();
 		
-		conllDiscourseRelation.Connective = new ConllGoldTokenList(discourseConnective);
+		conllDiscourseRelation.Connective = new ConllGoldTokenList(discourseConnective, tokenPositions);
 
 		DiscourseArgument arg1 = discourseRelation.getArguments(0);
-		conllDiscourseRelation.Arg1 = new ConllGoldTokenList(arg1);
+		conllDiscourseRelation.Arg1 = new ConllGoldTokenList(arg1, tokenPositions);
 		DiscourseArgument arg2 = discourseRelation.getArguments(1);
-		conllDiscourseRelation.Arg2 = new ConllGoldTokenList(arg2);
+		conllDiscourseRelation.Arg2 = new ConllGoldTokenList(arg2, tokenPositions);
 
 		conllDiscourseRelation.Sense[0] = discourseRelation.getSense();
 		conllDiscourseRelation.Type = discourseRelation.getRelationType();
