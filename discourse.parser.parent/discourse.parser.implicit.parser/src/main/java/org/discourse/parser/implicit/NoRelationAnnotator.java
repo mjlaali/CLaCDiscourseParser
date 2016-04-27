@@ -22,6 +22,7 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
@@ -29,7 +30,6 @@ import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.corpus.conll2015.RelationType;
 import org.cleartk.corpus.conll2015.TokenListTools;
-import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseRelation;
 
@@ -38,6 +38,14 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
+	public static final String PARAM_DEFAULT_SENSE = "defaultSense";
+	public static final String PARAM_DEFAULT_TYPE = "defaultType";
+
+	private String defaultSense = "";
+	private String defaultType = "NoRel";
+	
+	private RelationType defaultRelationType = RelationType.valueOf(defaultType); 
+	
 	DiscourseRelationFactory factory = new DiscourseRelationFactory();
 
 	@Override
@@ -66,9 +74,9 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 			else
 				intersect.retainAll(currentRelation);
 
-			if (intersect.isEmpty()){	 //there is no relation between these two sentences
-				RelationType type = RelationType.NoRel;
-				String sense = "";
+			if (intersect.isEmpty() && inSameParagraph(prev, current, aJCas.getDocumentText())){	 //there is no relation between these two sentences
+				RelationType type = defaultRelationType;
+				String sense = defaultSense;
 				String discourseConnectiveText = null;
 				List<Token> discourseConnectiveTokens = null;
 				List<Token> arg1 = new ArrayList<>(sentToToken.get(prev));
@@ -89,6 +97,12 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 
 	}
 
+	private boolean inSameParagraph(Sentence prev, Sentence current, String documentText) {
+		String textInBetween = documentText.substring(prev.getEnd(), current.getBegin());
+		boolean paragraphSeperator = textInBetween.contains("\n\n");
+		return !paragraphSeperator;
+	}
+	
 	private Map<Sentence, Set<DiscourseRelation>> createSentenceToRelationMap(JCas aJCas) {
 		Map<Sentence, Set<DiscourseRelation>> sentToRelations = new HashMap<>();
 		Collection<DiscourseRelation> relations = JCasUtil.select(aJCas, DiscourseRelation.class);
@@ -126,8 +140,8 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 	}
 	
 	public static void main(String[] args) throws UIMAException, IOException {
-		File dataFld = new File("data/");
-		DatasetMode mode = DatasetMode.dev;
+		File dataFld = new File("../discourse.conll.dataset/data/");
+		DatasetMode mode = DatasetMode.trial;
 		ConllDatasetPath datasetPath = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
@@ -138,7 +152,8 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(datasetPath.getParsesJSonFile());
 		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getDataJSonFile(), false);
 		AnalysisEngineDescription noRelationAnnotator = NoRelationAnnotator.getDescription();
-		AnalysisEngineDescription conllGoldJSONExporter = ConllJSonGoldExporter.getDescription(new File("outputs/no-relations-" + mode + ".json"));
+		AnalysisEngineDescription conllGoldJSONExporter = ConllJSonGoldExporter.getDescription(
+				new File("outputs/no-relations-" + mode + ".json"), "Explicit");
 		
 		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, conllDiscourseJsonReader, noRelationAnnotator, conllGoldJSONExporter);
 		System.out.println("NoRelationAnnotator.main()");

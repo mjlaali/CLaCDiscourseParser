@@ -23,7 +23,7 @@ public class ConllDatasetPath {
 		
 		for (File file: new File[]{rawDirectory, parsesJSonFile}){
 			if (file == null || !file.exists())
-				throw new RuntimeException("There is issue with the file: " + file);
+				throw new RuntimeException("The file/folder does not exist: " + file);
 		}
 		this.mode = mode;
 	}
