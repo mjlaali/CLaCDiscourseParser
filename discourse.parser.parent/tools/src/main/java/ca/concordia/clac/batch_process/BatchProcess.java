@@ -50,6 +50,12 @@ public class BatchProcess implements Serializable{
 	private final File outputDir;
 	private File temp;
 
+	public static CollectionReaderDescription getXmiReader(File inputDir) throws ResourceInitializationException{
+		return CollectionReaderFactory.createReaderDescription(XmiReader.class, 
+				XmiReader.PARAM_SOURCE_LOCATION, inputDir, 
+				XmiReader.PARAM_PATTERNS, new String[]{"*.xmi"});	
+	}
+	
 	public BatchProcess(File inputDir, File outputDir) throws ResourceInitializationException{
 		this(inputDir, outputDir, "en", "*.txt");
 	}
@@ -61,6 +67,7 @@ public class BatchProcess implements Serializable{
 				TextReader.PARAM_PATTERNS, patterns), outputDir);
 	}
 
+	
 	public BatchProcess(CollectionReaderDescription inputReaderDescription, File outDir) {
 		this.inputReaderDescription = inputReaderDescription;
 		this.outputDir = outDir;

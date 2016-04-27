@@ -35,6 +35,7 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
+import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
@@ -120,7 +121,7 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 		
 
 		BiFunction<Annotation, ArgumentTreeNode, Feature> leftSibling = makeBiFunc(getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("leftSibling"))); 
-		BiFunction<Annotation, ArgumentTreeNode, Feature> rightSibling = makeBiFunc(getRightSibling().andThen(getConstituentType()).andThen(makeFeature("leftSibling"))); 
+		BiFunction<Annotation, ArgumentTreeNode, Feature> rightSibling = makeBiFunc(getRightSibling().andThen(getConstituentType()).andThen(makeFeature("rightSibling"))); 
 
 		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> annotationFeatureExtractor = multiBiFuncMap(
 				nodeHead, consType, positionFeature, parentPattern, grandParentPattern, argumentType,
@@ -149,9 +150,11 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 		return new PurifyDiscourseRelations(constituentToCoveredTokens);
 	}
 
-	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
-//		return StringSequenceClassifier.getWriterDescription(NoneNodeLabeller.class,
-//				MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory)); 
+	public static AnalysisEngineDescription getWriterDescription(String outputDirectory, boolean mallet) throws ResourceInitializationException {
+		if (mallet)
+			return StringSequenceClassifier.getWriterDescription(NoneNodeLabeller.class,
+					MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory));
+		
 		return StringSequenceClassifier.getViterbiWriterDescription(NoneNodeLabeller.class,
 				WekaStringOutcomeDataWriter.class, new File(outputDirectory)); 
 	}

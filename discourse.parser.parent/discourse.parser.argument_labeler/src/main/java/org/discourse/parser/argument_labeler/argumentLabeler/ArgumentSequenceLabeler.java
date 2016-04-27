@@ -29,8 +29,13 @@ public class ArgumentSequenceLabeler {
 	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
-		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath()));
-		aggregateBuilder.add(NoneNodeLabeller.getWriterDescription(new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath()));
+		boolean usingMallet;
+		usingMallet = true;
+		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(
+				new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath(), usingMallet));
+		usingMallet = false;
+		aggregateBuilder.add(NoneNodeLabeller.getWriterDescription(
+				new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath(), usingMallet));
 		return aggregateBuilder.createAggregateDescription();
 	}
 
@@ -73,8 +78,10 @@ public class ArgumentSequenceLabeler {
 				getWriterDescription(outputDirectory)
 				);
 
-		for (File aComponent: outputDirectory.listFiles())
+		for (File aComponent: outputDirectory.listFiles()){
+			System.out.println("ArgumentSequenceLabeler.main(): training " + aComponent.getName());
 			Train.main(aComponent);
+		}
 	}
 
 }

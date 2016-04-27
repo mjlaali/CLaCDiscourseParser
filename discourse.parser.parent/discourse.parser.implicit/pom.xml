@@ -9,7 +9,7 @@
 		<version>0.1.1</version>
 	</parent>
 	<artifactId>discourse.parser.implicit</artifactId>
-	<name>discourse.parser.implicit.parser</name>
+	<name>discourse.parser.implicit</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
