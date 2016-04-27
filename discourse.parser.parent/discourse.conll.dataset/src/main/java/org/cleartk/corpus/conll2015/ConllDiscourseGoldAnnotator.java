@@ -104,8 +104,7 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 		if (!docJSonRelations.containsKey(Tools.getDocName(aJCas))){
 			if (JCasUtil.exists(aJCas, ConllToken.class)){
 				System.err.println("ConllDiscourseGoldAnnotator.process(): No discourse relation for file <" +
-						Tools.getDocName(aJCas) + "> while there is syntactic informaiton for the file. <" +
-						docJSonRelations.size() + ">");
+						Tools.getDocName(aJCas) + "> while there is syntactic informaiton for the file." );
 			}
 			return;
 		}

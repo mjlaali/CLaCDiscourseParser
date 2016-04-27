@@ -25,7 +25,7 @@ public class NoRelationAnnotatorTest {
 
 	@Test
 	public void whenGeneratingAFileForTrialDatasetThenNoRelationsAreIncludedInTheOutput() throws UIMAException, IOException{
-		File dataFld = new File("data/");
+		File dataFld = new File("../discourse.conll.dataset/data/");
 		ConllDatasetPath datasetPath = new ConllDatasetPathFactory().makeADataset2016(dataFld, DatasetMode.trial);
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 

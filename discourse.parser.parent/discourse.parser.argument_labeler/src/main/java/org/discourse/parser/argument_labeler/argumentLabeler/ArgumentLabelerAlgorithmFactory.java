@@ -12,6 +12,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,12 +31,10 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseConnective;
-import org.cleartk.ml.CleartkSequenceAnnotator;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.jar.DefaultSequenceDataWriterFactory;
-import org.cleartk.ml.jar.DirectoryDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
@@ -213,16 +212,15 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 	}
 
 
-	public static AnalysisEngineDescription getWriterDescription(String outputDirectory) throws ResourceInitializationException {
-		return AnalysisEngineFactory.createEngineDescription(StringSequenceClassifier.class,
-				GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
-				ArgumentLabelerAlgorithmFactory.class.getName(),
-				CleartkSequenceAnnotator.PARAM_IS_TRAINING,
-		        true,
-		        DirectoryDataWriterFactory.PARAM_OUTPUT_DIRECTORY,
-		        outputDirectory,
-		        DefaultSequenceDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME,
-		        MalletCrfStringOutcomeDataWriter.class);
+	public static AnalysisEngineDescription getWriterDescription(String outputDirectory, boolean mallet) throws ResourceInitializationException {
+		if (mallet)
+			return StringSequenceClassifier.getWriterDescription(ArgumentLabelerAlgorithmFactory.class,
+					MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory));
+		
+		return StringSequenceClassifier.getViterbiWriterDescription(ArgumentLabelerAlgorithmFactory.class,
+				WekaStringOutcomeDataWriter.class, new File(outputDirectory)); 
+		
+		
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(String modelFileName) throws ResourceInitializationException {

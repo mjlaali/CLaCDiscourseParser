@@ -111,15 +111,17 @@ public class NoneNodeLabellerTest{
 					.collect(Collectors.joining("-")))
 			.collect(Collectors.toList());
 		
+//		System.out.println(strFeatures.stream().collect(Collectors.joining("\n")));
 		String[] goldFeatures = new String[]{
-				"<nodeHead:impression>-<consType:NP>-<position:left>",
-				"<nodeHead:impression>-<consType:NP>-<position:left>",
-				"<nodeHead:the>-<consType:DT>-<position:left>",
-				"<nodeHead:impression>-<consType:NN>-<position:middle>",
-				"<nodeHead:got>-<consType:SBAR>-<position:middle>",
-				"<nodeHead:got>-<consType:S>-<position:middle>",
-				"<nodeHead:i>-<consType:NP>-<position:middle>",
-				"<nodeHead:i>-<consType:PRP>-<position:middle>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:S->NP-VP>-<grandParentPattern:S->S-,-CC-S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
+				 
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:SBAR>",
+				"<nodeHead:the>-<consType:DT>-<position:left>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:NN>",
+				"<nodeHead:impression>-<consType:NN>-<position:middle>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:DT>-<rightSibling:null>",
+				"<nodeHead:got>-<consType:SBAR>-<position:middle>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:NP>-<rightSibling:null>",
+				"<nodeHead:got>-<consType:S>-<position:middle>-<parentPattern:SBAR->S>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
+				"<nodeHead:i>-<consType:NP>-<position:middle>-<parentPattern:S->NP-VP>-<grandParentPattern:SBAR->S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
+				"<nodeHead:i>-<consType:PRP>-<position:middle>-<parentPattern:NP->PRP>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);

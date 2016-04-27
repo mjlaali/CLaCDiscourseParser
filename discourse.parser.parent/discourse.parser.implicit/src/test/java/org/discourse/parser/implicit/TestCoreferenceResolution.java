@@ -37,7 +37,7 @@ import edu.stanford.nlp.dcoref.Constants;
 public class TestCoreferenceResolution {
 
 	@Test
-	public void checkTimeComtestpaswplexity() throws UIMAException, IOException{
+	public void checkTimeComplexity() throws UIMAException, IOException{
 		ConllDatasetPathFactory factor = new ConllDatasetPathFactory();
 		ConllDatasetPath dataset = factor.makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
 		
