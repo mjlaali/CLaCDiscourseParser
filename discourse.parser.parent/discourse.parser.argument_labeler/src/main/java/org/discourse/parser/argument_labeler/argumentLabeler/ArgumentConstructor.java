@@ -4,6 +4,7 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -21,6 +22,8 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 	private JCas aJCas;
 	private DiscourseRelationFactory relationFactory = new DiscourseRelationFactory();
 	private Map<Constituent, ? extends Collection<Token>> constituentToTokens;
+	
+	
 	public ArgumentConstructor(JCas aJCas, Map<Constituent, ? extends Collection<Token>> constituentToTokens) {
 		this.aJCas = aJCas;
 		this.constituentToTokens = constituentToTokens;
@@ -28,6 +31,11 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 
 	@Override
 	public void accept(List<String> outcomes, DiscourseConnective dc, List<DCTreeNodeArgInstance> instances) {
+		if (!new HashSet<>(outcomes).contains(NodeArgType.Arg1.toString())){
+			outcomes.remove(0);
+			outcomes.add(0, NodeArgType.Arg1.toString());
+		}
+		
 		List<Token> arg1Tokens = new ArrayList<>();
 		List<Token> arg2Tokens = new ArrayList<>();
 		List<Token> dcTokens = new ArrayList<>();
@@ -58,6 +66,7 @@ public class ArgumentConstructor implements SequenceClassifierConsumer<String, D
 				break;
 			}
 		}
+		
 		
 		DiscourseRelation relation = relationFactory.makeAnExplicitRelation(aJCas, dc.getSense(), dc, arg1Tokens, arg2Tokens);
 		relation.addToIndexes();

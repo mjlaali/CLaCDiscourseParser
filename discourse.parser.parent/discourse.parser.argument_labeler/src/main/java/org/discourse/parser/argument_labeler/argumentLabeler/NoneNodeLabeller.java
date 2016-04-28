@@ -2,6 +2,7 @@ package org.discourse.parser.argument_labeler.argumentLabeler;
 
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependency;
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeBiFunc;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
@@ -39,6 +40,7 @@ import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
+import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
@@ -127,7 +129,12 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 				nodeHead, consType, positionFeature, parentPattern, grandParentPattern, argumentType,
 				leftSibling, rightSibling);
 		
-		return mapOneByOneTo(annotationFeatureExtractor);
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> dcFeatures = 
+				(ann, treeNode) -> DiscourseVsNonDiscourseClassifier.getDiscourseConnectiveFeatures().apply(treeNode.getDiscourseArgument().getDiscouresRelation().getDiscourseConnective());
+		
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> multiBiFuncMap = multiBiFuncMap(annotationFeatureExtractor, dcFeatures)
+				.andThen(flatMap(Feature.class));
+		return mapOneByOneTo(multiBiFuncMap);
 	}
 
 	@Override

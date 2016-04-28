@@ -97,7 +97,6 @@ public class DiscourseVsNonDiscourseClassifierTest {
 		
 		assertThat(features).containsKey(dc);
 		List<Feature> dcFeatures = features.get(dc);
-		assertThat(dcFeatures).hasSize(6);
 		
 		Collections.sort(dcFeatures, (f1, f2) -> f1.getName().compareTo(f2.getName()));
 		assertThat(dcFeatures).containsOnly(new Feature("CON-LStr", "so") 
@@ -105,6 +104,10 @@ public class DiscourseVsNonDiscourseClassifierTest {
 				, new Feature("selfCat", "ADVP")
 				, new Feature("selfCatLeftSibling", "CC")
 				, new Feature("selfCatRightSibling", "VP")
-				, new Feature("selfCatParent", "VP"));
+				, new Feature("selfCatParent", "VP")
+				, new Feature("leftPOS", "CC")
+				, new Feature("leftText", "and")
+				, new Feature("rightPOS", "VBP")
+				, new Feature("rightText", "are"));
 	}
 }

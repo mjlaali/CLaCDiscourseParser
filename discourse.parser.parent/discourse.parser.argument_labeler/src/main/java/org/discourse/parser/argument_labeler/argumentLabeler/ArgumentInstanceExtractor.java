@@ -55,8 +55,7 @@ public class ArgumentInstanceExtractor implements Function<DiscourseConnective, 
 				.map((child) -> new DCTreeNodeArgInstance(child, imediateDcParent, aJCas))
 				.collect(Collectors.toList());
 		
-		Constituent root = pathToRoot.get(0);
-		List<Sentence> prevSents = JCasUtil.selectPreceding(Sentence.class, root, 1);
+		List<Sentence> prevSents = JCasUtil.selectPreceding(Sentence.class, discourseConnective, 1);
 		if (prevSents.size() > 0){
 			Sentence prevSent = prevSents.get(0);
 			List<ROOT> prevSentRoots = JCasUtil.selectCovered(ROOT.class, prevSent);

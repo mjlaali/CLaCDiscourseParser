@@ -1,6 +1,7 @@
 package ca.concordia.clac.discourse.parser.dc.disambiguation;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.dummyFunc;
+import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getText;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.multiMap;
@@ -31,6 +32,7 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
+import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
@@ -45,6 +47,7 @@ import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
 import ca.concordia.clac.ml.classifier.StringClassifierLabeller;
 import ca.concordia.clac.uima.engines.LookupInstanceExtractor;
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
@@ -66,14 +69,53 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	public InstanceExtractor<DiscourseConnective> getExtractor(JCas aJCas) {
 		return lookupInstanceExtractor;
 	}
+	
+	public static <T extends Annotation, R extends Annotation> Function<T, R> getLeft(Class<R> r){
+		return (ann) -> {
+			List<R> selectPreceding = JCasUtil.selectPreceding(r, ann, 1);
+			if (selectPreceding.size() > 0)
+				return selectPreceding.get(0);
+			return null;
+		};
+	}
+
+	public static <T extends Annotation, R extends Annotation> Function<T, R> getRight(Class<R> r){
+		return (ann) -> {
+			List<R> selectPreceding = JCasUtil.selectFollowing(r, ann, 1);
+			if (selectPreceding.size() > 0)
+				return selectPreceding.get(0);
+			return null;
+		};
+	}
 
 	public static Function<DiscourseConnective, List<Feature>> getDiscourseConnectiveFeatures(){
 		Function<String, String> toLowerCase = String::toLowerCase;
 		Function<String, Boolean> isAllLowerCase = StringUtils::isAllLowerCase;
-		return dummyFunc(DiscourseConnective.class).andThen(getText()).andThen(multiMap(
+		
+		Function<DiscourseConnective, List<Feature>> textFeatures = dummyFunc(DiscourseConnective.class).andThen(getText()).andThen(multiMap(
 				toLowerCase.andThen(makeFeature(CONN_LStr)),
 				isAllLowerCase.andThen((b) -> b.toString()).andThen(makeFeature("CON-POS"))
 				));
+		
+		Function<DiscourseConnective, List<Feature>> contextFeature = dummyFunc(DiscourseConnective.class).andThen(
+				multiMap(getLeft(Token.class).andThen(
+							multiMap(
+									getConstituentType().andThen(makeFeature("leftPOS")),
+									getText().andThen(makeFeature("leftText"))
+									)
+							),
+						getRight(Token.class).andThen(
+							multiMap(
+									getConstituentType().andThen(makeFeature("rightPOS")),
+									getText().andThen(makeFeature("rightText"))
+									)
+							)
+						)
+				).andThen(flatMap(Feature.class));
+		
+		Function<DiscourseConnective, List<Feature>> allFeatuers = multiMap(textFeatures, contextFeature).andThen(flatMap(Feature.class));
+		
+		return allFeatuers;
 	}
 
 	@Override

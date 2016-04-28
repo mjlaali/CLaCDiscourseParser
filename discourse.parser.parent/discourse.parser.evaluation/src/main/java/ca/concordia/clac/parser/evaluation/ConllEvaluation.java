@@ -50,6 +50,7 @@ public class ConllEvaluation {
 				description = "Specify the output directory to stores extracted texts")
 		public String getOutputDir();
 	}
+	
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException {
 		Options options = CliFactory.parseArguments(Options.class, args);
 		
