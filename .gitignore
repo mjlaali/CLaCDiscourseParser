@@ -1,5 +1,6 @@
 target/
 bin/
 outputs/
+*.arff
 .DS_Store
 *.pyc
