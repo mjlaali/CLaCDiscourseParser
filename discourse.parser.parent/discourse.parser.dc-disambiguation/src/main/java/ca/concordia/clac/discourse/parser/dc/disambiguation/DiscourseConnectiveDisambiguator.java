@@ -96,10 +96,14 @@ public class DiscourseConnectiveDisambiguator {
 		AggregateBuilder parser = new AggregateBuilder();
 		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage), 
 				CAS.NAME_DEFAULT_SOFA, viewName);
-		parser.add(DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage), 
+		parser.add(getSenseLabeler(), 
 				CAS.NAME_DEFAULT_SOFA, viewName);
 		
 		return parser.createAggregateDescription();
+	}
+	
+	public AnalysisEngineDescription getSenseLabeler() throws ResourceInitializationException, MalformedURLException{
+		return DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage);
 	}
 	
 	public void parseSubdirectory(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{

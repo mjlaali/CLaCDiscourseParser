@@ -67,7 +67,7 @@ public class ArgumentSequenceLabeler {
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 
 		File outputDirectory = new File(new File("outputs/resources"), PACKAGE_DIR);
 		if (outputDirectory.exists())

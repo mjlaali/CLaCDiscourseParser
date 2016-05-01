@@ -11,12 +11,14 @@ public class ConllDatasetPath {
 	File rawDirectory;
 	File dataJSonFile;
 	File parsesJSonFile;
+	File relationNoSenseFile;
 	DatasetMode mode;
 	
-	public ConllDatasetPath(File rawDirectory, File dataJSonFile, File parsesJSonFile, DatasetMode mode){
+	public ConllDatasetPath(File rawDirectory, File dataJSonFile, File parsesJSonFile, File relationNoSenseFile, DatasetMode mode){
 		this.rawDirectory = rawDirectory;
 		this.dataJSonFile = dataJSonFile;
 		this.parsesJSonFile = parsesJSonFile;
+		this.relationNoSenseFile = relationNoSenseFile;
 		
 		if (mode != DatasetMode.test && dataJSonFile == null)
 			throw new RuntimeException("There is issue with the file: " + dataJSonFile);
@@ -29,7 +31,7 @@ public class ConllDatasetPath {
 	}
 
 
-	public File getDataJSonFile() {
+	public File getRelationsJSonFile() {
 		return dataJSonFile;
 	}
 	
@@ -43,6 +45,10 @@ public class ConllDatasetPath {
 	
 	public File getRawDirectory() {
 		return rawDirectory;
+	}
+	
+	public File getRelationNoSenseFile(){
+		return relationNoSenseFile;
 	}
 	
 }

@@ -150,7 +150,7 @@ public class NoRelationAnnotator extends JCasAnnotator_ImplBase{
 				TextReader.PARAM_PATTERNS, "wsj_*");
 		
 		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(datasetPath.getParsesJSonFile());
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getDataJSonFile(), false);
+		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getRelationsJSonFile(), false);
 		AnalysisEngineDescription noRelationAnnotator = NoRelationAnnotator.getDescription();
 		AnalysisEngineDescription conllGoldJSONExporter = ConllJSonGoldExporter.getDescription(
 				new File("outputs/no-relations-" + mode + ".json"), "Explicit");

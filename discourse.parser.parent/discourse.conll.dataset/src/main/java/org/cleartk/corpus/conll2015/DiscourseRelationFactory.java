@@ -108,6 +108,13 @@ public class DiscourseRelationFactory {
 		List<Token> tokens = new ArrayList<Token>();
 		
 		DiscourseRelation discourseRelation = new DiscourseRelation(aJCas);
+
+		if (type == null && discourseConnectiveTokens != null && discourseConnectiveTokens.size() > 0)
+			type = RelationType.Explicit;
+
+		if (type == null)
+			type = RelationType.Implicit;
+		
 		discourseRelation.setRelationType(type.toString());
 		discourseRelation.setSense(sense);
 		

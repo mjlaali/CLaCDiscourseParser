@@ -207,7 +207,7 @@ public class TerminalOutputWriter extends JCasAnnotator_ImplBase{
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 		
 		AnalysisEngineDescription output = getDescription(new File("outputs/relations.txt"));
 //		AnalysisEngineDescription output = getDescription(null);

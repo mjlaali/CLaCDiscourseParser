@@ -31,7 +31,7 @@ public class ConllJSONExporterTest {
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
 		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(dataSet.getParsesJSonFile());
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(dataSet.getDataJSonFile(), false);
+		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(dataSet.getRelationsJSonFile(), false);
 		AnalysisEngineDescription conllJSONExporter = ConllJSONExporter.getDescription(JSON_OUTPUT);
 //		AnalysisEngineDescription syntaxParseTreeReader = AnalysisEngineFactory.createEngineDescription(TreebankGoldAnnotator.class);
 		
@@ -54,7 +54,7 @@ public class ConllJSONExporterTest {
 	public void givenDevDataSetWhenWritingTheSameOutputThenGetPerfectResults() throws IOException, UIMAException{
 		ConllDatasetPath dataSet = new ConllDatasetPathFactory().makeADataset(ConllDatasetPath.DatasetMode.dev);
 		setUp(dataSet);
-		String overallResult = Tools.runScorer(dataSet.getDataJSonFile().getAbsolutePath(), JSON_OUTPUT).getLast();
+		String overallResult = Tools.runScorer(dataSet.getRelationsJSonFile().getAbsolutePath(), JSON_OUTPUT).getLast();
 		
 		assertThat(overallResult).isEqualTo(PERFECT_RESULT);
 	}

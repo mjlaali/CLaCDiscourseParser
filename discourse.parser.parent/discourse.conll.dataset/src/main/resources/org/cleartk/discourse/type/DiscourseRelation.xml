@@ -41,6 +41,11 @@
           <description/>
           <rangeTypeName>org.cleartk.discourse.type.DiscourseConnective</rangeTypeName>
         </featureDescription>
+      <featureDescription>
+          <name>relationId</name>
+          <description/>
+          <rangeTypeName>uima.cas.String</rangeTypeName>
+        </featureDescription>
       </features>
     </typeDescription>
   </types>

@@ -10,8 +10,8 @@ import org.apache.uima.jcas.cas.TOP_Type;
 
 
 /** 
- * Updated by JCasGen Fri Apr 15 12:41:45 EDT 2016
- * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/discourse/type/DiscourseArgument.xml
+ * Updated by JCasGen Sun May 01 13:05:42 EDT 2016
+ * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/discourse/type/DiscourseRelation.xml
  * @generated */
 public class DiscourseRelation extends TokenList {
   /** @generated
@@ -213,6 +213,28 @@ public class DiscourseRelation extends TokenList {
     if (DiscourseRelation_Type.featOkTst && ((DiscourseRelation_Type)jcasType).casFeat_discourseConnective == null)
       jcasType.jcas.throwFeatMissing("discourseConnective", "org.cleartk.discourse.type.DiscourseRelation");
     jcasType.ll_cas.ll_setRefValue(addr, ((DiscourseRelation_Type)jcasType).casFeatCode_discourseConnective, jcasType.ll_cas.ll_getFSRef(v));}    
+   
+    
+  //*--------------*
+  //* Feature: relationId
+
+  /** getter for relationId - gets 
+   * @generated
+   * @return value of the feature 
+   */
+  public String getRelationId() {
+    if (DiscourseRelation_Type.featOkTst && ((DiscourseRelation_Type)jcasType).casFeat_relationId == null)
+      jcasType.jcas.throwFeatMissing("relationId", "org.cleartk.discourse.type.DiscourseRelation");
+    return jcasType.ll_cas.ll_getStringValue(addr, ((DiscourseRelation_Type)jcasType).casFeatCode_relationId);}
+    
+  /** setter for relationId - sets  
+   * @generated
+   * @param v value to set into the feature 
+   */
+  public void setRelationId(String v) {
+    if (DiscourseRelation_Type.featOkTst && ((DiscourseRelation_Type)jcasType).casFeat_relationId == null)
+      jcasType.jcas.throwFeatMissing("relationId", "org.cleartk.discourse.type.DiscourseRelation");
+    jcasType.ll_cas.ll_setStringValue(addr, ((DiscourseRelation_Type)jcasType).casFeatCode_relationId, v);}    
   }
 
     

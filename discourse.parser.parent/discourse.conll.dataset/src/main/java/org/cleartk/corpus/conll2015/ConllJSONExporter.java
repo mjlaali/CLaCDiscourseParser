@@ -39,6 +39,7 @@ class ConllTokenList{
 
 class ConllDiscourseRelation{
 	String DocID;
+	String ID;
 	String Type;
 	String[] Sense = new String[1];
 	String discourseConnectiveText;
@@ -86,9 +87,11 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		for (DiscourseRelation discourseRelation: JCasUtil.select(aJCas, DiscourseRelation.class)){
-			String line = convertToJSon(discourseRelation, aJCas);
-			jsonFile.println(line);
-			jsonFile.flush();
+			if (discourseRelation.getSense() != null){
+				String line = convertToJSon(discourseRelation, aJCas);
+				jsonFile.println(line);
+				jsonFile.flush();
+			}
 //			try {
 //				JSONObject jsonObject = getJSONObject(discourseRelation, aJCas);
 //				jsonObject.write(jsonFile);
@@ -119,6 +122,7 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 
 		conllDiscourseRelation.Sense[0] = discourseRelation.getSense();
 		conllDiscourseRelation.Type = discourseRelation.getRelationType();
+		conllDiscourseRelation.ID = discourseRelation.getRelationId();
 
 		String jsonVal = xstream.toXML(conllDiscourseRelation).replace("\n", "").replaceAll(" +", " ");
 		jsonVal = jsonVal.substring("{\"\": ".length(), jsonVal.length() - 1);

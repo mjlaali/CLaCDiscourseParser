@@ -14,5 +14,6 @@ public class ConllJSON {
 	public static final String RELATION_TYPE = "Type";
 	
 	public static final String EXPLICIT_RELATION_TYPE = "Explicit";
+	public static final Object RELATION_ID = "ID";
 
 }

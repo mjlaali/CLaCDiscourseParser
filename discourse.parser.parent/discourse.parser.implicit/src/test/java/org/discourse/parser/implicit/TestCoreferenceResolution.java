@@ -57,7 +57,7 @@ public class TestCoreferenceResolution {
 		AnalysisEngineDescription lematizer = AnalysisEngineFactory.createEngineDescription(StanfordLemmatizer.class);
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 		
 		AnalysisEngineDescription namedEntityRecognizer = AnalysisEngineFactory.createEngineDescription(StanfordNamedEntityRecognizer.class);
 		AnalysisEngineDescription coreferenceResolver = AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
@@ -91,7 +91,9 @@ public class TestCoreferenceResolution {
                 AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
                         StanfordCoreferenceResolver.PARAM_SIEVES, Constants.SIEVEPASSES)));
 
-        String aText = "Kemper also blasted the Big Board for ignoring the interests of individual and institutional holders. \"The New York Stock Exchange has vested interests\" in its big member securities firms \"that cloud its objectivity,\" Mr. Timbers said.";
+//        String aText = "Kemper also blasted the Big Board for ignoring the interests of individual and institutional holders. \"The New York Stock Exchange has vested interests\" in its big member securities firms \"that cloud its objectivity,\" Mr. Timbers said.";
+//        String aText = "But the RTC also requires \"working\" capital to maintain the bad assets of thrifts that are sold, until the assets can be sold separately.";
+        String aText = "We would have to wait until we have collected on those assets";
 //        String aText = "John bought a car. He is very happy with it.";
         // Set up a simple example
         JCas jcas = engine.newJCas();

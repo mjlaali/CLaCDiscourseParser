@@ -25,6 +25,7 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.discourse.type.DiscourseConnective;
+import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
 import org.cleartk.ml.jar.GenericJarClassifierFactory;
@@ -60,7 +61,12 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 
 	@Override
 	public BiConsumer<String, DiscourseConnective> getLabeller(JCas aJCas) {
-		return (sense, dc) -> dc.setSense(sense.replaceAll("'", ""));
+		return (sense, dc) -> {
+			dc.setSense(sense.replaceAll("'", ""));
+			DiscourseRelation relation = dc.getDiscourseRelation();
+			if (relation != null)
+				relation.setSense(sense);
+		};
 	}
 
 	public static AnalysisEngineDescription getWriterDescription(File outputFld) throws ResourceInitializationException{
@@ -87,7 +93,7 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 		
 		File featureFile = new File(new File("outputs/resources"), PACKAGE_DIR);
 		if (featureFile.exists())

@@ -40,13 +40,13 @@ public class ConllJSonGoldExporterTest {
 				TextReader.PARAM_PATTERNS, "wsj_*");
 		
 		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(datasetPath.getParsesJSonFile());
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getDataJSonFile(), false);
+		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getRelationsJSonFile(), false);
 		AnalysisEngineDescription conllGoldJSONExporter = ConllJSonGoldExporter.getDescription(JSON_OUTPUT);
 		
 		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, conllDiscourseJsonReader, conllGoldJSONExporter);
 		
 		Set<JsonElement> outputs = fileToJsonElements(JSON_OUTPUT);
-		Set<JsonElement> expected = fileToJsonElements(datasetPath.getDataJSonFile());
+		Set<JsonElement> expected = fileToJsonElements(datasetPath.getRelationsJSonFile());
 		
 		for (JsonElement element: outputs){
 			if (expected.contains(element))
@@ -121,7 +121,7 @@ public class ConllJSonGoldExporterTest {
 				TextReader.PARAM_PATTERNS, "wsj_*");
 		
 		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(datasetPath.getParsesJSonFile());
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getDataJSonFile(), false);
+		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(datasetPath.getRelationsJSonFile(), false);
 		AnalysisEngineDescription conllGoldJSONExporter = ConllJSonGoldExporter.getDescription(JSON_OUTPUT, RelationType.Explicit.toString());
 		
 		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, conllDiscourseJsonReader, conllGoldJSONExporter);

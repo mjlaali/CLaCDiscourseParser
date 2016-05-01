@@ -191,7 +191,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 
 		File dcList = new File(new File("outputs/resources"), DC_HEAD_LIST_FILE);
 		File featureFile = new File(new File("outputs/resources"), PACKAGE_DIR);

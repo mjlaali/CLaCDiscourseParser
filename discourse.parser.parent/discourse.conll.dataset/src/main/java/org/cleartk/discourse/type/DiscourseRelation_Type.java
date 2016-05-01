@@ -13,7 +13,7 @@ import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
 
 /** 
- * Updated by JCasGen Fri Apr 15 12:41:45 EDT 2016
+ * Updated by JCasGen Sun May 01 13:05:42 EDT 2016
  * @generated */
 public class DiscourseRelation_Type extends TokenList_Type {
   /** @generated 
@@ -189,6 +189,30 @@ public class DiscourseRelation_Type extends TokenList_Type {
     ll_cas.ll_setRefValue(addr, casFeatCode_discourseConnective, v);}
     
   
+ 
+  /** @generated */
+  final Feature casFeat_relationId;
+  /** @generated */
+  final int     casFeatCode_relationId;
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @return the feature value 
+   */ 
+  public String getRelationId(int addr) {
+        if (featOkTst && casFeat_relationId == null)
+      jcas.throwFeatMissing("relationId", "org.cleartk.discourse.type.DiscourseRelation");
+    return ll_cas.ll_getStringValue(addr, casFeatCode_relationId);
+  }
+  /** @generated
+   * @param addr low level Feature Structure reference
+   * @param v value to set 
+   */    
+  public void setRelationId(int addr, String v) {
+        if (featOkTst && casFeat_relationId == null)
+      jcas.throwFeatMissing("relationId", "org.cleartk.discourse.type.DiscourseRelation");
+    ll_cas.ll_setStringValue(addr, casFeatCode_relationId, v);}
+    
+  
 
 
 
@@ -220,6 +244,10 @@ public class DiscourseRelation_Type extends TokenList_Type {
  
     casFeat_discourseConnective = jcas.getRequiredFeatureDE(casType, "discourseConnective", "org.cleartk.discourse.type.DiscourseConnective", featOkTst);
     casFeatCode_discourseConnective  = (null == casFeat_discourseConnective) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_discourseConnective).getCode();
+
+ 
+    casFeat_relationId = jcas.getRequiredFeatureDE(casType, "relationId", "uima.cas.String", featOkTst);
+    casFeatCode_relationId  = (null == casFeat_relationId) ? JCas.INVALID_FEATURE_CODE : ((FeatureImpl)casFeat_relationId).getCode();
 
   }
 }

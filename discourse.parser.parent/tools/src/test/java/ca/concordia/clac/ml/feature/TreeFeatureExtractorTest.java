@@ -76,6 +76,20 @@ public class TreeFeatureExtractorTest {
 	}
 	
 	@Test
+	public void givenTwoNodesNotInTheSameSentenceThenWhenCalculatingPathThenThePathIsEmpty(){
+		ROOT dummyRoot = new ROOT(aJCas, sent.length() + 10, sent.length() + 12);
+		Constituent s = findFirstConstituent("S");
+		
+		List<Annotation> path; 
+		path = getPath().apply(dummyRoot, s);
+		assertThat(path).isEmpty();
+
+		path = getPath().apply(s, dummyRoot);
+		assertThat(path).isEmpty();
+		
+	}
+	
+	@Test
 	public void givenANodeWithParentWhenCalculatingThePathThenThePathStartWithRootAndFinishWithNode() throws UIMAException{
 		String so = "so";
 		int soPos = sent.indexOf(so);

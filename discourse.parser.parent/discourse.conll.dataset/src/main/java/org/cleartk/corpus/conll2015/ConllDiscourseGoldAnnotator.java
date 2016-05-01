@@ -131,16 +131,20 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 	private void addDiscourseRelation(JSONRelation jsonDiscourseRelation) {
 		@SuppressWarnings("unchecked")
 		List<String> senses = (List<String>)jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_SENSE);
+		if (senses.size() == 0)
+			senses.add(null);
+		
 		for (String sense: senses){
-			if (sense.contains("'")){
+			if (sense != null && sense.contains("'")){
 				System.err.println("ConllDiscourseGoldAnnotator.addDiscourseRelation(): There is invalid sense in the dataset: " + sense);
 				sense.replaceAll("'", "");
 			}
 			
-			if (sense.equals("Expansion"))	//this is invalid sense.
+			if ("Expansion".equals(sense))	//this is invalid sense.
 				sense = "Expansion.Conjunction";
 			
 			RelationType type = textToRelation.get(jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_TYPE).toString().toLowerCase());
+			String relationId = (String) jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_ID);
 			Map<String, JSONComplexAnnotation> annotaions = jsonDiscourseRelation.getAnnotaions();
 			JSONComplexAnnotation jsonDiscourseConnective = annotaions.get(ConllJSON.CONNECTIVE);
 			String discourseConnectiveText = jsonDiscourseConnective.getRawText();
@@ -151,6 +155,8 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 
 			DiscourseRelation discourseRelation = discourseRelationFactory.makeDiscourseRelation(aJCas,
 					type, sense, discourseConnectiveText, discourseConnectiveTokenList, arg1Tokens, arg2Tokens);
+			if (relationId != null)
+				discourseRelation.setRelationId(relationId);
 			discourseRelation.addToIndexesRecursively();
 			if (!addMultipleSenses)
 				break;
@@ -186,7 +192,7 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 
 		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, conllGoldJsonReader);
 	}

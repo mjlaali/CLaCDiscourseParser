@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -49,6 +50,7 @@ import org.cleartk.discourse.type.TokenList;
 import ca.concordia.clac.uima.engines.ViewAnnotationCopier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
+import ir.laali.tools.ds.DSPrinter;
 
 public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	public static enum ErrorType{
@@ -65,7 +67,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 
 	private Map<ErrorType, Integer> errorCount = new HashMap<>();
 	private Map<String, Integer> parallelDCCoung = new HashMap<>();
-	private Map<String, Map<String, Integer>> confusionMatrix = new HashMap<>();
+	private Map<String, Map<String, Integer>> confusionMatrix = new TreeMap<>();
 	
 	public static AnalysisEngineDescription getDescription(File outputDir) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(ErrorAnalysis.class, PARAM_OUTPUT_DIR, outputDir);
@@ -122,7 +124,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 			systemConnectives.removeAll(alignedSystemConnectives);
 			
 			for (DiscourseConnective aSystemConnective: alignedSystemConnectives){
-				if (!hasSameRelation(aGoldConnective, aSystemConnective)){
+				if (!areSameRelation(aGoldConnective, aSystemConnective)){
 					incorrectRelations.add(new Pair<DiscourseConnective, DiscourseConnective>(aGoldConnective, aSystemConnective));
 				} else
 					addError(ErrorType.Correct);
@@ -196,33 +198,38 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		errorCount.put(errorType, errorCount.get(errorType) + 1);
 	}
 	
-	private boolean hasSameRelation(DiscourseConnective aGoldConnective, DiscourseConnective aSystemConnective) {
+	private boolean areSameRelation(DiscourseConnective aGoldConnective, DiscourseConnective aSystemConnective) {
 		DiscourseRelation goldRelation = aGoldConnective.getDiscourseRelation();
 		DiscourseRelation systemRelation = aSystemConnective.getDiscourseRelation();
 		
+		boolean result = true;
 		if (!isEqualTokenList(goldRelation.getArguments(0), systemRelation.getArguments(0))){
 			addError(ErrorType.Arg1);
-			return false;
+			result = false;
 		}
+		
 		if (!isEqualTokenList(goldRelation.getArguments(1), systemRelation.getArguments(1))){
 			addError(ErrorType.Arg2);
-			return false;
+			result = false;
 		}
 		
 		addToConfusionMatrix(goldRelation.getSense(), systemRelation.getSense());
 		if (!goldRelation.getSense().equals(systemRelation.getSense())){
 			addError(ErrorType.IncorrectSense);
-			return false;
+			result = false;
 		}
 				
-		return true;
+		return result;
 	}
 	
 	private void addToConfusionMatrix(String gold, String system) {
 		Map<String, Integer> outputs = confusionMatrix.get(gold);
 		if (outputs == null){
-			outputs = new HashMap<>();
+			outputs = new TreeMap<>();
 			confusionMatrix.put(gold, outputs);
+			outputs.put(gold, 0);
+			if (!confusionMatrix.containsKey(system))
+				confusionMatrix.put(system, new TreeMap<>());
 		}
 		
 		Integer cnt = outputs.get(system);
@@ -248,7 +255,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getDataJSonFile());
+				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 		
 		builder.add(conllSyntaxJsonReader);
 		builder.add(conllGoldJsonReader);
@@ -295,7 +302,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 			parallelDCCoung.forEach((type, cnt) -> summary.println(type + ":\t" + cnt));
 			
 			summary.println("====Confusion Matrix=====");
-			confusionMatrix.forEach((gold, row) -> row.forEach((system, cnt) -> summary.println(gold + "\t" + system + "\t" + cnt)));
+			DSPrinter.printTable("Confusion Matrix", confusionMatrix.entrySet(), summary);
 			
 			summary.close();
 		} catch (FileNotFoundException e) {

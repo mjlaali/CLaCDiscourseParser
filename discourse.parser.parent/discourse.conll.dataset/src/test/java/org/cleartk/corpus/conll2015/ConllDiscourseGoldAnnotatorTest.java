@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -20,30 +21,55 @@ import org.apache.uima.fit.util.CasIOUtil;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.xml.sax.SAXException;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
+
+@RunWith(Parameterized.class)
 public class ConllDiscourseGoldAnnotatorTest {
+	
+	@Parameters
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {     
+                 {true}, {false}  
+           });
+    }
 
 	protected JCas jCas;
+	
+	private boolean relationNoSense = false;
+	
+	public ConllDiscourseGoldAnnotatorTest(boolean relationNoSense) {
+		this.relationNoSense = relationNoSense;
+	}
 
 	@Before
 	public void setUp() throws UIMAException, IOException{
 
+		ConllDatasetPath path = new ConllDatasetPathFactory().makeADataset2016(new File("data"), DatasetMode.trial);
+		
 		// A collection reader that creates one CAS per file, containing the file's URI
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
-				TextReader.PARAM_SOURCE_LOCATION, new File(ConllJSON.TRIAL_RAW_TEXT_LD), 
+				TextReader.PARAM_SOURCE_LOCATION, path.getRawDirectory(), 
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
-		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(new File(ConllJSON.TRIAL_SYNTAX_FILE));
-		AnalysisEngineDescription conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(new File(ConllJSON.TRIAL_DISCOURSE_FILE));
+		AnalysisEngineDescription conllSyntaxJsonReader = ConllSyntaxGoldAnnotator.getDescription(path.getParsesJSonFile());
+		AnalysisEngineDescription conllDiscourseJsonReader; 
+		if (relationNoSense)
+			conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(path.getRelationNoSenseFile());
+		else
+			conllDiscourseJsonReader = ConllDiscourseGoldAnnotator.getDescription(path.getRelationsJSonFile());
 //		AnalysisEngineDescription syntaxParseTreeReader = AnalysisEngineFactory.createEngineDescription(TreebankGoldAnnotator.class);
 		
 		for (JCas jCas : SimplePipeline.iteratePipeline(reader, conllSyntaxJsonReader, conllDiscourseJsonReader)) {
@@ -174,5 +200,7 @@ public class ConllDiscourseGoldAnnotatorTest {
 		
 		return selectedRelation;
 	}
+	
+
 
 }

@@ -49,6 +49,8 @@ public class TreeFeatureExtractor {
 
 	public static BiFunction<Annotation, Annotation, List<Annotation>> getPath(){
 		return (source, target) -> {
+			if (source == null || target == null)
+				return Collections.emptyList();
 			List<Annotation> fromSource = getPathFromRoot(Annotation.class).andThen(mapOneByOneTo((c) -> (Annotation)c)).apply(source);
 			fromSource.add(source);
 			List<Annotation> fromTarget = getPathFromRoot(Annotation.class).andThen(mapOneByOneTo((c) -> (Annotation)c)).apply(target);
@@ -76,9 +78,10 @@ public class TreeFeatureExtractor {
 		};
 	}
 
-	public static <IN_ANN extends Annotation> Function<IN_ANN, List<Constituent>> getPathFromRoot(Class<IN_ANN> cls){
+	public static <IN_ANN extends Annotation> Function<IN_ANN, List<Constituent>> getPathFromRoot(
+			final Class<IN_ANN> cls, final Map<IN_ANN, Collection<Constituent>> annToCoveringConstituents){
 		return (inAnn) -> {
-			Constituent[] constituents = JCasUtil.selectCovering(Constituent.class, inAnn).toArray(new Constituent[0]);
+			Constituent[] constituents = annToCoveringConstituents.get(inAnn).toArray(new Constituent[0]);
 
 			Constituent parent = null;
 			for (int i = 0; i < constituents.length; i++){
@@ -111,6 +114,16 @@ public class TreeFeatureExtractor {
 			if (idx != -1)
 				res = res.subList(0, idx);
 			return res;
+		};
+
+	}
+	
+	
+	public static <IN_ANN extends Annotation> Function<IN_ANN, List<Constituent>> getPathFromRoot(Class<IN_ANN> cls){
+		
+		return (inAnn) -> {
+			List<Constituent> constituents = JCasUtil.selectCovering(Constituent.class, inAnn);
+			return getPathFromRoot(cls, Collections.singletonMap(inAnn, constituents)).apply(inAnn);
 		};
 	}
 
