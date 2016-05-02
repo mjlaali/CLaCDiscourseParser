@@ -87,7 +87,7 @@ public class ConllEvaluationSense {
 				new File(outputDirectory, "output.json").getAbsolutePath(), false);
 
 		AnalysisEngineDescription jsonExporterAll = ConllJSONExporter.getDescription(
-				new File(outputDirectory, "output-baseline.json").getAbsolutePath(), false);
+				new File(outputDirectory, "output-baseline.json").getAbsolutePath(), true);
 		
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
