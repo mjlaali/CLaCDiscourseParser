@@ -39,7 +39,7 @@ class ConllTokenList{
 
 class ConllDiscourseRelation{
 	String DocID;
-	String ID;
+	Integer ID;
 	String Type;
 	String[] Sense = new String[1];
 	String discourseConnectiveText;
@@ -50,7 +50,8 @@ class ConllDiscourseRelation{
 }
 
 public class ConllJSONExporter extends JCasAnnotator_ImplBase{
-	public static final String PARAM_JSON_OUT_FILE = "PARAM_JSON_OUT_FILE";
+	public static final String PARAM_JSON_OUT_FILE = "jsonOutFilePath";
+	public static final String PARAM_EXPORT_NULL_SENSES = "exportNullSenses";
 	public static final String JSON_OUT_FILE_DESCRIPTION = "Specify the json output file.";
 
 	@ConfigurationParameter(
@@ -59,14 +60,24 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 			mandatory = true)
 	private String jsonOutFilePath;
 
+	@ConfigurationParameter(
+			name = PARAM_EXPORT_NULL_SENSES,
+			mandatory = true)
+	private boolean exportNullSenses;
+
+	
 	private PrintWriter jsonFile;
 
 	private XStream xstream = new XStream(new JsonHierarchicalStreamDriver());
 	public static AnalysisEngineDescription getDescription(String jsonOuFilePath) throws ResourceInitializationException {
+		return getDescription(jsonOuFilePath, true);
+	}
+	
+	public static AnalysisEngineDescription getDescription(String jsonOuFilePath, boolean exportNullSenses) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(
 				ConllJSONExporter.class,
-				PARAM_JSON_OUT_FILE,
-				jsonOuFilePath);
+				PARAM_JSON_OUT_FILE, jsonOuFilePath,
+				PARAM_EXPORT_NULL_SENSES, exportNullSenses);
 	}
 
 	public void initialize(UimaContext context)
@@ -87,11 +98,16 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		for (DiscourseRelation discourseRelation: JCasUtil.select(aJCas, DiscourseRelation.class)){
-			if (discourseRelation.getSense() != null){
-				String line = convertToJSon(discourseRelation, aJCas);
-				jsonFile.println(line);
-				jsonFile.flush();
+			if (discourseRelation.getSense() == null){
+				if (exportNullSenses)
+					discourseRelation.setSense("Expansion.Conjunction");
+				else 
+					continue;
 			}
+			
+			String line = convertToJSon(discourseRelation, aJCas);
+			jsonFile.println(line);
+			jsonFile.flush();
 //			try {
 //				JSONObject jsonObject = getJSONObject(discourseRelation, aJCas);
 //				jsonObject.write(jsonFile);
@@ -190,7 +206,6 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 			throws AnalysisEngineProcessException {
 		super.collectionProcessComplete();
 		jsonFile.close();
-		System.out.println("ConllJSONExporter.collectionProcessComplete()");
 	}
 	
 }

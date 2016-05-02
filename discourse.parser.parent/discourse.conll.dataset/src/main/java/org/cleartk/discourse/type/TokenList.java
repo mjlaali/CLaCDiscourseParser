@@ -13,7 +13,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 
 
 /** 
- * Updated by JCasGen Sun May 01 13:05:42 EDT 2016
+ * Updated by JCasGen Sun May 01 17:57:18 EDT 2016
  * XML source: /Users/majid/Documents/git/CLaCDiscourseParser/discourse.parser.parent/discourse.conll.dataset/src/main/resources/org/cleartk/discourse/type/DiscourseRelation.xml
  * @generated */
 public class TokenList extends Annotation {

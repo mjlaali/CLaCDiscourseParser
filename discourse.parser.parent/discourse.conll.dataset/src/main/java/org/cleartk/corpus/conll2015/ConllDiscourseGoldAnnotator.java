@@ -156,7 +156,7 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 			DiscourseRelation discourseRelation = discourseRelationFactory.makeDiscourseRelation(aJCas,
 					type, sense, discourseConnectiveText, discourseConnectiveTokenList, arg1Tokens, arg2Tokens);
 			if (relationId != null)
-				discourseRelation.setRelationId(relationId);
+				discourseRelation.setRelationId(Integer.parseInt(relationId));
 			discourseRelation.addToIndexesRecursively();
 			if (!addMultipleSenses)
 				break;

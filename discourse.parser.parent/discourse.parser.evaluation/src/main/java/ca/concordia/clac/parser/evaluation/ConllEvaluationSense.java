@@ -83,7 +83,11 @@ public class ConllEvaluationSense {
 		
 		AnalysisEngineDescription dcSenseLabeler = new DiscourseConnectiveDisambiguator().getSenseLabeler();
 		
-		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());
+		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(
+				new File(outputDirectory, "output.json").getAbsolutePath(), false);
+
+		AnalysisEngineDescription jsonExporterAll = ConllJSONExporter.getDescription(
+				new File(outputDirectory, "output-baseline.json").getAbsolutePath(), false);
 		
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
@@ -91,7 +95,10 @@ public class ConllEvaluationSense {
 				conllSyntaxJsonReader,
 				addRelattion, 
 				dcSenseLabeler,
-				jsonExporter
+				jsonExporter,
+				jsonExporterAll
 				);
+		
+		System.out.println("ConllEvaluationSense.main()");
 	}
 }

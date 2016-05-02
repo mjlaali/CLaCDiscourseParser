@@ -62,7 +62,8 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 	@Override
 	public BiConsumer<String, DiscourseConnective> getLabeller(JCas aJCas) {
 		return (sense, dc) -> {
-			dc.setSense(sense.replaceAll("'", ""));
+			sense = sense.replaceAll("'", "");
+			dc.setSense(sense);
 			DiscourseRelation relation = dc.getDiscourseRelation();
 			if (relation != null)
 				relation.setSense(sense);

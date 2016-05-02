@@ -13,7 +13,7 @@ import org.apache.uima.cas.impl.FeatureImpl;
 import org.apache.uima.cas.Feature;
 
 /** 
- * Updated by JCasGen Sun May 01 13:05:42 EDT 2016
+ * Updated by JCasGen Sun May 01 17:57:18 EDT 2016
  * @generated */
 public class DiscourseConnective_Type extends TokenList_Type {
   /** @generated 
