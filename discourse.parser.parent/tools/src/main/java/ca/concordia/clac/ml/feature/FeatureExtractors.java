@@ -88,7 +88,7 @@ public class FeatureExtractors{
 	}
 	
 	public static <T extends Annotation> Function<T, String> getText(){
-		return (ann) -> ann.getCoveredText();
+		return (ann) -> ann != null ? ann.getCoveredText() : "NULL";
 	}
 
 	public static <T extends Annotation> Function<T, String> getText(Class<T> cls){

@@ -1,6 +1,6 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependency;
+import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependencies;
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
@@ -92,7 +92,7 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 	@Override
 	public BiFunction<List<Annotation>, ArgumentTreeNode, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
 		initConstituentToCoveredTokens(jCas);
-		Map<Token, Dependency> dependencies = getDependantDependency().apply(jCas);
+		Map<Token, Dependency> dependencies = getDependantDependencies(jCas);
 		Function<Annotation, Token> headFinder = getHead(dependencies, getTokenList(constituentToCoveredTokens, Set.class));
 		
 		BiFunction<Annotation, ArgumentTreeNode, Feature> nodeHead = makeBiFunc(headFinder.andThen((h) -> h == null ? "null" : h.getCoveredText())
@@ -134,6 +134,9 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 		
 		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> multiBiFuncMap = multiBiFuncMap(annotationFeatureExtractor, dcFeatures)
 				.andThen(flatMap(Feature.class));
+		
+		
+		
 		return mapOneByOneTo(multiBiFuncMap);
 	}
 

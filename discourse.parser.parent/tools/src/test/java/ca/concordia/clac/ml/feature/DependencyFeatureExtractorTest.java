@@ -1,6 +1,8 @@
 package ca.concordia.clac.ml.feature;
 
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependency;
+import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.dependencyToString;
+import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependencies;
+import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependencyGraph;
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,17 +11,23 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.apache.uima.UIMAException;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.junit.Before;
 import org.junit.Test;
 
 import ca.concordia.clac.uima.test.util.DocumentFactory;
+import ca.concordia.clac.util.graph.LabeledEdge;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
+import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 
 public class DependencyFeatureExtractorTest {
 	private String sent;
@@ -61,10 +69,34 @@ public class DependencyFeatureExtractorTest {
 	@Test
 	public void whenExtractingTheHeadOfTheSentenceThenTheHeadIsHave(){
 		Map<Constituent, Collection<Token>> constituentsToTokens = JCasUtil.indexCovered(aJCas, Constituent.class, Token.class);
-		Function<Annotation, Token> headFinder = getHead(getDependantDependency().apply(aJCas), getTokenList(constituentsToTokens, List.class));
+		Function<Annotation, Token> headFinder = getHead(getDependantDependencies(aJCas), getTokenList(constituentsToTokens, List.class));
 		
 		Constituent root = TreeFeatureExtractorTest.findFirstConstituent("ROOT", aJCas);
 		assertThat(headFinder.apply(root).getCoveredText()).isEqualTo("have");
+		
+	}
+	
+	private Token getToken(String text){
+		int start = sent.indexOf(text);
+		List<Token> selectedTokens = JCasUtil.selectCovered(aJCas, Token.class, start, start + text.length());
+		if (selectedTokens.size() != 1)
+			throw new RuntimeException("" + selectedTokens.size() + " has been found");
+		
+		return selectedTokens.get(0);
+	}
+	
+	@Test
+	public void givenTheSourceAndTheTargetOfThePathWhenCaclulatingThePathThenThePathIsCorrect(){
+		Token source = getToken(" its ");
+		Token target = getToken(" cushioned ");
+		 
+		String expectedPath = "nmod:poss(competitors-its)-nsubj(have-competitors)-conj(have-cushioned)";
+		
+		DirectedGraph<Token, LabeledEdge<Dependency>> graph = getDependencyGraph(aJCas);
+		List<LabeledEdge<Dependency>> dependencies = DijkstraShortestPath.findPathBetween(new AsUndirectedGraph<>(graph), source, target);
+		String actualPath = dependencies.stream().map(LabeledEdge::getLabel).map(dependencyToString()).collect(Collectors.joining("-"));
+		
+		assertThat(actualPath).isEqualTo(expectedPath);
 		
 	}
 }
