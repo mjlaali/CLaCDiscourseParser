@@ -75,7 +75,7 @@ public class ConllEvaluationSense {
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
 				TextReader.PARAM_LANGUAGE, "en",
-				TextReader.PARAM_PATTERNS, "wsj_*");
+				TextReader.PARAM_PATTERNS, "*");
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 

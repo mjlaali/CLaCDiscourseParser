@@ -73,12 +73,12 @@ public class ConllEvaluation {
 		
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File(inputDataset), mode);
 		if (dataset == null)
-			throw new RuntimeException();
+			throw new RuntimeException("The mode is not correct: " + mode);
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
 				TextReader.PARAM_LANGUAGE, "en",
-				TextReader.PARAM_PATTERNS, "wsj_*");
+				TextReader.PARAM_PATTERNS, "*");
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
