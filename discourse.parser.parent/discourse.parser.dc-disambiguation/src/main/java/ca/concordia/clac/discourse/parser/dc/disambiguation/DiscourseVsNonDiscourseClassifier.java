@@ -171,11 +171,16 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
-		return StringClassifierLabeller.getClassifierDescription(
+		return getClassifierDescription(dcList, packageDir, null, null);
+	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(URL dcList, URL packageDir, String goldView, String systemView) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
+		return StringClassifierLabeller.getClassifierDescription(goldView, systemView, Boolean.toString(true),
 					DiscourseVsNonDiscourseClassifier.class, 
 					new URL(packageDir, "model.jar"),
 					LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
 					LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName()
+					
 					);
 	}
 

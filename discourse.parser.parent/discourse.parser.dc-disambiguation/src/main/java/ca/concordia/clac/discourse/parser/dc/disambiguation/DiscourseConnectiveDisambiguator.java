@@ -87,23 +87,29 @@ public class DiscourseConnectiveDisambiguator {
 				getTokenizer(), 
 				getPosTagger(), 
 				getSyntacticParser(),
-				getParser(CAS.NAME_DEFAULT_SOFA), 
+				getDCDisambiguator(CAS.NAME_DEFAULT_SOFA), 
 				getWriter(output)
 						);
 	}
 	
-	public AnalysisEngineDescription getParser(String viewName) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
+	public AnalysisEngineDescription getDCDisambiguator(String viewName) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		AggregateBuilder parser = new AggregateBuilder();
-		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage), 
-				CAS.NAME_DEFAULT_SOFA, viewName);
-		parser.add(getSenseLabeler(), 
+		parser.add(getDCDisambiguator(null, null), 
 				CAS.NAME_DEFAULT_SOFA, viewName);
 		
 		return parser.createAggregateDescription();
 	}
 	
-	public AnalysisEngineDescription getSenseLabeler() throws ResourceInitializationException, MalformedURLException{
-		return DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage);
+	public AnalysisEngineDescription getDCDisambiguator(String goldView, String systemView) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
+		AggregateBuilder parser = new AggregateBuilder();
+		parser.add(DiscourseVsNonDiscourseClassifier.getClassifierDescription(dcList, discourseVsNonDiscoursePackage, goldView, systemView));
+		parser.add(getSenseLabeler(goldView, systemView));
+		
+		return parser.createAggregateDescription();
+	}
+	
+	public AnalysisEngineDescription getSenseLabeler(String goldView, String systemView) throws ResourceInitializationException, MalformedURLException{
+		return DiscourseSenseLabeler.getClassifierDescription(senseLabelerPackage, goldView, systemView);
 	}
 	
 	public void parseSubdirectory(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{

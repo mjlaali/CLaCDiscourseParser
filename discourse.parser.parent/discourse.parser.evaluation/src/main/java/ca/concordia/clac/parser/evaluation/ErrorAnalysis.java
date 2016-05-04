@@ -269,10 +269,10 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
-		AnalysisEngineDescription conllGoldJsonReader = new CLaCParser().getParser();
+		AnalysisEngineDescription clacParser = new CLaCParser().getParser();
 
 		builder.add(conllSyntaxJsonReader);
-		builder.add(conllGoldJsonReader);
+		builder.add(clacParser);
 		
 		return builder.createAggregateDescription();
 	}

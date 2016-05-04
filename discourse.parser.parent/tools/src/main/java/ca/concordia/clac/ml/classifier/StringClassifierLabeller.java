@@ -35,13 +35,21 @@ public class StringClassifierLabeller<INSTANCE_TYPE> extends GenericClassifierLa
 
 	public static <T> AnalysisEngineDescription getClassifierDescription(
 			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, URL modelUrl, Object... otherParams) throws ResourceInitializationException{
+		return getClassifierDescription(null, null, null, classifierAlgorithmFactoryCls, modelUrl, otherParams);
+	}
+
+	public static <T> AnalysisEngineDescription getClassifierDescription(String goldView, String systemView, String defaultValue,
+			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, URL modelUrl, Object... otherParams) throws ResourceInitializationException{
 		List<Object> params = new ArrayList<>();
 		params.addAll(Arrays.asList(
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, classifierAlgorithmFactoryCls.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false, 
 				GenericClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, false,
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelUrl)
-				);
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelUrl, 
+				GenericClassifierLabeller.PARAM_GOLD_VIEW, goldView,
+				GenericClassifierLabeller.PARAM_SYSTEM_VIEW, systemView,
+				GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT, defaultValue
+				));
 		params.addAll(Arrays.asList(otherParams));
 
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 

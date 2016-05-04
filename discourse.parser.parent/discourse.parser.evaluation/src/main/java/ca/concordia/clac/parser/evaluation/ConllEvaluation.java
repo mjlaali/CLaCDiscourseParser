@@ -82,7 +82,7 @@ public class ConllEvaluation {
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
-		AnalysisEngineDescription dcDisambiguator = new DiscourseConnectiveDisambiguator().getParser(CAS.NAME_DEFAULT_SOFA);
+		AnalysisEngineDescription dcDisambiguator = new DiscourseConnectiveDisambiguator().getDCDisambiguator(CAS.NAME_DEFAULT_SOFA);
 		
 		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
 		

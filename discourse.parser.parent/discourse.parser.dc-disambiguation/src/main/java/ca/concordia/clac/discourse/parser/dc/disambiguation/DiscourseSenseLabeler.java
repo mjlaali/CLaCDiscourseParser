@@ -77,12 +77,21 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputFld);
 	}
 	
-	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
+	public static AnalysisEngineDescription getClassifierDescription(URL packageDir, String goldView, String systemView) throws ResourceInitializationException, MalformedURLException {
 		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseSenseLabeler.class.getName(), 
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString()
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString(),
+				GenericClassifierLabeller.PARAM_GOLD_VIEW, goldView,
+				GenericClassifierLabeller.PARAM_SYSTEM_VIEW, systemView,
+				GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT, "Expansion.Conjunction"
 				);
+		
 	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
+		return getClassifierDescription(packageDir, null, null);
+	}
+	
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 

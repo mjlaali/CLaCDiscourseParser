@@ -81,7 +81,7 @@ public class ConllEvaluationSense {
 
 		AnalysisEngineDescription addRelattion = ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile());
 		
-		AnalysisEngineDescription dcSenseLabeler = new DiscourseConnectiveDisambiguator().getSenseLabeler();
+		AnalysisEngineDescription dcSenseLabeler = new DiscourseConnectiveDisambiguator().getSenseLabeler(null, null);
 		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(
 				new File(outputDirectory, "output.json").getAbsolutePath(), false);

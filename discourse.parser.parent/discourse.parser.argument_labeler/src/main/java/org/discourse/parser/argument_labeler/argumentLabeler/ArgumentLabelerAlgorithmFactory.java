@@ -13,6 +13,7 @@ import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,19 +26,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
-import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
@@ -223,12 +221,11 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 		
 	}
 	
-	public static AnalysisEngineDescription getClassifierDescription(String modelFileName) throws ResourceInitializationException {
-		return AnalysisEngineFactory.createEngineDescription(
-		        StringSequenceClassifier.class,
-		        GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
-		        ArgumentLabelerAlgorithmFactory.class.getName(),
-		        GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH,
-		        modelFileName);
+	public static AnalysisEngineDescription getClassifierDescription(String modelLocation) throws ResourceInitializationException {
+		return getClassifierDescription(modelLocation, null, null);
+	}
+	public static AnalysisEngineDescription getClassifierDescription(String modelLocation, String goldView, String systemView) throws ResourceInitializationException {
+		return StringSequenceClassifier.getClassifierDescription(goldView, systemView, "Arg2", 
+				ArgumentLabelerAlgorithmFactory.class, modelLocation);
 	}
 }

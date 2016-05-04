@@ -68,17 +68,20 @@ public class ArgumentSequenceLabeler {
 	}
 
 	public static AnalysisEngineDescription getClassifierDescription() throws ResourceInitializationException, MalformedURLException {
-		return getClassifierDescription(DEFAULT_URL);
+		return getClassifierDescription(DEFAULT_URL, null, null);
 	}
 	
-	public static AnalysisEngineDescription getClassifierDescription(URL packageDir) throws ResourceInitializationException, MalformedURLException {
+	public static AnalysisEngineDescription getClassifierDescription(String goldView, String systemView) throws ResourceInitializationException, MalformedURLException {
+		return getClassifierDescription(DEFAULT_URL, goldView, systemView);
+	}
+	
+	public static AnalysisEngineDescription getClassifierDescription(URL packageDir, String goldView, String systemView) throws ResourceInitializationException, MalformedURLException {
 		URL sequenceTaggerModel = new URL(packageDir, SEQUENCE_TAGGER + "/model.jar");
 		URL noneNodeTaggerModel = new URL(packageDir, NONE_NODE_TAGGER + "/model.jar");
 		
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
-		aggregateBuilder.add(getPreprocessor());
-		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getClassifierDescription(sequenceTaggerModel.toString()));
-		aggregateBuilder.add(NoneNodeLabeller.getClassifierDescription(noneNodeTaggerModel.toString()));
+		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getClassifierDescription(sequenceTaggerModel.toString(), goldView, systemView));
+		aggregateBuilder.add(NoneNodeLabeller.getClassifierDescription(noneNodeTaggerModel.toString(), goldView, systemView));
 		
 		return aggregateBuilder.createAggregateDescription();
 	}

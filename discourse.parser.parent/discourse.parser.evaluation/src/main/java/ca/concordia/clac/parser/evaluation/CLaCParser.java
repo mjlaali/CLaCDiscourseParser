@@ -18,9 +18,16 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public class CLaCParser {
 
+	public AnalysisEngineDescription getParser(String goldView, String systemView) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
+		AggregateBuilder builder = new AggregateBuilder();
+		builder.add(new DiscourseConnectiveDisambiguator().getDCDisambiguator(goldView, systemView));
+		builder.add(ArgumentSequenceLabeler.getClassifierDescription(goldView, systemView));
+		return builder.createAggregateDescription();
+	}
+	
 	public AnalysisEngineDescription getParser() throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		AggregateBuilder builder = new AggregateBuilder();
-		builder.add(new DiscourseConnectiveDisambiguator().getParser(CAS.NAME_DEFAULT_SOFA));
+		builder.add(new DiscourseConnectiveDisambiguator().getDCDisambiguator(CAS.NAME_DEFAULT_SOFA));
 		builder.add(ArgumentSequenceLabeler.getClassifierDescription());
 		return builder.createAggregateDescription();
 	}
