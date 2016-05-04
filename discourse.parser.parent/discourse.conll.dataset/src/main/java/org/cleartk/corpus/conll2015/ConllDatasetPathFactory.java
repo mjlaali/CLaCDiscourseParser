@@ -31,7 +31,7 @@ public class ConllDatasetPathFactory {
 		}
 
 		if (baseFld == null || !baseFld.exists())
-			throw new RuntimeException("The base fld is not valid folder for the CoNLL dataset: " + baseFld.getAbsolutePath());
+			throw new RuntimeException("The structure of the base folder is not valid: " + baseFld.getAbsolutePath());
 		
 		return new ConllDatasetPath(new File(baseFld, "raw"), new File(baseFld, "relations.json"), 
 				new File(baseFld, "parses.json"), new File(baseFld, "relations-no-senses.json"), mode);

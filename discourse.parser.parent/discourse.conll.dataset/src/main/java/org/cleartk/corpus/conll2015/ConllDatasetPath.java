@@ -27,6 +27,12 @@ public class ConllDatasetPath {
 			if (file == null || !file.exists())
 				throw new RuntimeException("The file/folder does not exist: " + file);
 		}
+		
+		File[] files = rawDirectory.listFiles();
+		if (files.length == 0)
+			throw new RuntimeException("Raw directory is empty: " + rawDirectory.getAbsolutePath());
+		System.err.println(files.length + " files are available in the raw directory." );
+		
 		this.mode = mode;
 	}
 
