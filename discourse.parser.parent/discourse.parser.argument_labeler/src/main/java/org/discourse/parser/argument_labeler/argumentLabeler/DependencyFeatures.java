@@ -55,11 +55,6 @@ public class DependencyFeatures implements BiFunction<Annotation, ArgumentTreeNo
 		List<Token> otherArgumentTokens = TokenListTools.convertToTokens(otherArgument);
 		List<LabeledEdge<Dependency>> path = ShortestPathForMultiDestination.findPathBetween(dependencyUndirectedGraph, nodeHead, 
 				new HashSet<>(otherArgumentTokens));
-		if (path == null || path.size() == 0) {
-			String arg1 = TokenListTools.getTokenListText(nodeArgument);
-//			System.out.println("DependencyFeatures.apply()\n" + ann.getCoveredText() + "\n" + arg1 + "\n" + TokenListTools.getTokenListText(otherArgument));
-//			System.out.println();
-		}
 		if (path == null)
 			path = Collections.emptyList();
 		
