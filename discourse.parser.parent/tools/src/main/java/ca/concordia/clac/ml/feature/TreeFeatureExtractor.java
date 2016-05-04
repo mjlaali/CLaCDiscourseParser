@@ -182,7 +182,7 @@ public class TreeFeatureExtractor {
 
 
 	@SuppressWarnings("unchecked")
-	public static <T extends Collection<U>, U> Function<Annotation, T> getTokenList(Map<Constituent, T> constituentToTokens, Class<?> t){
+	public static <T extends Collection<U>, U> Function<Annotation, T> getTokenList(Map<? extends Annotation, T> constituentToTokens, Class<?> t){
 		return (ann) -> {
 			if (ann instanceof Token){
 				if (t.equals(List.class))

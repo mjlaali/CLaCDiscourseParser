@@ -113,15 +113,14 @@ public class NoneNodeLabellerTest{
 		
 //		System.out.println(strFeatures.stream().collect(Collectors.joining("\n")));
 		String[] goldFeatures = new String[]{
-				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:S->NP-VP>-<grandParentPattern:S->S-,-CC-S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
-				 
-				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:SBAR>",
-				"<nodeHead:the>-<consType:DT>-<position:left>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:NN>",
-				"<nodeHead:impression>-<consType:NN>-<position:middle>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:DT>-<rightSibling:null>",
-				"<nodeHead:got>-<consType:SBAR>-<position:middle>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:NP>-<rightSibling:null>",
-				"<nodeHead:got>-<consType:S>-<position:middle>-<parentPattern:SBAR->S>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
-				"<nodeHead:i>-<consType:NP>-<position:middle>-<parentPattern:S->NP-VP>-<grandParentPattern:SBAR->S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
-				"<nodeHead:i>-<consType:PRP>-<position:middle>-<parentPattern:NP->PRP>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:S->NP-VP>-<grandParentPattern:S->S-,-CC-S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>-<DepPathSize:2>-<DepPath:nsubj-conj>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:SBAR>-<DepPathSize:2>-<DepPath:nsubj-conj>",
+				"<nodeHead:the>-<consType:DT>-<position:left>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:NN>-<DepPathSize:3>-<DepPath:det-nsubj-conj>",
+				"<nodeHead:impression>-<consType:NN>-<position:middle>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:DT>-<rightSibling:null>-<DepPathSize:2>-<DepPath:nsubj-conj>",
+				"<nodeHead:got>-<consType:SBAR>-<position:middle>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:NP>-<rightSibling:null>-<DepPathSize:3>-<DepPath:rcmod-nsubj-conj>",
+				"<nodeHead:got>-<consType:S>-<position:middle>-<parentPattern:SBAR->S>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>-<DepPathSize:3>-<DepPath:rcmod-nsubj-conj>",
+				"<nodeHead:i>-<consType:NP>-<position:middle>-<parentPattern:S->NP-VP>-<grandParentPattern:SBAR->S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>-<DepPathSize:4>-<DepPath:nsubj-rcmod-nsubj-conj>",
+				"<nodeHead:i>-<consType:PRP>-<position:middle>-<parentPattern:NP->PRP>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>-<DepPathSize:4>-<DepPath:nsubj-rcmod-nsubj-conj>",
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);

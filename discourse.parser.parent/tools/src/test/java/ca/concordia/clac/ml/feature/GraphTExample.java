@@ -9,6 +9,7 @@ import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.DepthFirstIterator;
 import org.junit.Test;
 
 import ca.concordia.clac.util.graph.LabeledEdge;
@@ -81,5 +82,24 @@ public class GraphTExample {
 				findPathBetween.stream().map(LabeledEdge::getLabel).map(Object::toString).collect(Collectors.joining("-"));
 		System.out.println(toStr);
 
+	}
+	
+	
+	@Test
+	public void depthFirstSearch(){
+		graph.addVertex("a");
+		graph.addVertex("b");
+		graph.addVertex("c");
+		graph.addVertex("d");
+		
+		graph.addEdge("a", "b", new LabeledEdge<>("ab"));
+		graph.addEdge("b", "d", new LabeledEdge<>("bc"));
+		graph.addEdge("b", "c", new LabeledEdge<>("ab"));
+		
+		DepthFirstIterator<String, LabeledEdge<String>> iter = new DepthFirstIterator<>(graph);
+		
+		while (iter.hasNext()){
+			System.out.println(iter.next());
+		}
 	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collector;
@@ -11,6 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.cleartk.ml.Feature;
+
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 
 public class ScopeFeatureExtractor {
@@ -53,6 +56,15 @@ public class ScopeFeatureExtractor {
 		return (scope) -> {
 			return scope.stream().collect(collector);
 		};
-		
+	}
+	
+	public static Function<Set<Token>, Token> pickLeftMostToken(){
+		return (set) -> {
+			if (set == null || set.size() == 0)
+				return null;
+			List<Token> list = new ArrayList<>(set);
+			Collections.sort(list, (a, b) -> a.getBegin() - b.getBegin());
+			return list.get(0);
+		};
 	}
 }

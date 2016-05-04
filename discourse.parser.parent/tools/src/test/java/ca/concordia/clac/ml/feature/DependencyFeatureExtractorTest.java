@@ -1,10 +1,10 @@
 package ca.concordia.clac.ml.feature;
 
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.dependencyToString;
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependencies;
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependencyGraph;
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
+import static ca.concordia.clac.ml.feature.GraphFeatureExtractors.getRoots;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.pickLeftMostToken;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collection;
@@ -45,6 +45,7 @@ public class DependencyFeatureExtractorTest {
 				+ "cc(have-4, and-9) dep(and-9, so-10) auxpass(cushioned-13, are-11) advmod(cushioned-13, better-12) conj(have-4, cushioned-13) "
 				+ "case(swings-16, against-14) compound(swings-16, price-15) nmod(cushioned-13, swings-16)";
 
+		//But its competitors have much broader business interests and so are better cushioned against price swings .
 //		(ROOT
 //				(S 
 //						(CC But)
@@ -63,13 +64,13 @@ public class DependencyFeatureExtractorTest {
 		aJCas = factory.createADcoument(parseTree, dependencies); 
 		
 		sent = aJCas.getDocumentText();
-		System.out.println(sent);
 	}
 	
 	@Test
 	public void whenExtractingTheHeadOfTheSentenceThenTheHeadIsHave(){
 		Map<Constituent, Collection<Token>> constituentsToTokens = JCasUtil.indexCovered(aJCas, Constituent.class, Token.class);
-		Function<Annotation, Token> headFinder = getHead(getDependantDependencies(aJCas), getTokenList(constituentsToTokens, List.class));
+//		Function<Annotation, Token> headFinder = getHeadBasedDependencyMap(getDependantDependencies(aJCas), getTokenList(constituentsToTokens, List.class));
+		Function<Annotation, Token> headFinder = getTokenList(constituentsToTokens, List.class).andThen(getRoots(getDependencyGraph(aJCas))).andThen(pickLeftMostToken()); 
 		
 		Constituent root = TreeFeatureExtractorTest.findFirstConstituent("ROOT", aJCas);
 		assertThat(headFinder.apply(root).getCoveredText()).isEqualTo("have");
@@ -99,4 +100,26 @@ public class DependencyFeatureExtractorTest {
 		assertThat(actualPath).isEqualTo(expectedPath);
 		
 	}
+	
+	@Test
+	public void givenATextWhenCalculatingTheHeadItReturnsTheHead(){
+		String aText = "But its competitors have much broader business interests";
+		
+		List<Token> tokens = JCasUtil.selectCovered(aJCas, Token.class, 0, aText.length());
+		
+		DirectedGraph<Token, LabeledEdge<Dependency>> graph = getDependencyGraph(aJCas);
+		
+		Token head = getRoots(graph).andThen(pickLeftMostToken()).apply(tokens);
+		assertThat(head.getCoveredText()).isEqualTo("have");
+	}
+	
+	@Test
+	public void givenASentenceWhenCalculatingTheHeadItReturnsTheHead(){
+		
+		Collection<Token> tokens = JCasUtil.select(aJCas, Token.class);
+		
+		Token head = getRoots(getDependencyGraph(aJCas)).andThen(pickLeftMostToken()).apply(tokens);
+		assertThat(head.getCoveredText()).isEqualTo("have");
+	}
+	
 }

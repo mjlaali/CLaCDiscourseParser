@@ -85,12 +85,12 @@ public class ArgumentLabelAlgorithmFactoryTest{
 			.collect(Collectors.toList());
 		
 		String[] goldFeatures = new String[]{
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>-<CON-NT-Path-Size:4>-<firstToken:but>-<lastToken:but>-<tokenBeforeFirst:null>-<tokenAfterLast:its>-<mainVerb:null>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>-<CON-NT-Path-Size:4>-<firstToken:its>-<lastToken:competitors>-<tokenBeforeFirst:but>-<tokenAfterLast:have>-<mainVerb:null>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:have>-<lastToken:interests>-<tokenBeforeFirst:competitors>-<tokenAfterLast:and>-<mainVerb:have>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>-<CON-NT-Path-Size:3>-<firstToken:and>-<lastToken:and>-<tokenBeforeFirst:interests>-<tokenAfterLast:so>-<mainVerb:null>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>-<CON-NT-Path-Size:3>-<firstToken:so>-<lastToken:so>-<tokenBeforeFirst:and>-<tokenAfterLast:are>-<mainVerb:null>",
-				"<CON-LStr:so>-<CON-POS:true>-<CON-NT-Position:false>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:are>-<lastToken:swings>-<tokenBeforeFirst:so>-<tokenAfterLast:null>-<mainVerb:cushioned>"
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-S-null-NP>-<CON-NT-Path:VP-S-null-CC>-<CON-NT-Path-Size:4>-<firstToken:but>-<lastToken:but>-<tokenBeforeFirst:null>-<tokenAfterLast:its>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:true>-<ChildPat:PRP-NNS>-<NT-Ctx:NP-S-CC-VP>-<CON-NT-Path:VP-S-null-NP>-<CON-NT-Path-Size:4>-<firstToken:its>-<lastToken:competitors>-<tokenBeforeFirst:but>-<tokenAfterLast:have>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:true>-<ChildPat:VBP-NP>-<NT-Ctx:VP-VP-null-CC>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:have>-<lastToken:interests>-<tokenBeforeFirst:competitors>-<tokenAfterLast:and>-<mainVerb:have>",
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:true>-<ChildPat:>-<NT-Ctx:CC-VP-VP-RB>-<CON-NT-Path:VP-null-CC>-<CON-NT-Path-Size:3>-<firstToken:and>-<lastToken:and>-<tokenBeforeFirst:interests>-<tokenAfterLast:so>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:false>-<ChildPat:>-<NT-Ctx:RB-VP-CC-VP>-<CON-NT-Path:VP-null-RB>-<CON-NT-Path-Size:3>-<firstToken:so>-<lastToken:so>-<tokenBeforeFirst:and>-<tokenAfterLast:are>-<mainVerb:null>",
+				"<CON-LStr:so>-<CON-POS:true>-<leftPOS:CC>-<leftText:and>-<rightPOS:VBP>-<rightText:are>-<CON-NT-Position:false>-<ChildPat:VBP-VP>-<NT-Ctx:VP-VP-RB-null>-<CON-NT-Path:VP-null-VP>-<CON-NT-Path-Size:3>-<firstToken:are>-<lastToken:swings>-<tokenBeforeFirst:so>-<tokenAfterLast:null>-<mainVerb:cushioned>"
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);

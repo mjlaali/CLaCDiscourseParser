@@ -55,7 +55,7 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 	}
 
 	public static NodeArgType getNodeLabel(Annotation ann, DiscourseRelation discourseRelation, 
-			Map<Constituent, Set<Token>> constituentsToTokens, boolean errorAnalysis) {
+			Map<? extends Annotation, Set<Token>> constituentsToTokens, boolean errorAnalysis) {
 		Set<Token> arg1Tokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getArguments(0)));
 		Set<Token> arg2Tokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getArguments(1)));
 		Set<Token> dcTokens = new HashSet<Token>(TokenListTools.convertToTokens(discourseRelation.getDiscourseConnective()));
@@ -114,7 +114,7 @@ public class LabelExtractor implements BiFunction<DCTreeNodeArgInstance, Discour
 		argTreeNode.addToIndexes();
 	}
 
-	private static Set<Token> getCoveredToken(Annotation ann, Map<Constituent, Set<Token>> constituentsToTokens ) {
+	private static Set<Token> getCoveredToken(Annotation ann, Map<? extends Annotation, Set<Token>> constituentsToTokens ) {
 		Set<Token> nodeTokens;
 		if (ann instanceof Token){
 			nodeTokens = new HashSet<Token>();

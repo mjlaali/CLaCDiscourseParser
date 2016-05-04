@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.AggregateBuilder;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -19,6 +20,10 @@ import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
 
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordCoreferenceResolver;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordLemmatizer;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
+import edu.stanford.nlp.dcoref.Constants;
 
 public class ArgumentSequenceLabeler {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
@@ -27,8 +32,31 @@ public class ArgumentSequenceLabeler {
 	public static final String SEQUENCE_TAGGER = "sequenceTagger";
 	public static final String NONE_NODE_TAGGER = "noneNodeTagger";
 	
+	public static AnalysisEngineDescription getPreprocessor() throws ResourceInitializationException{
+		AggregateBuilder aggregateBuilder = new AggregateBuilder();
+		
+		AnalysisEngineDescription lematizer = AnalysisEngineFactory.createEngineDescription(StanfordLemmatizer.class);
+		aggregateBuilder.add(lematizer);
+		
+		AnalysisEngineDescription namedEntityRecognizer = AnalysisEngineFactory.createEngineDescription(StanfordNamedEntityRecognizer.class);
+		aggregateBuilder.add(namedEntityRecognizer);
+		
+		AnalysisEngineDescription coreferenceResolver = AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
+				StanfordCoreferenceResolver.PARAM_SIEVES, Constants.SIEVEPASSES);
+		aggregateBuilder.add(coreferenceResolver);
+		
+		AnalysisEngineDescription corefrenceToDependency = CoreferenceToDependencyAnnotator.getDescription();
+		aggregateBuilder.add(corefrenceToDependency);
+		
+		return aggregateBuilder.createAggregateDescription();
+
+	}
+	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
+		
+		aggregateBuilder.add(getPreprocessor());
+		
 		boolean usingMallet;
 		usingMallet = true;
 		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(
@@ -48,6 +76,7 @@ public class ArgumentSequenceLabeler {
 		URL noneNodeTaggerModel = new URL(packageDir, NONE_NODE_TAGGER + "/model.jar");
 		
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
+		aggregateBuilder.add(getPreprocessor());
 		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getClassifierDescription(sequenceTaggerModel.toString()));
 		aggregateBuilder.add(NoneNodeLabeller.getClassifierDescription(noneNodeTaggerModel.toString()));
 		

@@ -15,11 +15,10 @@ import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNo
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
-import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class PurifyDiscourseRelations implements SequenceClassifierConsumer<String, ArgumentTreeNode, Annotation> {
-	private Map<Constituent, Set<Token>> constituentsToTokens = new HashMap<>();
-	public PurifyDiscourseRelations(Map<Constituent, Set<Token>> constituentsToTokens) {
+	private Map<Annotation, Set<Token>> constituentsToTokens = new HashMap<>();
+	public PurifyDiscourseRelations(Map<Annotation, Set<Token>> constituentsToTokens) {
 		this.constituentsToTokens = constituentsToTokens;
 	}
 

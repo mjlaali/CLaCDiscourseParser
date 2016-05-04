@@ -1,12 +1,12 @@
 package org.discourse.parser.argument_labeler.argumentLabeler;
 
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependantDependencies;
-import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getHead;
+import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependencyGraph;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.getFunction;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeBiFunc;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.multiBiFuncMap;
+import static ca.concordia.clac.ml.feature.GraphFeatureExtractors.getRoots;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getConstituentType;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getLeftSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getParent;
@@ -14,7 +14,8 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getProductRule;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
- 
+import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.pickLeftMostToken;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,26 +40,34 @@ import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
+import org.jgrapht.DirectedGraph;
 
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.GenericSequenceClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
+import ca.concordia.clac.util.graph.LabeledEdge;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 
 public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<String, ArgumentTreeNode, Annotation>{
 
-	Map<Constituent, Set<Token>> constituentToCoveredTokens = new HashMap<>();
+	Map<Annotation, Set<Token>> constituentToCoveredTokens = new HashMap<>();
+	DirectedGraph<Token, LabeledEdge<Dependency>> dependencyGraph;
+
 	JCas jcas = null;
 	
-	public Map<Constituent, Set<Token>> initConstituentToCoveredTokens(JCas jCas) {
+	public Map<Annotation, Set<Token>> init(JCas jCas) {
 		if (!jCas.equals(jcas)){
 			constituentToCoveredTokens.clear();
 			JCasUtil.indexCovered(jCas, Constituent.class, Token.class).forEach((cns, tokens) -> 
 			constituentToCoveredTokens.put(cns, new HashSet<>(tokens)));
+			for (Token token: JCasUtil.select(jCas, Token.class)){
+				constituentToCoveredTokens.put(token, new HashSet<>(Collections.singletonList(token)));
+			};
+			
+			dependencyGraph = getDependencyGraph(jCas);
 		}
 		return constituentToCoveredTokens;
 	}
@@ -91,9 +100,21 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 
 	@Override
 	public BiFunction<List<Annotation>, ArgumentTreeNode, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		initConstituentToCoveredTokens(jCas);
-		Map<Token, Dependency> dependencies = getDependantDependencies(jCas);
-		Function<Annotation, Token> headFinder = getHead(dependencies, getTokenList(constituentToCoveredTokens, Set.class));
+		init(jCas);
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> constituentFeatures = constituentBasedFeatures(jCas);
+//		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> dcFeatures = 
+//				(ann, treeNode) -> DiscourseVsNonDiscourseClassifier.getDiscourseConnectiveFeatures().apply(treeNode.getDiscourseArgument().getDiscouresRelation().getDiscourseConnective());
+
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> dependencyFeatures = new DependencyFeatures(dependencyGraph, constituentToCoveredTokens);
+		
+		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> allFeatures = multiBiFuncMap(constituentFeatures, dependencyFeatures).andThen(flatMap(Feature.class)); 
+		
+		return mapOneByOneTo(allFeatures);
+	}
+
+
+	private BiFunction<Annotation, ArgumentTreeNode, List<Feature>> constituentBasedFeatures(JCas jCas) {
+		Function<Annotation, Token> headFinder = getTokenList(constituentToCoveredTokens, List.class).andThen(getRoots(getDependencyGraph(jCas))).andThen(pickLeftMostToken());
 		
 		BiFunction<Annotation, ArgumentTreeNode, Feature> nodeHead = makeBiFunc(headFinder.andThen((h) -> h == null ? "null" : h.getCoveredText())
 				.andThen(String::toLowerCase).andThen(makeFeature("nodeHead")));
@@ -129,20 +150,13 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 				nodeHead, consType, positionFeature, parentPattern, grandParentPattern, argumentType,
 				leftSibling, rightSibling);
 		
-		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> dcFeatures = 
-				(ann, treeNode) -> DiscourseVsNonDiscourseClassifier.getDiscourseConnectiveFeatures().apply(treeNode.getDiscourseArgument().getDiscouresRelation().getDiscourseConnective());
 		
-		BiFunction<Annotation, ArgumentTreeNode, List<Feature>> multiBiFuncMap = multiBiFuncMap(annotationFeatureExtractor, dcFeatures)
-				.andThen(flatMap(Feature.class));
-		
-		
-		
-		return mapOneByOneTo(multiBiFuncMap);
+		return annotationFeatureExtractor;
 	}
 
 	@Override
 	public BiFunction<List<Annotation>, ArgumentTreeNode, List<String>> getLabelExtractor(JCas jCas) {
-		initConstituentToCoveredTokens(jCas);
+		init(jCas);
 		BiFunction<Annotation, ArgumentTreeNode, String> getLabel = (ann, argInstance) -> {
 			DiscourseRelation discourseRelation = argInstance.getDiscourseArgument().getDiscouresRelation();
 			NodeArgType label = LabelExtractor.getNodeLabel(ann, discourseRelation, constituentToCoveredTokens, false);
@@ -156,7 +170,7 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 
 	@Override
 	public SequenceClassifierConsumer<String, ArgumentTreeNode, Annotation> getLabeller(JCas jCas) {
-		initConstituentToCoveredTokens(jCas);
+		init(jCas);
 		return new PurifyDiscourseRelations(constituentToCoveredTokens);
 	}
 

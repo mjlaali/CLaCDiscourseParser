@@ -97,6 +97,10 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 			JSONObject jsonWordInfo = jsonWord.getJSONObject(1);
 			int wordBegin = jsonWordInfo.getInt("CharacterOffsetBegin");
 			int wordEnd = jsonWordInfo.getInt("CharacterOffsetEnd");
+			if (wordEnd < sentEnd){
+				System.err.println("ConllSyntaxGoldAnnotator.addSyntaxInfo(): A token offset seems is incorrect, fixed by new value " + wordBegin + "->" + sentEnd);
+				wordEnd = sentEnd;
+			}
 			ConllToken conllToken = new ConllToken(aJCas, wordBegin, wordEnd);
 			POS pos = new POS(aJCas, wordBegin, wordEnd);
 			pos.setPosValue(jsonWordInfo.getString("PartOfSpeech"));
@@ -109,16 +113,18 @@ public class ConllSyntaxGoldAnnotator extends JCasAnnotator_ImplBase{
 				sentBegin = wordBegin;
 			if (wordEnd > sentEnd)
 				sentEnd = wordEnd;
+				
 			sentTokens.add(conllToken);
 		}
+		
 		
 		addDependencies(jsonSent, sentTokens, aJCas, sentBegin, sentEnd);
 		String parseTree = jsonSent.getString("parsetree");
 		SentenceWithSyntax sentence = new SentenceWithSyntax(aJCas, sentBegin, sentEnd);
 		sentence.setSyntaxTree(parseTree);
 		sentence.addToIndexes();
-
 		syntaxReader.addSyntacticConstituents(sentence, parseTree);
+		
 	}
 
 	private void addDependencies(JSONObject jsonSent, List<Token> sentTokens, JCas aJCas, int sentBegin, int sentEnd) throws JSONException, AnalysisEngineProcessException {

@@ -86,7 +86,7 @@ public class PSCaseArgumenLabelAlgorithmFactoryTest {
 					.collect(Collectors.joining("-")))
 			.collect(Collectors.toList());
 		
-		assertThat(strFeatures.get(0)).isEqualTo("<CON-LStr:additionally>-<CON-POS:false>-<CON-NT-Position:true>-<ChildPat:S>"
+		assertThat(strFeatures.get(0)).isEqualTo("<CON-LStr:additionally>-<CON-POS:false>-<leftPOS:.>-<leftText:.>-<rightPOS:,>-<rightText:,>-<CON-NT-Position:true>-<ChildPat:S>"
 				+ "-<NT-Ctx:ROOT-null-null-null>-<CON-NT-Path:>-<CON-NT-Path-Size:0>"
 				+ "-<firstToken:a>-<lastToken:.>-<tokenBeforeFirst:null>-<tokenAfterLast:additionally>-<mainVerb:is>");
 	}

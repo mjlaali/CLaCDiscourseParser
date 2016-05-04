@@ -11,7 +11,6 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
-import org.apache.uima.fit.factory.JCasFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
@@ -31,6 +30,8 @@ import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordLemmatizer;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordParser;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordSegmenter;
+import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
+
 import edu.stanford.nlp.dcoref.Constants;
 
 
@@ -39,18 +40,19 @@ public class TestCoreferenceResolution {
 	@Test
 	public void checkTimeComplexity() throws UIMAException, IOException{
 		ConllDatasetPathFactory factor = new ConllDatasetPathFactory();
-		ConllDatasetPath dataset = factor.makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
+		ConllDatasetPath dataset = factor.makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
+//		ConllDatasetPath dataset = factor.makeADataset2016(new File("../discourse.conll.dataset/data/conll2016-dataset/conll16st-en-zh-dev-train_LDC2016E50/test"), DatasetMode.test);
 		
 		CollectionReader reader = CollectionReaderFactory.createReader(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
 				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "wsj_*");
-		JCas jCas = JCasFactory.createJCas();
-		if (reader.hasNext())
-			reader.getNext(jCas.getCas());
-		else
-			throw new RuntimeException();
-		System.out.println(jCas.getDocumentLanguage());
+//		JCas jCas = JCasFactory.createJCas();
+//		if (reader.hasNext())
+//			reader.getNext(jCas.getCas());
+//		else
+//			throw new RuntimeException();
+//		System.out.println(jCas.getDocumentLanguage());
 		
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
@@ -63,16 +65,22 @@ public class TestCoreferenceResolution {
 		AnalysisEngineDescription coreferenceResolver = AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
                 StanfordCoreferenceResolver.PARAM_SIEVES, Constants.SIEVEPASSES);
 		
-		SimplePipeline.runPipeline(jCas, conllSyntaxJsonReader, conllGoldJsonReader, lematizer, namedEntityRecognizer, coreferenceResolver);
-		Collection<CoreferenceChain> corefs = JCasUtil.select(jCas, CoreferenceChain.class);
-		
-		for (CoreferenceChain coref: corefs){
-			for (CoreferenceLink link: coref.links()){
-				System.out.print(link.getCoveredText() + "[" + link.getReferenceType() + ", " + link.getReferenceRelation() + "] ");
-			}
-			
-			System.out.println();
-		}
+		File outputDir = new File("outputs/" + dataset.getMode().toString());
+		outputDir.mkdirs();
+		AnalysisEngineDescription saver = AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
+				XmiWriter.PARAM_TARGET_LOCATION, outputDir);
+		SimplePipeline.runPipeline(reader, conllSyntaxJsonReader, 
+				conllGoldJsonReader, lematizer, namedEntityRecognizer, 
+				coreferenceResolver, saver);
+//		Collection<CoreferenceChain> corefs = JCasUtil.select(jCas, CoreferenceChain.class);
+//		
+//		for (CoreferenceChain coref: corefs){
+//			for (CoreferenceLink link: coref.links()){
+//				System.out.print(link.getCoveredText() + "[" + link.getReferenceType() + ", " + link.getReferenceRelation() + "] ");
+//			}
+//			
+//			System.out.println();
+//		}
 		
 	}
 	
@@ -93,7 +101,9 @@ public class TestCoreferenceResolution {
 
 //        String aText = "Kemper also blasted the Big Board for ignoring the interests of individual and institutional holders. \"The New York Stock Exchange has vested interests\" in its big member securities firms \"that cloud its objectivity,\" Mr. Timbers said.";
 //        String aText = "But the RTC also requires \"working\" capital to maintain the bad assets of thrifts that are sold, until the assets can be sold separately.";
-        String aText = "We would have to wait until we have collected on those assets";
+//        String aText = "We would have to wait until we have collected on those assets";
+        String aText = "Several big securities firms backed off from program trading a few months after the 1987 crash. "
+        		+ "But most of them, led by Morgan Stanley & Co., moved back in earlier this year.";
 //        String aText = "John bought a car. He is very happy with it.";
         // Set up a simple example
         JCas jcas = engine.newJCas();

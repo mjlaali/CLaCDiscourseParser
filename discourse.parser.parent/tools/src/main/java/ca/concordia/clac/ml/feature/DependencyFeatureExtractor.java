@@ -43,13 +43,13 @@ public class DependencyFeatureExtractor {
 	public static DirectedGraph<Token, LabeledEdge<Dependency>> getDependencyGraph(JCas jCas){
 		Collection<Dependency> dependencies = JCasUtil.select(jCas, Dependency.class);
 		@SuppressWarnings({ "rawtypes", "unchecked" })
-		DirectedGraph<Token, LabeledEdge<Dependency>> graph = new DefaultDirectedGraph(LabeledEdge.class); 
+		DirectedGraph<Token, LabeledEdge<Dependency>> graph = new DefaultDirectedGraph(LabeledEdge.class);
+		
+		for (Token token: JCasUtil.select(jCas, Token.class)){
+			graph.addVertex(token);
+		}
+		
 		for (Dependency dependency: dependencies){
-			if (dependency.getGovernor() != null)
-				graph.addVertex(dependency.getGovernor());
-			if (dependency.getDependent() != null)
-				graph.addVertex(dependency.getDependent());
-
 			if (dependency.getGovernor() != null && dependency.getDependent() != null){
 				graph.addEdge(dependency.getGovernor(), dependency.getDependent(), new LabeledEdge<Dependency>(dependency));
 			} 
@@ -58,7 +58,7 @@ public class DependencyFeatureExtractor {
 
 	}
 
-	public static Function<Annotation, Token> getHead(final Map<Token, Dependency> dependantToDependencies,
+	public static Function<Annotation, Token> getHeadBasedDependencyMap(final Map<Token, Dependency> dependantToDependencies,
 			Function<Annotation, ? extends Collection<Token>> getTokens){
 		return (ann) -> {
 			if (ann instanceof Token)
@@ -92,5 +92,7 @@ public class DependencyFeatureExtractor {
 		};
 	}
 
+	
+	
 	
 }
