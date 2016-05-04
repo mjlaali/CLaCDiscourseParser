@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package ca.concordia.clac.uima.engines;
 
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependencyGraph;
 import static ca.concordia.clac.ml.feature.GraphFeatureExtractors.getRoots;

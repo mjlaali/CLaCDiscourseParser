@@ -66,6 +66,19 @@
 			<version>${dkpro.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>de.tudarmstadt.ukp.dkpro.core</groupId>
+			<artifactId>
+				de.tudarmstadt.ukp.dkpro.core.stanfordnlp-gpl
+			</artifactId>
+			<version>${dkpro.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>clac.concordia.ca</groupId>
+			<artifactId>tools</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 	</dependencies>
 </project>

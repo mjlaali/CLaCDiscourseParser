@@ -1,19 +1,29 @@
 package org.cleartk.corpus.conll2015.loader;
 
 import java.io.File;
+import java.io.IOException;
 
+import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 
+import ca.concordia.clac.uima.engines.CoreferenceToDependencyAnnotator;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordCoreferenceResolver;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordLemmatizer;
+import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
+import edu.stanford.nlp.dcoref.Constants;
 
 public class LoaderPlusAnnotator implements ConllDataLoader{
 	private ConllDatasetPath dataset;
@@ -30,6 +40,20 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile()));
 		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
 				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
+		
+		AnalysisEngineDescription lematizer = AnalysisEngineFactory.createEngineDescription(StanfordLemmatizer.class);
+		builder.add(lematizer);
+		
+		AnalysisEngineDescription namedEntityRecognizer = AnalysisEngineFactory.createEngineDescription(StanfordNamedEntityRecognizer.class);
+		builder.add(namedEntityRecognizer);
+		
+		AnalysisEngineDescription coreferenceResolver = AnalysisEngineFactory.createEngineDescription(StanfordCoreferenceResolver.class,
+				StanfordCoreferenceResolver.PARAM_SIEVES, Constants.SIEVEPASSES);
+		builder.add(coreferenceResolver);
+		
+		AnalysisEngineDescription corefrenceToDependency = CoreferenceToDependencyAnnotator.getDescription();
+		builder.add(corefrenceToDependency);
+
 		return builder.createAggregateDescription();
 	}
 
@@ -41,5 +65,15 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 				TextReader.PARAM_PATTERNS, "*");
 		return reader;
 	}
+
+	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
+		File dataFld = new File("data/");
+		DatasetMode mode = DatasetMode.train;
+		
+		ConllDataLoader instance  = ConllDataLoaderFactory.getInstance(new ConllDatasetPathFactory().makeADataset2016(dataFld, mode));
+		
+		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator());
+	}
+	
 
 }
