@@ -1,7 +1,6 @@
 package ca.concordia.clac.ml.classifier;
 
 import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,26 +33,22 @@ public class StringClassifierLabeller<INSTANCE_TYPE> extends GenericClassifierLa
 	}
 
 	public static <T> AnalysisEngineDescription getClassifierDescription(
-			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, URL modelUrl, Object... otherParams) throws ResourceInitializationException{
+			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, String modelUrl, Object... otherParams) throws ResourceInitializationException{
 		return getClassifierDescription(null, null, null, classifierAlgorithmFactoryCls, modelUrl, otherParams);
 	}
 
 	public static <T> AnalysisEngineDescription getClassifierDescription(String goldView, String systemView, String defaultValue,
-			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, URL modelUrl, Object... otherParams) throws ResourceInitializationException{
-		List<Object> params = new ArrayList<>();
-		params.addAll(Arrays.asList(
+			Class<? extends ClassifierAlgorithmFactory<String, T>> classifierAlgorithmFactoryCls, String modelLocation, Object... otherParams) throws ResourceInitializationException{
+		Object[] params = JCasUtils.addParams(otherParams, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, classifierAlgorithmFactoryCls.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false, 
 				GenericClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, false,
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelUrl, 
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelLocation, 
 				GenericClassifierLabeller.PARAM_GOLD_VIEW, goldView,
 				GenericClassifierLabeller.PARAM_SYSTEM_VIEW, systemView,
 				GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT, defaultValue
-				));
-		params.addAll(Arrays.asList(otherParams));
-
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-				params.toArray(new Object[params.size()])
 				);
+
+		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, params);
 	}
 }

@@ -142,6 +142,10 @@ public class ConllDiscourseGoldAnnotator extends JCasAnnotator_ImplBase{
 			
 			if ("Expansion".equals(sense))	//this is invalid sense.
 				sense = "Expansion.Conjunction";
+			if ("Comparison".equals(sense))
+				sense = "Comparison.Contrast";
+			if ("Temporal".equals(sense))
+				sense = "Temporal.Synchrony";
 			
 			RelationType type = textToRelation.get(jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_TYPE).toString().toLowerCase());
 			String relationId = (String) jsonDiscourseRelation.getFeatures().get(ConllJSON.RELATION_ID);

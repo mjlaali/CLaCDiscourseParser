@@ -22,7 +22,7 @@ public class GenericClassifier <CLASSIFIER_OUTPUT, INSTANCE_TYPE>{
 	protected final Function<List<Feature>, CLASSIFIER_OUTPUT> classify;
 	
 	private final boolean parallelClassification;
-	private final boolean training;
+	private boolean training;
 	
 	public GenericClassifier(ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE> algorithmFactory,
 			Consumer<Instance<CLASSIFIER_OUTPUT>> writer,
@@ -34,6 +34,10 @@ public class GenericClassifier <CLASSIFIER_OUTPUT, INSTANCE_TYPE>{
 		this.writer = writer;
 		this.classify = classify;
 		this.parallelClassification = parallelClassification;
+		this.training = training;
+	}
+	
+	public void setTraining(boolean training) {
 		this.training = training;
 	}
 	
@@ -67,6 +71,7 @@ public class GenericClassifier <CLASSIFIER_OUTPUT, INSTANCE_TYPE>{
 		}
 		allFeatures.forEach(action);
 	}
+	
 
 	public static <INSTANCE_TYPE> Map<INSTANCE_TYPE, List<Feature>> calcFeatures(
 			Stream<INSTANCE_TYPE> stream, List<Function<INSTANCE_TYPE, List<Feature>>> featureExtractor) {

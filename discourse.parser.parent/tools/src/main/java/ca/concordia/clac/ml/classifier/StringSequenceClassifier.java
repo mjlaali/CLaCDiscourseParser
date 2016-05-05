@@ -52,7 +52,6 @@ public class StringSequenceClassifier<SEQUENCE_TYPE, INSTANCE_TYPE> extends Gene
 			) throws ResourceInitializationException{
 		
 		Object[] params = JCasUtils.addParams(otherParams,
-		        StringSequenceClassifier.class,
 		        GenericSequenceClassifier.PARAM_ALGORITHM_FACTORY_CLASS_NAME,
 		        classifierAlgorithmFactoryCls,
 		        GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH,

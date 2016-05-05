@@ -105,7 +105,7 @@ public class StringClassifierLabellerTest {
 		SimplePipeline.runPipeline(aJCas, 
 				StringClassifierLabeller.getClassifierDescription(
 						TokenClassificationAlgorithmFactory.class, 
-						new File(featureFile, "model.jar").toURI().toURL())
+						new File(featureFile, "model.jar").getAbsolutePath())
 					);
 		
 		assertThat(JCasUtil.select(aJCas, Token.class)).hasSize(0);

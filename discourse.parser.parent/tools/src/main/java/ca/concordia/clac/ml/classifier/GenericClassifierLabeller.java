@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.initializable.InitializableFactory;
@@ -51,7 +52,9 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE>
 		
 		Consumer<Instance<CLASSIFIER_OUTPUT>> writerFunc = null;
 		Function<List<Feature>, CLASSIFIER_OUTPUT> classifierFunc = null;
-		if (goldViewName != null && systemViewName != null){
+		if (goldViewName != null){
+			if (systemViewName == null)
+				systemViewName = CAS.NAME_DEFAULT_SOFA;
 			if (defaultGoldClassifierOutput == null)
 				throw new ResourceInitializationException(PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT + " is null", null);
 			goldClassifier = new GoldClassifier<>(defaultGoldClassifierOutput);
@@ -83,8 +86,11 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE>
 		if (goldClassifier != null){
 			try {
 				JCas goldView = aJCas.getView(goldViewName);
+				genericClassifier.setTraining(true);
 				genericClassifier.process(goldView);
+				
 				JCas systemView = aJCas.getView(systemViewName);
+				genericClassifier.setTraining(false);
 				genericClassifier.process(systemView);
 				goldClassifier.clear();
 			} catch (CASException e) {

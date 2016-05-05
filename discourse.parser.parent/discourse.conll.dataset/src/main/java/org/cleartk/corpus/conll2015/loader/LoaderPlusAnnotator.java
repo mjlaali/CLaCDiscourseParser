@@ -37,9 +37,6 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 	public AnalysisEngineDescription getAnnotator() throws ResourceInitializationException {
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile()));
-		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile()));
-		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
-				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
 		
 		AnalysisEngineDescription lematizer = AnalysisEngineFactory.createEngineDescription(StanfordLemmatizer.class);
 		builder.add(lematizer);
@@ -53,6 +50,10 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 		
 		AnalysisEngineDescription corefrenceToDependency = CoreferenceToDependencyAnnotator.getDescription();
 		builder.add(corefrenceToDependency);
+
+		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
+				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
+		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile()));
 
 		return builder.createAggregateDescription();
 	}
@@ -68,9 +69,11 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
 		File dataFld = new File("data/");
-		DatasetMode mode = DatasetMode.train;
+		DatasetMode mode = DatasetMode.dev;
 		
-		ConllDataLoader instance  = ConllDataLoaderFactory.getInstance(new ConllDatasetPathFactory().makeADataset2016(dataFld, mode));
+		ConllDatasetPath path = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
+		ConllDataLoaderFactory.clean(path);
+		ConllDataLoader instance  = ConllDataLoaderFactory.getInstance(path);
 		
 		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator());
 	}

@@ -8,6 +8,7 @@ import java.util.function.Function;
 
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.initializable.InitializableFactory;
@@ -40,6 +41,7 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 	private String systemViewName;
 
 	private GoldSequenceClassifier<CLASSIFIER_OUTPUT> goldSequenceClassifier;
+	private boolean isTraining;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -48,7 +50,10 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 		algorithmFactory = InitializableFactory.create(context, algorithmFactoryClassName, SequenceClassifierAlgorithmFactory.class);
 		
 		
-		if (goldViewName != null && systemViewName != null){
+		if (goldViewName != null){
+			if (systemViewName == null)
+				systemViewName = CAS.NAME_DEFAULT_SOFA;
+
 			if (defaultGoldClassifierOutput == null)
 				throw new ResourceInitializationException(GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT + " is null", null);
 			goldSequenceClassifier = new GoldSequenceClassifier<>(defaultGoldClassifierOutput);
@@ -71,6 +76,7 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 			};
 		}
 
+		isTraining = isTraining();
 		
 	}
 	
@@ -79,8 +85,11 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 		if (goldSequenceClassifier != null){
 			try {
 				JCas goldView = aJCas.getView(goldViewName);
+				isTraining = true;
 				internalProcess(goldView);
+				
 				JCas systemView = aJCas.getView(systemViewName);
+				isTraining = false;
 				internalProcess(systemView);
 				goldSequenceClassifier.clear();
 			} catch (CASException e) {
@@ -103,7 +112,7 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 			List<INSTANCE_TYPE> instances = instanceExtractor.apply(aSequence);
 			List<List<Feature>> featureLists = featureExtractor.apply(instances, aSequence);
 			
-			if (isTraining()){
+			if (isTraining){
 				List<CLASSIFIER_OUTPUT> outcomes = labelExtractor.apply(instances, aSequence);
 				writerFunc.accept(Instances.toInstances(outcomes, featureLists));
 			} else {

@@ -13,7 +13,6 @@ import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
 import java.io.File;
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;

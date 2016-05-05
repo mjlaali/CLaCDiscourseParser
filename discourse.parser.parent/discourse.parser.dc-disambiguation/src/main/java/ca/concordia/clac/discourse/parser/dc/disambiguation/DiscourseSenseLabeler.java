@@ -28,7 +28,6 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.jar.DefaultDataWriterFactory;
-import org.cleartk.ml.jar.GenericJarClassifierFactory;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
@@ -78,13 +77,8 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(URL packageDir, String goldView, String systemView) throws ResourceInitializationException, MalformedURLException {
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, DiscourseSenseLabeler.class.getName(), 
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, new URL(packageDir, "model.jar").toString(),
-				GenericClassifierLabeller.PARAM_GOLD_VIEW, goldView,
-				GenericClassifierLabeller.PARAM_SYSTEM_VIEW, systemView,
-				GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT, "Expansion.Conjunction"
-				);
+		return StringClassifierLabeller.getClassifierDescription(goldView, systemView, "Expansion.Conjunction", 
+				DiscourseSenseLabeler.class, new URL(packageDir, "model.jar").toString()); 
 		
 	}
 	
