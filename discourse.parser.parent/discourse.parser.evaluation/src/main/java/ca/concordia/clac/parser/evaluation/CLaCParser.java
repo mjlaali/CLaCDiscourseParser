@@ -9,7 +9,7 @@ import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSequenceLabeler;
+import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSegmenter;
 
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseConnectiveDisambiguator;
 import de.tudarmstadt.ukp.dkpro.core.berkeleyparser.BerkeleyParser;
@@ -21,14 +21,14 @@ public class CLaCParser {
 	public AnalysisEngineDescription getParser(String goldView, String systemView) throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(new DiscourseConnectiveDisambiguator().getDCDisambiguator(goldView, systemView));
-		builder.add(ArgumentSequenceLabeler.getClassifierDescription(goldView, systemView));
+		builder.add(ArgumentSegmenter.getClassifierDescription(goldView, systemView));
 		return builder.createAggregateDescription();
 	}
 	
 	public AnalysisEngineDescription getParser() throws ResourceInitializationException, MalformedURLException, URISyntaxException{
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(new DiscourseConnectiveDisambiguator().getDCDisambiguator(CAS.NAME_DEFAULT_SOFA));
-		builder.add(ArgumentSequenceLabeler.getClassifierDescription());
+		builder.add(ArgumentSegmenter.getClassifierDescription());
 		return builder.createAggregateDescription();
 	}
 	

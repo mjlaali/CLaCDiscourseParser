@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes;
 
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 
@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseArgument;
+import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;

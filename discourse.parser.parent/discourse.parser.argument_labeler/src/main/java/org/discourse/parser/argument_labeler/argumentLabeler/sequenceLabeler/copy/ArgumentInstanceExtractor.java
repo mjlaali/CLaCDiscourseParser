@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy;
 
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getChilderen;
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getPathFromRoot;

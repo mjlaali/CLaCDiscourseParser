@@ -18,7 +18,7 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllJSONExporter;
 import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
-import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSequenceLabeler;
+import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSegmenter;
 import org.discourse.parser.implicit.NoRelationAnnotator;
 
 import com.lexicalscope.jewel.cli.CliFactory;
@@ -84,7 +84,7 @@ public class ConllEvaluation {
 
 		AnalysisEngineDescription dcDisambiguator = new DiscourseConnectiveDisambiguator().getDCDisambiguator(CAS.NAME_DEFAULT_SOFA);
 		
-		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
+		AnalysisEngineDescription argumentLabeler = ArgumentSegmenter.getClassifierDescription();
 		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());
 		

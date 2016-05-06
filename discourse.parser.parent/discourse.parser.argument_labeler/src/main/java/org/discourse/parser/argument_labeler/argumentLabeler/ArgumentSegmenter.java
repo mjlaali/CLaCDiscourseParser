@@ -18,6 +18,8 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
+import org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes.NoneNodeClassifier;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
 
 import ca.concordia.clac.uima.engines.CoreferenceToDependencyAnnotator;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
@@ -26,7 +28,7 @@ import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordLemmatizer;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordNamedEntityRecognizer;
 import edu.stanford.nlp.dcoref.Constants;
 
-public class ArgumentSequenceLabeler {
+public class ArgumentSegmenter {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
 	public static URL DEFAULT_URL = ClassLoader.getSystemClassLoader().getResource("clacParser/model/" + PACKAGE_DIR);
 	
@@ -60,10 +62,10 @@ public class ArgumentSequenceLabeler {
 		
 		boolean usingMallet;
 		usingMallet = true;
-		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(
+		aggregateBuilder.add(ArgumentSequenceClassifier.getWriterDescription(
 				new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath(), usingMallet));
 		usingMallet = false;
-		aggregateBuilder.add(NoneNodeLabeller.getWriterDescription(
+		aggregateBuilder.add(NoneNodeClassifier.getWriterDescription(
 				new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath(), usingMallet));
 		return aggregateBuilder.createAggregateDescription();
 	}
@@ -81,8 +83,8 @@ public class ArgumentSequenceLabeler {
 		URL noneNodeTaggerModel = new URL(packageDir, NONE_NODE_TAGGER + "/model.jar");
 		
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
-		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getClassifierDescription(sequenceTaggerModel.toString(), goldView, systemView));
-		aggregateBuilder.add(NoneNodeLabeller.getClassifierDescription(noneNodeTaggerModel.toString(), goldView, systemView));
+		aggregateBuilder.add(ArgumentSequenceClassifier.getClassifierDescription(sequenceTaggerModel.toString(), goldView, systemView));
+		aggregateBuilder.add(NoneNodeClassifier.getClassifierDescription(noneNodeTaggerModel.toString(), goldView, systemView));
 		
 		return aggregateBuilder.createAggregateDescription();
 	}

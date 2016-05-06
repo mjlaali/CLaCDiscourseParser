@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler;
 
 import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getTokenList;
 
@@ -13,6 +13,9 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
+import org.discourse.parser.argument_labeler.argumentLabeler.LabelExtractor;
+import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;

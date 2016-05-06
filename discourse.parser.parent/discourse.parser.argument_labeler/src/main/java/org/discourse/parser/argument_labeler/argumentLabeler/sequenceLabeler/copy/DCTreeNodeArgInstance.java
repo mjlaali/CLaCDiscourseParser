@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy;
 
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;

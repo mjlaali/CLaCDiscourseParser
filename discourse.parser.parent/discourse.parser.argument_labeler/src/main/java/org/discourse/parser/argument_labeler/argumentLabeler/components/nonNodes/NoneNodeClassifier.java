@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes;
 
 import static ca.concordia.clac.ml.feature.DependencyFeatureExtractor.getDependencyGraph;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
@@ -37,6 +37,8 @@ import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
+import org.discourse.parser.argument_labeler.argumentLabeler.LabelExtractor;
+import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 import org.jgrapht.DirectedGraph;
 
@@ -48,7 +50,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.dependency.Dependency;
 
-public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<String, ArgumentTreeNode, Annotation>{
+public class NoneNodeClassifier implements SequenceClassifierAlgorithmFactory<String, ArgumentTreeNode, Annotation>{
 
 	Map<Annotation, Set<Token>> constituentToCoveredTokens = new HashMap<>();
 	DirectedGraph<Token, LabeledEdge<Dependency>> dependencyGraph;
@@ -173,16 +175,16 @@ public class NoneNodeLabeller implements SequenceClassifierAlgorithmFactory<Stri
 
 	public static AnalysisEngineDescription getWriterDescription(String outputDirectory, boolean mallet) throws ResourceInitializationException {
 		if (mallet)
-			return StringSequenceClassifier.getWriterDescription(NoneNodeLabeller.class,
+			return StringSequenceClassifier.getWriterDescription(NoneNodeClassifier.class,
 					MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory));
 		
-		return StringSequenceClassifier.getViterbiWriterDescription(NoneNodeLabeller.class,
+		return StringSequenceClassifier.getViterbiWriterDescription(NoneNodeClassifier.class,
 				WekaStringOutcomeDataWriter.class, new File(outputDirectory)); 
 	}
 	
 	public static AnalysisEngineDescription getClassifierDescription(String modelLocation, String goldView, String systemView) throws ResourceInitializationException {
 		return StringSequenceClassifier.getClassifierDescription(goldView, systemView, NodeArgType.None.toString(), 
-				NoneNodeLabeller.class, modelLocation);
+				NoneNodeClassifier.class, modelLocation);
 	}
 	
 

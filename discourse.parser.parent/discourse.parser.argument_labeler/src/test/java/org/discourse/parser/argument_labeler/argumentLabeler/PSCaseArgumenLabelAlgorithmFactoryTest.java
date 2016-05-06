@@ -25,6 +25,8 @@ import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -32,7 +34,7 @@ import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 
 public class PSCaseArgumenLabelAlgorithmFactoryTest {
-	private ArgumentLabelerAlgorithmFactory algorithmFactory = new ArgumentLabelerAlgorithmFactory();
+	private ArgumentSequenceClassifier algorithmFactory = new ArgumentSequenceClassifier();
 	private DiscourseRelationExample additionallyExample;
 	private JCas aJCas;
 	private DiscourseRelation discourseRelation;
@@ -113,7 +115,7 @@ public class PSCaseArgumenLabelAlgorithmFactoryTest {
 	
 	@Test
 	public void runRealTest() throws ResourceInitializationException, MalformedURLException, AnalysisEngineProcessException{
-		AnalysisEngineDescription argumentLabeler = ArgumentSequenceLabeler.getClassifierDescription();
+		AnalysisEngineDescription argumentLabeler = ArgumentSegmenter.getClassifierDescription();
 		discourseRelation.getDiscourseConnective().addToIndexes();
 		SimplePipeline.runPipeline(aJCas, argumentLabeler);
 	}

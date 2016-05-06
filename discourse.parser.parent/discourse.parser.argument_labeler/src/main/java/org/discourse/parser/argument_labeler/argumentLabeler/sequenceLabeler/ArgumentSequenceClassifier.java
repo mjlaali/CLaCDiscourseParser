@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler;
+package org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler;
 
 import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.makeFeature;
@@ -33,6 +33,8 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
+import org.discourse.parser.argument_labeler.argumentLabeler.LabelExtractor;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
@@ -42,7 +44,7 @@ import ca.concordia.clac.ml.feature.TreeFeatureExtractor;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
-public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, DCTreeNodeArgInstance>{
+public class ArgumentSequenceClassifier implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, DCTreeNodeArgInstance>{
 	Map<Constituent, List<Token>> constituentToCoveredTokens = new HashMap<>();
 	JCas jcas = null;
 	
@@ -211,10 +213,10 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 
 	public static AnalysisEngineDescription getWriterDescription(String outputDirectory, boolean mallet) throws ResourceInitializationException {
 		if (mallet)
-			return StringSequenceClassifier.getWriterDescription(ArgumentLabelerAlgorithmFactory.class,
+			return StringSequenceClassifier.getWriterDescription(ArgumentSequenceClassifier.class,
 					MalletCrfStringOutcomeDataWriter.class, new File(outputDirectory));
 		
-		return StringSequenceClassifier.getViterbiWriterDescription(ArgumentLabelerAlgorithmFactory.class,
+		return StringSequenceClassifier.getViterbiWriterDescription(ArgumentSequenceClassifier.class,
 				WekaStringOutcomeDataWriter.class, new File(outputDirectory)); 
 		
 		
@@ -225,6 +227,6 @@ public class ArgumentLabelerAlgorithmFactory implements SequenceClassifierAlgori
 	}
 	public static AnalysisEngineDescription getClassifierDescription(String modelLocation, String goldView, String systemView) throws ResourceInitializationException {
 		return StringSequenceClassifier.getClassifierDescription(goldView, systemView, "Arg2", 
-				ArgumentLabelerAlgorithmFactory.class, modelLocation);
+				ArgumentSequenceClassifier.class, modelLocation);
 	}
 }

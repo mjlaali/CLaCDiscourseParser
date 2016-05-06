@@ -21,6 +21,9 @@ import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
+import org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes.NoneNodeClassifier;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +32,11 @@ import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class NoneNodeLabellerTest{
-	private NoneNodeLabeller algorithmFactory = new NoneNodeLabeller();
+	private NoneNodeClassifier algorithmFactory = new NoneNodeClassifier();
 	
 	private JCas aJCas;
 	private DiscourseRelation discourseRelation;
-	private ArgumentLabelerAlgorithmFactory argumentLabelerAlgorithmFactory = new ArgumentLabelerAlgorithmFactory();
+	private ArgumentSequenceClassifier argumentLabelerAlgorithmFactory = new ArgumentSequenceClassifier();
 	private DiscourseRelationExample example = new NoneNodeExample(); 
 	
 	@Before
