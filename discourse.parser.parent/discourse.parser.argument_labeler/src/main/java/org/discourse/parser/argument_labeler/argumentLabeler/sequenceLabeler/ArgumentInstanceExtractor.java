@@ -14,7 +14,6 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
-import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;

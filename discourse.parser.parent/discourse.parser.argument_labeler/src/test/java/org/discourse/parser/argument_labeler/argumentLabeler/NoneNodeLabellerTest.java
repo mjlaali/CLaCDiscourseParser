@@ -23,7 +23,7 @@ import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes.NoneNodeClassifier;
 import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
-import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.DCTreeNodeArgInstance;
 import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNode;
 import org.junit.Before;
 import org.junit.Test;

@@ -34,7 +34,6 @@ import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.LabelExtractor;
-import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;

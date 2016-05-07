@@ -26,7 +26,7 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
-import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.DCTreeNodeArgInstance;
 import org.junit.Before;
 import org.junit.Test;
 

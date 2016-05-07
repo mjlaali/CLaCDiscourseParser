@@ -26,7 +26,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 public class TreeFeatureExtractor {
-
+	
 	public static Function<Annotation, String> getProductRule(){
 		final Function<Annotation, String> childerenPattern = getChilderen()
 				.andThen(mapOneByOneTo(getConstituentType())).andThen(collect(Collectors.joining("-")));

@@ -15,7 +15,6 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.discourse.parser.argument_labeler.argumentLabeler.LabelExtractor;
 import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
-import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.copy.DCTreeNodeArgInstance;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
