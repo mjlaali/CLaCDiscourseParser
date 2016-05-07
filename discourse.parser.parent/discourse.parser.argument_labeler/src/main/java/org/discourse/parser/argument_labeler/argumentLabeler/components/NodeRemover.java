@@ -3,6 +3,7 @@ package org.discourse.parser.argument_labeler.argumentLabeler.components;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.multiBiFuncMap;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,17 +16,21 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
+import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
+import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
@@ -123,6 +128,16 @@ public class NodeRemover implements SequenceClassifierAlgorithmFactory<String, D
 			tokens.removeAll(toRemove);
 			TokenListTools.initTokenList(arg, tokens);
 		}
+	}
+
+	public static AnalysisEngineDescription getClassifierDescription(String modelLocation, 
+			String goldView, String systemView) throws ResourceInitializationException{
+		return StringSequenceClassifier.getClassifierDescription(goldView, systemView, Boolean.toString(false), 
+				NodeRemover.class, modelLocation);
+	}
+	
+	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
+		return StringSequenceClassifier.getWriterDescription(NodeRemover.class, MalletCrfStringOutcomeDataWriter.class, outputDirectory);
 	}
 
 
