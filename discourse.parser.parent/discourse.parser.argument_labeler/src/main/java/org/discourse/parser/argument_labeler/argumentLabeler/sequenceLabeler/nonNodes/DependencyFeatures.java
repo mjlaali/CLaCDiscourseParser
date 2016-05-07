@@ -1,4 +1,4 @@
-package org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes;
+package org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.nonNodes;
 
 import static ca.concordia.clac.ml.feature.GraphFeatureExtractors.getRoots;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.pickLeftMostToken;

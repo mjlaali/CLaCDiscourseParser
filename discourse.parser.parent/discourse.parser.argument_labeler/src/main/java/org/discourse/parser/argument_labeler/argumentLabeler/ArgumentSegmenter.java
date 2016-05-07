@@ -18,8 +18,8 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
-import org.discourse.parser.argument_labeler.argumentLabeler.components.nonNodes.NoneNodeClassifier;
 import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.ArgumentSequenceClassifier;
+import org.discourse.parser.argument_labeler.argumentLabeler.sequenceLabeler.nonNodes.NoneNodeClassifier;
 
 import ca.concordia.clac.uima.engines.CoreferenceToDependencyAnnotator;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
