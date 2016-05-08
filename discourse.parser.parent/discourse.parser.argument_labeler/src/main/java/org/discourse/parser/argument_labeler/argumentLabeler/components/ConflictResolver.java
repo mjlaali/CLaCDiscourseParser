@@ -88,13 +88,16 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 		if (arg1CoveringConstituent != null)
 			arg1CoveringTokens = new HashSet<>(mapToTokenList.get(arg1CoveringConstituent));
 		else{
-			System.err.println("ConflictResolver.getNewFeatures(): TODO");
+			//FIXME
 			arg1CoveringTokens = Collections.emptySet();
 		}
 			
-
 		Constituent arg2CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(1));
-		Set<Token> arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
+		Set<Token> arg2CoveringTokens = null;
+		if (arg2CoveringConstituent != null)
+			arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
+		else //FIXME
+			arg2CoveringTokens = Collections.emptySet();
 
 		return new ConstituentArg2Arg1FeatureFactory(dependencyGraph, mapToTokenSet)
 				.getInstance(arg1CoveringTokens, arg2CoveringTokens).apply(constituent);

@@ -5,6 +5,7 @@ import static ca.concordia.clac.ml.feature.FeatureExtractors.multiBiFuncMap;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,8 +44,12 @@ public class Arg1Classifier extends Arg2Classifier{
 	
 	private List<Feature> getArg1Features(Annotation constituent, DiscourseConnective connective){
 		Constituent arg2CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(1));
-		Set<Token> arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
-		Set<Token> arg1CoveringTokens = new HashSet<>();
+		Set<Token> arg2CoveringTokens = null;
+		if (arg2CoveringConstituent != null)
+			arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
+		else	//FIXME
+			arg2CoveringTokens = Collections.emptySet();
+		Set<Token> arg1CoveringTokens = Collections.emptySet();
 		
 		return new ConstituentArg2Arg1FeatureFactory(dependencyGraph, mapToTokenSet)
 				.getInstance(arg1CoveringTokens, arg2CoveringTokens).apply(constituent);
