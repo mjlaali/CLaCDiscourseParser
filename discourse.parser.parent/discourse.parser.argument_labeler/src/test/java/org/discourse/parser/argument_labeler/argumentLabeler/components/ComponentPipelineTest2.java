@@ -105,7 +105,7 @@ public class ComponentPipelineTest2 {
 		DiscourseConnective dc = null;
 		Collection<? extends DiscourseConnective> goldSequence = conflictResolver.getSequenceExtractor(view).apply(view);
 		dc = goldSequence.iterator().next();
-		List<Constituent> goldInstances = conflictResolver.getInstanceExtractor(view).apply(dc);
+		List<Annotation> goldInstances = conflictResolver.getInstanceExtractor(view).apply(dc);
 		List<List<Feature>> goldFeatures = conflictResolver.getFeatureExtractor(view).apply(goldInstances, dc);
 		List<String> goldLabels = conflictResolver.getLabelExtractor(view).apply(goldInstances, dc);
 		assertThat(goldSequence).hasSize(1);
@@ -115,7 +115,7 @@ public class ComponentPipelineTest2 {
 		dc = testSequence.iterator().next();
 		assertThat(testSequence).hasSize(goldSequence.size());
 		
-		List<Constituent> testInstances = conflictResolver.getInstanceExtractor(view).apply(dc);
+		List<Annotation> testInstances = conflictResolver.getInstanceExtractor(view).apply(dc);
 		assertThat(testInstances).hasSize(goldInstances.size());
 		
 		List<List<Feature>> testFeatures = conflictResolver.getFeatureExtractor(view).apply(testInstances, dc);

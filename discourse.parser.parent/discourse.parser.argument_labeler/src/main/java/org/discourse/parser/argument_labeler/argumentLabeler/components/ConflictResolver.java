@@ -29,24 +29,18 @@ import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
 
-import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 
-public class ConflictResolver implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Constituent>{
-	Arg2Classifier arg1Classifier = new Arg2Classifier();
+public class ConflictResolver extends BaseClassifier<String, DiscourseConnective, Annotation>{
 	Map<DiscourseConnective, Set<Token>> argumentTokens = new HashMap<>();
 	Map<Annotation, Collection<Token>> coveredTokens = new HashMap<>();
 
-	JCas jcas = null;
-
 	protected void init(JCas jCas) {
-		this.jcas = jCas;
-
-		arg1Classifier.init(jCas);
+		super.init(jCas);
 		argumentTokens.clear();
 		Collection<DiscourseConnective> connectives = JCasUtil.select(jcas, DiscourseConnective.class);
 		connectives.stream().forEach((dc) -> {
@@ -57,7 +51,7 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 
 		});
 
-		coveredTokens.putAll(arg1Classifier.constituentCoveredTokens);
+		coveredTokens.putAll(constituentCoveredTokens);
 		Collection<Token> tokens = JCasUtil.select(jcas, Token.class);
 		tokens.forEach((t) -> coveredTokens.put(t, Arrays.asList(t)));
 	}
@@ -70,23 +64,26 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 	}
 
 	@Override
-	public Function<DiscourseConnective, List<Constituent>> getInstanceExtractor(JCas aJCas) {
+	public Function<DiscourseConnective, List<Annotation>> getInstanceExtractor(JCas aJCas) {
 		return this::getSubAnnotations;
 	}
 
-	private List<Constituent> getSubAnnotations(DiscourseConnective discourseConnective){
-		Set<Constituent> candidates = new HashSet<>();
+	private List<Annotation> getSubAnnotations(DiscourseConnective discourseConnective){
+		Set<Annotation> candidates = new HashSet<>();
 		DiscourseRelation discourseRelation = discourseConnective.getDiscourseRelation();
 		for (int i = 0; i < 2; i++){
 			DiscourseArgument arg = discourseRelation.getArguments(i);
-			Constituent constituent = arg1Classifier.argumentCoveringConstituent.get(arg);
-			Collection<Constituent> constituents = arg1Classifier.constituentChilderen.get(constituent);
-			if (i == 0) 
-				candidates.addAll(constituents);
-			else
-				candidates.retainAll(constituents);
+			Constituent constituent = argumentCoveringConstituent.get(arg);
+			Set<Annotation> annotaionSet = new HashSet<>();
+			annotaionSet.addAll(constituentCoveredTokens.get(constituent));
+			annotaionSet.addAll(constituentChilderen.get(constituent));
+			
+//			if (i == 0) {
+				candidates.addAll(annotaionSet);
+//			} else
+//				candidates.retainAll(annotaionSet);
 		}
-		ArrayList<Constituent> results = new ArrayList<>(candidates);
+		ArrayList<Annotation> results = new ArrayList<>(candidates);
 
 		Collections.sort(results, new AnnotationSizeComparator<>());
 		return results;
@@ -98,18 +95,18 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 
 
 	@Override
-	public BiFunction<List<Constituent>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		BiFunction<Constituent, DiscourseConnective, Feature> dummyFeature = (cns, dc) -> new Feature("dummy", annotationToString(cns) + annotationToString(dc));
-		BiFunction<Constituent, DiscourseConnective, List<Feature>> features = multiBiFuncMap(dummyFeature);
+	public BiFunction<List<Annotation>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
+		BiFunction<Annotation, DiscourseConnective, Feature> dummyFeature = (cns, dc) -> new Feature("dummy", annotationToString(cns) + annotationToString(dc));
+		BiFunction<Annotation, DiscourseConnective, List<Feature>> features = multiBiFuncMap(dummyFeature);
 		return mapOneByOneTo(features);
 	}
 
 	@Override
-	public BiFunction<List<Constituent>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
+	public BiFunction<List<Annotation>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
 		return this::getLabels;
 	}
 
-	private List<String> getLabels(List<Constituent> constituents, DiscourseConnective discourseConnective){
+	private List<String> getLabels(List<Annotation> constituents, DiscourseConnective discourseConnective){
 		Set<Token> arg1Tokens = new HashSet<>(TokenListTools.convertToTokens(discourseConnective.getDiscourseRelation().getArguments(0)));
 		Set<Token> arg2Tokens = new HashSet<>(TokenListTools.convertToTokens(discourseConnective.getDiscourseRelation().getArguments(1)));
 
@@ -142,12 +139,12 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 	}
 
 	@Override
-	public SequenceClassifierConsumer<String, DiscourseConnective, Constituent> getLabeller(JCas jCas) {
+	public SequenceClassifierConsumer<String, DiscourseConnective, Annotation> getLabeller(JCas jCas) {
 		return this::setLabels;
 	}
 
 	@SuppressWarnings("unused")
-	private void setLabelsBaseRules(List<String> outcomes, DiscourseConnective connective, List<Constituent>  constituents){
+	private void setLabelsBaseRules(List<String> outcomes, DiscourseConnective connective, List<Annotation>  constituents){
 		DiscourseRelation relation = connective.getDiscourseRelation();
 		DiscourseArgument arg1 = relation.getArguments(0);
 		DiscourseArgument arg2 = relation.getArguments(0);
@@ -159,7 +156,7 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 	
 	
 //	@SuppressWarnings("unused")
-	private void setLabels(List<String> outcomes, DiscourseConnective connective, List<Constituent>  constituents){
+	private void setLabels(List<String> outcomes, DiscourseConnective connective, List<Annotation>  constituents){
 		Set<Token> arg1Tokens = new HashSet<>();
 		Set<Token> arg2Tokens = new HashSet<>();
 		Set<Token> noneTokens = new HashSet<>();

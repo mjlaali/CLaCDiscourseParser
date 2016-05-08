@@ -15,10 +15,9 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.loader.ConllDataLoader;
 import org.cleartk.corpus.conll2015.loader.ConllDataLoaderFactory;
 import org.cleartk.ml.jar.Train;
+import org.discourse.parser.argument_labeler.argumentLabeler.components.Arg1Classifier;
 import org.discourse.parser.argument_labeler.argumentLabeler.components.Arg2Classifier;
 import org.discourse.parser.argument_labeler.argumentLabeler.components.ConflictResolver;
-import org.discourse.parser.argument_labeler.argumentLabeler.components.Arg1Classifier;
-import org.discourse.parser.argument_labeler.argumentLabeler.components.NodeRemover;
 
 public class ArgumentSegmenter {
 	public static final String PACKAGE_DIR = "argumentSequenceLabeler/";
@@ -38,7 +37,7 @@ public class ArgumentSegmenter {
 		aggregateBuilder.add(Arg2Classifier.getWriterDescription(new File(outputDirectory, ARG2_MODEL_LOCATION)));
 		aggregateBuilder.add(Arg1Classifier.getWriterDescription(new File(outputDirectory, ARG1_MODEL_LOCATION)));
 		aggregateBuilder.add(ConflictResolver.getWriterDescription(new File(outputDirectory, NODE_JUDGE_LOCATION)));
-		aggregateBuilder.add(NodeRemover.getWriterDescription(new File(outputDirectory, NODE_REMOVER_MODEL_LOCATION)));
+//		aggregateBuilder.add(NodeRemover.getWriterDescription(new File(outputDirectory, NODE_REMOVER_MODEL_LOCATION)));
 		
 		return aggregateBuilder.createAggregateDescription();
 	}
@@ -57,7 +56,7 @@ public class ArgumentSegmenter {
 		aggregateBuilder.add(Arg2Classifier.getClassifierDescription(new URL(packageDir, ARG2_MODEL_LOCATION + "/model.jar").toString(), goldView, systemView));
 		aggregateBuilder.add(Arg1Classifier.getClassifierDescription(new URL(packageDir, ARG1_MODEL_LOCATION + "/model.jar").toString(), goldView, systemView));
 		aggregateBuilder.add(ConflictResolver.getClassifierDescription(new URL(packageDir, NODE_JUDGE_LOCATION + "/model.jar").toString(), goldView, systemView));
-		aggregateBuilder.add(NodeRemover.getClassifierDescription(new URL(packageDir, NODE_REMOVER_MODEL_LOCATION + "/model.jar").toString(), goldView, systemView));
+//		aggregateBuilder.add(NodeRemover.getClassifierDescription(new URL(packageDir, NODE_REMOVER_MODEL_LOCATION + "/model.jar").toString(), goldView, systemView));
 		
 		return aggregateBuilder.createAggregateDescription();
 	}
