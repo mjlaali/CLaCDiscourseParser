@@ -68,12 +68,12 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 	}
 
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
-//		File dataFld = new File("data/");
-//		DatasetMode mode = DatasetMode.trial;
+		File dataFld = new File("data/");
+		DatasetMode mode = DatasetMode.train;
 //		File dataFld = new File("../discourse.parser.evaluation/data/test-data");
 //		DatasetMode mode = DatasetMode.test;
-		File dataFld = new File("../discourse.parser.argument_labeler/outputs/data/test-data");
-		DatasetMode mode = DatasetMode.test;
+//		File dataFld = new File("../discourse.parser.argument_labeler/outputs/data/test-data");
+//		DatasetMode mode = DatasetMode.test;
 		
 		ConllDatasetPath path = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		ConllDataLoaderFactory.clean(path);
