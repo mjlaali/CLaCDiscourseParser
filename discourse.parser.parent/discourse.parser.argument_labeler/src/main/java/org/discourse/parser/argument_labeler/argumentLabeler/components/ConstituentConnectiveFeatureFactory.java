@@ -10,6 +10,7 @@ import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.collect;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.pickLeftMostToken;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,10 @@ public class ConstituentConnectiveFeatureFactory {
 			List<LabeledEdge<Dependency>> depPath = ShortestPathForMultiDestination
 					.findPathBetween(dependencyUndirectedGraph, nodeHead, 
 					new HashSet<>(TokenListTools.convertToTokens(dc)));
+			
+			if (depPath == null){
+				depPath = Collections.emptyList();
+			}
 			
 			String strPath = depPath.stream()
 					.map(LabeledEdge::getLabel)

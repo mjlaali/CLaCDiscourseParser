@@ -65,7 +65,7 @@ public class ArgumentSegmenter {
 	public static void main(String[] args) throws Exception {
 		new File("outputs/patterns.txt").delete();
 		File dataFld = new File("../discourse.conll.dataset/data");
-		DatasetMode mode = DatasetMode.train;
+		DatasetMode mode = DatasetMode.trial;
 		
 //		File dataFld = new File("../discourse.parser.argument_labeler/outputs/data/test-data");
 //		DatasetMode mode = DatasetMode.test;
@@ -74,7 +74,7 @@ public class ArgumentSegmenter {
 
 		ConllDataLoader dataLoader = ConllDataLoaderFactory.getInstance(dataset);
 		
-		File outputDirectory = new File(new File("outputs/resources"), PACKAGE_DIR);
+		File outputDirectory = new File(new File("outputs/resources/" + mode.toString()), PACKAGE_DIR);
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
 		SimplePipeline.runPipeline(dataLoader.getReader(),
