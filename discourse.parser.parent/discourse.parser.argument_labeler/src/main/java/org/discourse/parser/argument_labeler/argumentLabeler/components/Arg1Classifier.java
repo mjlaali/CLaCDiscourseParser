@@ -54,6 +54,8 @@ public class Arg1Classifier extends Arg2Classifier{
 	protected void makeARelation(DiscourseConnective discourseConnective, Constituent argConnstituent) {
 		DiscourseRelation relation = discourseConnective.getDiscourseRelation();
 		DiscourseArgument argument = relation.getArguments(0);
+		argument.removeFromIndexes();
+		
 		List<Token> dc = TokenListTools.convertToTokens(discourseConnective);
 		List<Token> arg1 = new ArrayList<>(mapToTokenList.get(argConnstituent));
 		arg1.removeAll(dc);

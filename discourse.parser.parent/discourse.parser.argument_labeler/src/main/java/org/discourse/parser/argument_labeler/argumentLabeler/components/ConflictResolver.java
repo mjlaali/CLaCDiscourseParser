@@ -9,10 +9,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,27 +35,6 @@ import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 
 public class ConflictResolver extends BaseClassifier<String, DiscourseConnective, Annotation>{
-	Map<DiscourseConnective, Set<Token>> argumentTokens = new HashMap<>();
-	Map<Annotation, Collection<Token>> coveredTokens = new HashMap<>();
-
-	protected void init(JCas jCas) {
-		super.init(jCas);
-		argumentTokens.clear();
-		Collection<DiscourseConnective> connectives = JCasUtil.select(jcas, DiscourseConnective.class);
-		connectives.stream().forEach((dc) -> {
-			Set<Token> results = new HashSet<>();
-			for (int i = 0; i < 2; i++)
-				results.addAll(TokenListTools.convertToTokens(dc.getDiscourseRelation().getArguments(i)));
-			argumentTokens.put(dc, results);
-
-		});
-
-		coveredTokens.putAll(mapToTokenList);
-		Collection<Token> tokens = JCasUtil.select(jcas, Token.class);
-		tokens.forEach((t) -> coveredTokens.put(t, Arrays.asList(t)));
-	}
-
-
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
 		init(jCas);
@@ -75,6 +52,10 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 		for (int i = 0; i < 2; i++){
 			DiscourseArgument arg = discourseRelation.getArguments(i);
 			Constituent constituent = argumentCoveringConstituent.get(arg);
+			if (constituent == null){
+				System.err.println("ConflictResolver.getSubAnnotations(): TODO");
+				continue;
+			}
 			Set<Annotation> annotaionSet = new HashSet<>();
 			annotaionSet.addAll(mapToTokenList.get(constituent));
 			annotaionSet.addAll(constituentChilderen.get(constituent));
@@ -103,7 +84,14 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 	
 	private List<Feature> getNewFeatures(Annotation constituent, DiscourseConnective connective){
 		Constituent arg1CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(0));
-		Set<Token> arg1CoveringTokens = new HashSet<>(mapToTokenList.get(arg1CoveringConstituent));
+		Set<Token> arg1CoveringTokens = null;
+		if (arg1CoveringConstituent != null)
+			arg1CoveringTokens = new HashSet<>(mapToTokenList.get(arg1CoveringConstituent));
+		else{
+			System.err.println("ConflictResolver.getNewFeatures(): TODO");
+			arg1CoveringTokens = Collections.emptySet();
+		}
+			
 
 		Constituent arg2CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(1));
 		Set<Token> arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
@@ -124,7 +112,7 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 		String[] outcomes = new String[constituents.size()]; 
 		Set<Token> ignore = new HashSet<>();
 		for (int idx = 0; idx < constituents.size(); idx++){
-			HashSet<Token> tokens = new HashSet<>(coveredTokens.get(constituents.get(idx)));
+			HashSet<Token> tokens = new HashSet<>(mapToTokenSet.get(constituents.get(idx)));
 			tokens.removeAll(ignore);
 			if (tokens.size() == 0)
 				outcomes[idx] = outcomes[idx - 1];
@@ -173,7 +161,7 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 		Set<Token> noneTokens = new HashSet<>();
 
 		for (int i = 0; i < outcomes.size(); i++){
-			Set<Token> constituentTokens = new HashSet<>(coveredTokens.get(constituents.get(i)));
+			Set<Token> constituentTokens = new HashSet<>(mapToTokenSet.get(constituents.get(i)));
 			switch (NodeArgType.valueOf(outcomes.get(i))) {
 			case Arg1:
 				constituentTokens.removeAll(arg2Tokens);
