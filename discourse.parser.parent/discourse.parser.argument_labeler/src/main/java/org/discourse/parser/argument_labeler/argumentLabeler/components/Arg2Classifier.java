@@ -7,10 +7,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,7 +17,6 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.resource.ResourceInitializationException;
-import org.cleartk.corpus.conll2015.DiscourseRelationFactory;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseArgument;
 import org.cleartk.discourse.type.DiscourseConnective;
@@ -28,64 +24,22 @@ import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
 
-import ca.concordia.clac.ml.classifier.SequenceClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
-public class Arg2Classifier implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Constituent>{
-	DiscourseRelationFactory factory = new DiscourseRelationFactory();
-	Map<DiscourseConnective, Sentence> coveringSentences = new HashMap<>();
-	Map<Sentence, Collection<Constituent>> sentenceConstituents = new HashMap<>();
-	Map<DiscourseArgument, Constituent> argumentCoveringConstituent = new HashMap<>();
-	Map<Constituent, Collection<Token>> constituentCoveredTokens = new HashMap<>();
-	Map<Constituent, Collection<Constituent>> constituentChilderen = new HashMap<>();
-
-	JCas jcas = null;
-
-	protected void init(JCas jCas) {
-		this.jcas = jCas;
-		coveringSentences.clear();
-		JCasUtil.indexCovering(jCas, DiscourseConnective.class, Sentence.class).forEach(
-				(k, v) -> coveringSentences.put(k, v.iterator().next()));
-
-		sentenceConstituents = JCasUtil.indexCovered(jCas, Sentence.class, Constituent.class);
-
-		argumentCoveringConstituent.clear();
-		JCasUtil.indexCovering(jCas, DiscourseArgument.class, Constituent.class).forEach(
-				(k, v) -> argumentCoveringConstituent.put(k, smallest(v)));
-
-		constituentCoveredTokens = JCasUtil.indexCovered(jCas, Constituent.class, Token.class);
-
-		constituentChilderen = JCasUtil.indexCovered(jCas, Constituent.class, Constituent.class);
-	}
-
-	private Constituent smallest(Collection<Constituent> constituents) {
-		HashSet<Constituent> children = new HashSet<>(constituents);
-
-		for (Constituent constituent: constituents){
-			if (constituent.getParent() != null)
-				children.remove(constituent.getParent());
-		}
-
-		if (children.size() != 1)
-			throw new RuntimeException("Should not be reached");
-		return children.iterator().next();
-	}
-
-
+public class Arg2Classifier extends BaseClassifier<String, DiscourseConnective, Constituent>{
+	
 	@Override
 	public Function<JCas, ? extends Collection<? extends DiscourseConnective>> getSequenceExtractor(JCas jCas) {
-		init(jCas);
-
+		super.getSequenceExtractor(jCas);
 		return (aJCas) -> JCasUtil.select(aJCas, DiscourseConnective.class);
 	}
 
 	@Override
 	public Function<DiscourseConnective, List<Constituent>> getInstanceExtractor(JCas aJCas) {
-
 		return this::getArgsConstituents;
 	}
 

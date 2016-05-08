@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,9 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
@@ -37,68 +34,6 @@ import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
-
-
-class SortPermutation {
-	public static <T> List<Integer> getPermutations(final List<T> list, final Comparator<? super T> comparator){
-		List<Integer> permutation = new ArrayList<>();
-		for (int i = 0; i < list.size(); i++)
-			permutation.add(i);
-		
-		Collections.sort(permutation, (a, b) -> comparator.compare(list.get(a), list.get(b)));
-		
-		return permutation;
-	}
-}
-
-class HeavyPair<L, R> implements Comparable<HeavyPair<L, R>>{
-	public final L left;
-	public final R right;
-	public final Comparator<? super L> comparator;
-
-	public HeavyPair(L left, R right, Comparator<? super L> comparator) {
-		this.left = left;
-		this.right = right;
-		this.comparator = comparator;
-	}
-
-	public static<L, R> List<R> sort(List<L> weights, List<R> toSort, Comparator<? super L> comparator) {
-		assert(weights.size() == toSort.size());
-		List<R> output = new ArrayList<>(toSort.size());
-		List<HeavyPair<L, R>> workHorse = new ArrayList<>(toSort.size());
-		for(int i = 0; i < toSort.size(); i++) {
-			workHorse.add(new HeavyPair<>(weights.get(i), toSort.get(i), comparator));
-		}
-		Collections.sort(workHorse);
-		for(int i = 0; i < workHorse.size(); i++) {
-			output.add(workHorse.get(i).right);
-		}
-		return output;
-	}
-
-	@Override
-	public int compareTo(HeavyPair<L, R> o) {
-		return this.comparator.compare(this.left, o.left);
-	}
-
-}
-
-class SizeComparator implements Comparator<Annotation>{
-
-	@Override
-	public int compare(Annotation o1, Annotation o2) {
-		return new CompareToBuilder()
-				.append(size(o1), size(o2))
-				.append(o1.getBegin(), o2.getBegin())
-				.append(o1.getClass().getName(), o2.getClass().getName())
-				.toComparison();
-	}
-
-	private int size(Annotation ann){
-		return ann.getEnd() - ann.getBegin();
-	}
-
-}
 
 
 public class ConflictResolver implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Constituent>{
@@ -153,7 +88,7 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 		}
 		ArrayList<Constituent> results = new ArrayList<>(candidates);
 
-		Collections.sort(results, new SizeComparator());
+		Collections.sort(results, new AnnotationSizeComparator<>());
 		return results;
 	}
 
@@ -178,14 +113,15 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 		Set<Token> arg1Tokens = new HashSet<>(TokenListTools.convertToTokens(discourseConnective.getDiscourseRelation().getArguments(0)));
 		Set<Token> arg2Tokens = new HashSet<>(TokenListTools.convertToTokens(discourseConnective.getDiscourseRelation().getArguments(1)));
 
-//		List<Integer> permutaiton = SortPermutation.getPermutations(constituents, new SizeComparator());
-		
 		String[] outcomes = new String[constituents.size()]; 
 		Set<Token> ignore = new HashSet<>();
 		for (int idx = 0; idx < constituents.size(); idx++){
 			HashSet<Token> tokens = new HashSet<>(coveredTokens.get(constituents.get(idx)));
 			tokens.removeAll(ignore);
-			outcomes[idx] = decideLabel(tokens, arg1Tokens, arg2Tokens);
+			if (tokens.size() == 0)
+				outcomes[idx] = outcomes[idx - 1];
+			else
+				outcomes[idx] = decideLabel(tokens, arg1Tokens, arg2Tokens);
 			ignore.addAll(tokens);
 		}
 
@@ -198,6 +134,9 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 		if (arg2Tokens.containsAll(tokens))
 			return NodeArgType.Arg2.toString();
 
+		if (tokens.removeAll(arg1Tokens) || tokens.removeAll(arg2Tokens)){
+			System.err.println("ConflictResolver.decideLabel(): TODO");
+		}
 		return NodeArgType.None.toString();
 
 	}
@@ -207,20 +146,23 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 		return this::setLabels;
 	}
 
+	@SuppressWarnings("unused")
+	private void setLabelsBaseRules(List<String> outcomes, DiscourseConnective connective, List<Constituent>  constituents){
+		DiscourseRelation relation = connective.getDiscourseRelation();
+		DiscourseArgument arg1 = relation.getArguments(0);
+		DiscourseArgument arg2 = relation.getArguments(0);
+		
+		List<Token> arg1Tokens = TokenListTools.convertToTokens(arg1);
+		arg1Tokens.removeAll(TokenListTools.convertToTokens(arg2));
+		TokenListTools.initTokenList(arg1, arg1Tokens, false);
+	}
+	
+	
+//	@SuppressWarnings("unused")
 	private void setLabels(List<String> outcomes, DiscourseConnective connective, List<Constituent>  constituents){
 		Set<Token> arg1Tokens = new HashSet<>();
 		Set<Token> arg2Tokens = new HashSet<>();
 		Set<Token> noneTokens = new HashSet<>();
-		
-		if (TokenListTools.getTokenListText(connective.getDiscourseRelation().getArguments(0)).contains("We would have to wait")){
-//			System.out.println("ConflictResolver.setLabels()" + outcomes.stream().collect(Collectors.joining(", ")));
-//			System.out.println("ConflictResolver.setLabels()" + constituents.stream().map(Constituent::getCoveredText).collect(Collectors.joining(", ")));
-			
-		}
-
-		constituents = new ArrayList<>(constituents);
-		Collections.sort(constituents, new SizeComparator());
-		outcomes = HeavyPair.sort(constituents, outcomes, new SizeComparator());
 
 		for (int i = 0; i < outcomes.size(); i++){
 			Set<Token> constituentTokens = new HashSet<>(coveredTokens.get(constituents.get(i)));
@@ -247,9 +189,7 @@ public class ConflictResolver implements SequenceClassifierAlgorithmFactory<Stri
 			}
 		}
 		List<Set<Token>> argsTokens = Arrays.asList(arg1Tokens, arg2Tokens);
-//		System.out.println(noneTokens.stream().map(Token::getCoveredText).collect(Collectors.joining(" ")));
 		for (int i = 0; i < 2; i++){
-//			System.out.println(argsTokens.get(i).stream().map(Token::getCoveredText).collect(Collectors.joining(" ")));
 			DiscourseArgument arg = connective.getDiscourseRelation().getArguments(i);
 			List<Token> updatedArgTokens = TokenListTools.convertToTokens(arg);
 			updatedArgTokens.removeAll(noneTokens);
