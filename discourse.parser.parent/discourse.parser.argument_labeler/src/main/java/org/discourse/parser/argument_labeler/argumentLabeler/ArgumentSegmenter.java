@@ -65,7 +65,7 @@ public class ArgumentSegmenter {
 	public static void main(String[] args) throws Exception {
 		new File("outputs/patterns.txt").delete();
 		File dataFld = new File("../discourse.conll.dataset/data");
-		DatasetMode mode = DatasetMode.trial;
+		DatasetMode mode = DatasetMode.train;
 		
 //		File dataFld = new File("../discourse.parser.argument_labeler/outputs/data/test-data");
 //		DatasetMode mode = DatasetMode.test;
