@@ -120,7 +120,8 @@ public abstract class BaseClassifier<OUTCOME, SEQUENCE extends Annotation, INSTA
 				(cns, dc) -> new ConstituentFeatureFactory(mapToTokenSet, dependencyGraph, mapToTokenList)
 					.getInstance().apply(cns);
 				
-		BiFunction<Annotation, DiscourseConnective, List<Feature>> constituentConnectiveFeatuers = new ConstituentConnectiveFeatureFactory().getInstance();
+		BiFunction<Annotation, DiscourseConnective, List<Feature>> constituentConnectiveFeatuers = 
+				new ConstituentConnectiveFeatureFactory(dependencyGraph, mapToTokenSet).getInstance();
 		
 		BiFunction<Annotation, DiscourseConnective, List<Feature>> features = 
 				multiBiFuncMap(connectiveFeatures, constituentFeatures, constituentConnectiveFeatuers)
