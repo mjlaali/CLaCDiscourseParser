@@ -129,6 +129,8 @@ public class ConstituentFeatureFactory {
 				.andThen(getTokens)
 				.andThen(getRoots(dependencyGraph))
 				.andThen(pickLeftMostToken())
+				.andThen(Token::getCoveredText)
+				.andThen(String::toLowerCase)
 				.andThen(makeFeature("ConstituentHead"));
 		features.add(constituentHead);
 				
