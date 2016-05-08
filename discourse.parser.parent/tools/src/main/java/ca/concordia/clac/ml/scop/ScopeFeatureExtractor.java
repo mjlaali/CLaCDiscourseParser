@@ -67,4 +67,15 @@ public class ScopeFeatureExtractor {
 			return list.get(0);
 		};
 	}
+	
+	public static Function<Set<Token>, Token> pickRightMostToken(){
+		return (set) -> {
+			if (set == null || set.size() == 0)
+				return null;
+			List<Token> list = new ArrayList<>(set);
+			Collections.sort(list, (a, b) -> a.getBegin() - b.getBegin());
+			return list.get(list.size() - 1);
+		};
+	}
+
 }

@@ -64,7 +64,7 @@ public class ArgumentSegmenter {
 	
 	public static void main(String[] args) throws Exception {
 		new File("outputs/patterns.txt").delete();
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.trial);
+		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		ConllDataLoader dataLoader = ConllDataLoaderFactory.getInstance(dataset);
 		

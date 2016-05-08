@@ -52,7 +52,7 @@ public class NodeRemover extends BaseClassifier<String, DiscourseConnective, Ann
 
 		});
 
-		coveringTokens.putAll(constituentCoveredTokens);
+		coveringTokens.putAll(mapToTokenList);
 		Collection<Token> tokens = JCasUtil.select(jcas, Token.class);
 		tokens.forEach((t) -> coveringTokens.put(t, Arrays.asList(t)));
 	}
@@ -76,7 +76,7 @@ public class NodeRemover extends BaseClassifier<String, DiscourseConnective, Ann
 		for (int i = 0; i < 2; i++){
 			DiscourseArgument arg = discourseRelation.getArguments(i);
 			Constituent constituent = argumentCoveringConstituent.get(arg);
-			candidates.addAll(constituentCoveredTokens.get(constituent));
+			candidates.addAll(mapToTokenList.get(constituent));
 			candidates.addAll(constituentChilderen.get(constituent));
 		}
 		ArrayList<Annotation> results = new ArrayList<>(candidates);

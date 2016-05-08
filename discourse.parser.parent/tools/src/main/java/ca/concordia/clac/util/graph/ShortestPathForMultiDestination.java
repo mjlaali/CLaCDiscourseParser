@@ -123,6 +123,8 @@ public final class ShortestPathForMultiDestination<V, E>
         V startVertex,
         Set<V> endVertex)
     {
+    	if (endVertex.isEmpty())
+    		return Collections.emptyList();
         ShortestPathForMultiDestination<V, E> alg =
             new ShortestPathForMultiDestination<V, E>(
                 graph,

@@ -1,5 +1,6 @@
 package org.discourse.parser.argument_labeler.argumentLabeler.components;
 
+import static ca.concordia.clac.ml.feature.FeatureExtractors.flatMap;
 import static ca.concordia.clac.ml.feature.FeatureExtractors.multiBiFuncMap;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.mapOneByOneTo;
 
@@ -51,7 +52,7 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 
 		});
 
-		coveredTokens.putAll(constituentCoveredTokens);
+		coveredTokens.putAll(mapToTokenList);
 		Collection<Token> tokens = JCasUtil.select(jcas, Token.class);
 		tokens.forEach((t) -> coveredTokens.put(t, Arrays.asList(t)));
 	}
@@ -75,13 +76,10 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 			DiscourseArgument arg = discourseRelation.getArguments(i);
 			Constituent constituent = argumentCoveringConstituent.get(arg);
 			Set<Annotation> annotaionSet = new HashSet<>();
-			annotaionSet.addAll(constituentCoveredTokens.get(constituent));
+			annotaionSet.addAll(mapToTokenList.get(constituent));
 			annotaionSet.addAll(constituentChilderen.get(constituent));
 			
-//			if (i == 0) {
-				candidates.addAll(annotaionSet);
-//			} else
-//				candidates.retainAll(annotaionSet);
+			candidates.addAll(annotaionSet);
 		}
 		ArrayList<Annotation> results = new ArrayList<>(candidates);
 
@@ -89,16 +87,29 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 		return results;
 	}
 
-	private String annotationToString(Annotation annotation){
-		return "(" + annotation.getBegin() + "-" + annotation.getEnd() + "-" + annotation.getClass().getSimpleName() + ")"; 
-	}
-
-
+	
 	@Override
 	public BiFunction<List<Annotation>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		BiFunction<Annotation, DiscourseConnective, Feature> dummyFeature = (cns, dc) -> new Feature("dummy", annotationToString(cns) + annotationToString(dc));
-		BiFunction<Annotation, DiscourseConnective, List<Feature>> features = multiBiFuncMap(dummyFeature);
-		return mapOneByOneTo(features);
+		BiFunction<Annotation, DiscourseConnective, List<Feature>> generalFeatures = 
+				getGeneralFeatures(jCas);
+		
+		BiFunction<Annotation, DiscourseConnective, List<Feature>> newFeatures = this::getNewFeatures;
+		
+		BiFunction<Annotation, DiscourseConnective, List<Feature>> allFeatures = multiBiFuncMap(generalFeatures, newFeatures)
+				.andThen(flatMap(Feature.class));
+		
+		return mapOneByOneTo(allFeatures);
+	}
+	
+	private List<Feature> getNewFeatures(Annotation constituent, DiscourseConnective connective){
+		Constituent arg1CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(0));
+		Set<Token> arg1CoveringTokens = new HashSet<>(mapToTokenList.get(arg1CoveringConstituent));
+
+		Constituent arg2CoveringConstituent = argumentCoveringConstituent.get(connective.getDiscourseRelation().getArguments(1));
+		Set<Token> arg2CoveringTokens = new HashSet<>(mapToTokenList.get(arg2CoveringConstituent));
+
+		return new ConstituentArg2Arg1FeatureFactory(dependencyGraph, mapToTokenSet)
+				.getInstance(arg1CoveringTokens, arg2CoveringTokens).apply(constituent);
 	}
 
 	@Override

@@ -54,6 +54,16 @@ public class FeatureExtractors{
 		};
 	}
 	
+	public static <T, R> Function<T, List<R>> multiMapList(List<Function<T, R>> mapFunctions){
+		return (t) -> {
+			if (t == null)
+				return Collections.emptyList();
+			else 
+			return mapFunctions.stream().map((f) ->  Optional.of(t).map(f).orElse(null))
+				.collect(Collectors.toList());
+		};
+	}
+	
 	@SafeVarargs
 	public static <T, R> Function<T, List<R>> multiMap(Function<? super T, R>... mapFunctions){
 		return (t) -> {
