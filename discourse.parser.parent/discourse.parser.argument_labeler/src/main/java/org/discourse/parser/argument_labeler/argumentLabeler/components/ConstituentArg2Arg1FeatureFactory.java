@@ -61,16 +61,16 @@ public class ConstituentArg2Arg1FeatureFactory implements Function<Annotation, L
 			if (path == null)
 				path = Collections.emptyList();
 
-			features.add(new Feature("ArgsDepPathSize_" + argIdx, path.size()));
-			features.add(new Feature("ArgsDepPath_" + argIdx, 
+			features.add(new Feature("ArgsDepPathSize" + argIdx, "" + path.size()));
+			features.add(new Feature("ArgsDepPath" + argIdx, 
 					path.stream()
 					.map(LabeledEdge::getLabel)
 					.map(Dependency::getDependencyType)
 					.collect(Collectors.joining("-"))));
 
 			
-			features.add(new Feature("ArgsHeadInArg_" + argIdx, Boolean.toString(argTokens.contains(nodeHead))));
-			features.add(new Feature("ArgsContainAllInArg_" + argIdx, Boolean.toString(argTokens.containsAll(nodeTokens))));
+			features.add(new Feature("ArgsHeadInArg" + argIdx, Boolean.toString(argTokens.contains(nodeHead))));
+			features.add(new Feature("ArgsContainAllInArg" + argIdx, Boolean.toString(argTokens.containsAll(nodeTokens))));
 			++argIdx;
 		}
 		

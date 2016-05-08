@@ -56,6 +56,7 @@ public class ConstituentConnectiveFeatureFactory {
 		BiFunction<Annotation, DiscourseConnective, Feature> pathSize = pathExtractor
 				.andThen(mapOneByOneTo(getConstituentType()))
 				.andThen(collect(Collectors.counting()))
+				.andThen((l) -> "" + l)
 				.andThen(makeFeature("ConstituentDCPathSize"));
 		
 		Function<Annotation, Token> annotationHead = dummyFunc(Annotation.class)
