@@ -19,8 +19,12 @@ public class TokenListTools {
 	public static Function<Character, Boolean> isWhiteSpace = Character::isWhitespace;
 
 	public static void initTokenList(TokenList tokenList, List<Token> tokens) {
+		initTokenList(tokenList, tokens, true);
+	}
+	public static void initTokenList(TokenList tokenList, List<Token> tokens, boolean setOffsets) {
 		int begin = Integer.MAX_VALUE; 
 		int end = -1;
+		Collections.sort(tokens, (a, b) -> a.getBegin() - b.getBegin());
 		for (Token token: tokens){
 			if (begin > token.getBegin())
 				begin = token.getBegin();

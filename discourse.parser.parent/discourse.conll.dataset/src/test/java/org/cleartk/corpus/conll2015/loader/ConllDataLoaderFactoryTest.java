@@ -35,7 +35,7 @@ public class ConllDataLoaderFactoryTest {
 		FileUtils.deleteDirectory(ConllDataLoaderFactory.getPreprocessFilesLocation(path));
 		
 		ConllDataLoader instance = ConllDataLoaderFactory.getInstance(path);
-		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator());
+		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator(false));
 		
 		instance = ConllDataLoaderFactory.getInstance(path);
 		assertThat(instance).isInstanceOf(PreprocessedDataLoader.class);

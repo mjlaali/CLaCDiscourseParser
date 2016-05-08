@@ -1,0 +1,1468 @@
+dummy_(517-629-S)(566-572-DiscourseConnective) false
+dummy_(517-519-ConllToken)(566-572-DiscourseConnective) false
+dummy_(520-629-VP)(566-572-DiscourseConnective) false
+dummy_(520-528-ConllToken)(566-572-DiscourseConnective) false
+dummy_(529-536-NP)(566-572-DiscourseConnective) false
+dummy_(529-532-ConllToken)(566-572-DiscourseConnective) false
+dummy_(533-536-ConllToken)(566-572-DiscourseConnective) false
+dummy_(537-559-PP)(566-572-DiscourseConnective) false
+dummy_(537-539-ConllToken)(566-572-DiscourseConnective) false
+dummy_(540-559-NP)(566-572-DiscourseConnective) false
+dummy_(540-548-ConllToken)(566-572-DiscourseConnective) false
+dummy_(549-559-ConllToken)(566-572-DiscourseConnective) false
+dummy_(560-564-ADVP)(566-572-DiscourseConnective) false
+dummy_(560-564-ConllToken)(566-572-DiscourseConnective) false
+dummy_(564-565-ConllToken)(566-572-DiscourseConnective) true
+dummy_(566-629-SBAR)(566-572-DiscourseConnective) false
+dummy_(566-572-ConllToken)(566-572-DiscourseConnective) true
+dummy_(573-629-S)(566-572-DiscourseConnective) false
+dummy_(573-583-NP)(566-572-DiscourseConnective) false
+dummy_(573-576-ConllToken)(566-572-DiscourseConnective) false
+dummy_(577-583-ConllToken)(566-572-DiscourseConnective) false
+dummy_(584-629-VP)(566-572-DiscourseConnective) false
+dummy_(584-592-ConllToken)(566-572-DiscourseConnective) false
+dummy_(593-629-NP)(566-572-DiscourseConnective) false
+dummy_(593-601-ConllToken)(566-572-DiscourseConnective) false
+dummy_(602-615-ConllToken)(566-572-DiscourseConnective) false
+dummy_(616-629-ConllToken)(566-572-DiscourseConnective) false
+
+dummy_(1154-1291-ROOT)(1154-1157-DiscourseConnective) false
+dummy_(1154-1157-ConllToken)(1154-1157-DiscourseConnective) true
+dummy_(1158-1165-NP)(1154-1157-DiscourseConnective) false
+dummy_(1158-1161-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1162-1165-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1166-1170-ADVP)(1154-1157-DiscourseConnective) false
+dummy_(1166-1170-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1171-1290-VP)(1154-1157-DiscourseConnective) false
+dummy_(1171-1179-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1180-1249-S)(1154-1157-DiscourseConnective) false
+dummy_(1180-1197-NP)(1154-1157-DiscourseConnective) false
+dummy_(1180-1181-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1181-1188-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1188-1189-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1190-1197-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1198-1249-VP)(1154-1157-DiscourseConnective) false
+dummy_(1198-1200-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1201-1249-VP)(1154-1157-DiscourseConnective) false
+dummy_(1201-1209-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1210-1249-NP)(1154-1157-DiscourseConnective) false
+dummy_(1210-1224-NP)(1154-1157-DiscourseConnective) false
+dummy_(1210-1213-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1214-1217-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1218-1224-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1225-1249-PP)(1154-1157-DiscourseConnective) false
+dummy_(1225-1227-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1228-1249-NP)(1154-1157-DiscourseConnective) false
+dummy_(1228-1235-NP)(1154-1157-DiscourseConnective) false
+dummy_(1228-1235-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1236-1249-SBAR)(1154-1157-DiscourseConnective) false
+dummy_(1236-1240-WHNP)(1154-1157-DiscourseConnective) false
+dummy_(1236-1240-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1241-1249-S)(1154-1157-DiscourseConnective) false
+dummy_(1241-1249-VP)(1154-1157-DiscourseConnective) false
+dummy_(1241-1244-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1245-1249-VP)(1154-1157-DiscourseConnective) false
+dummy_(1245-1249-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1249-1250-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1251-1290-SBAR)(1154-1157-DiscourseConnective) false
+dummy_(1251-1256-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1257-1290-S)(1154-1157-DiscourseConnective) false
+dummy_(1257-1267-NP)(1154-1157-DiscourseConnective) false
+dummy_(1257-1260-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1261-1267-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1268-1290-VP)(1154-1157-DiscourseConnective) false
+dummy_(1268-1271-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1272-1290-VP)(1154-1157-DiscourseConnective) false
+dummy_(1272-1274-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1275-1290-VP)(1154-1157-DiscourseConnective) false
+dummy_(1275-1279-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1280-1290-ADVP)(1154-1157-DiscourseConnective) false
+dummy_(1280-1290-ConllToken)(1154-1157-DiscourseConnective) false
+dummy_(1290-1291-ConllToken)(1154-1157-DiscourseConnective) true
+
+dummy_(817-938-ROOT)(1166-1170-DiscourseConnective) false
+dummy_(817-866-NP)(1166-1170-DiscourseConnective) false
+dummy_(817-843-NP)(1166-1170-DiscourseConnective) false
+dummy_(817-820-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(821-828-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(829-838-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(839-843-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(844-866-PP)(1166-1170-DiscourseConnective) false
+dummy_(844-846-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(847-866-NP)(1166-1170-DiscourseConnective) false
+dummy_(847-850-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(851-854-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(855-862-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(863-866-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(867-937-VP)(1166-1170-DiscourseConnective) false
+dummy_(867-875-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(876-937-S)(1166-1170-DiscourseConnective) false
+dummy_(876-937-VP)(1166-1170-DiscourseConnective) false
+dummy_(876-883-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(884-937-NP)(1166-1170-DiscourseConnective) false
+dummy_(884-895-NP)(1166-1170-DiscourseConnective) false
+dummy_(884-895-QP)(1166-1170-DiscourseConnective) false
+dummy_(884-885-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(885-887-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(888-895-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(896-937-PP)(1166-1170-DiscourseConnective) false
+dummy_(896-900-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(901-937-NP)(1166-1170-DiscourseConnective) false
+dummy_(901-905-NP)(1166-1170-DiscourseConnective) false
+dummy_(901-905-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(906-937-VP)(1166-1170-DiscourseConnective) false
+dummy_(906-912-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(913-937-PP)(1166-1170-DiscourseConnective) false
+dummy_(913-915-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(916-937-NP)(1166-1170-DiscourseConnective) false
+dummy_(916-919-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(920-933-ADJP)(1166-1170-DiscourseConnective) false
+dummy_(920-925-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(926-933-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(934-937-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(937-938-ConllToken)(1166-1170-DiscourseConnective) true
+dummy_(1154-1291-ROOT)(1166-1170-DiscourseConnective) false
+dummy_(1154-1157-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1158-1165-NP)(1166-1170-DiscourseConnective) false
+dummy_(1158-1161-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1162-1165-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1166-1170-ADVP)(1166-1170-DiscourseConnective) true
+dummy_(1166-1170-ConllToken)(1166-1170-DiscourseConnective) true
+dummy_(1171-1290-VP)(1166-1170-DiscourseConnective) false
+dummy_(1171-1179-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1180-1249-S)(1166-1170-DiscourseConnective) false
+dummy_(1180-1197-NP)(1166-1170-DiscourseConnective) false
+dummy_(1180-1181-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1181-1188-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1188-1189-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1190-1197-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1198-1249-VP)(1166-1170-DiscourseConnective) false
+dummy_(1198-1200-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1201-1249-VP)(1166-1170-DiscourseConnective) false
+dummy_(1201-1209-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1210-1249-NP)(1166-1170-DiscourseConnective) false
+dummy_(1210-1224-NP)(1166-1170-DiscourseConnective) false
+dummy_(1210-1213-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1214-1217-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1218-1224-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1225-1249-PP)(1166-1170-DiscourseConnective) false
+dummy_(1225-1227-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1228-1249-NP)(1166-1170-DiscourseConnective) false
+dummy_(1228-1235-NP)(1166-1170-DiscourseConnective) false
+dummy_(1228-1235-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1236-1249-SBAR)(1166-1170-DiscourseConnective) false
+dummy_(1236-1240-WHNP)(1166-1170-DiscourseConnective) false
+dummy_(1236-1240-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1241-1249-S)(1166-1170-DiscourseConnective) false
+dummy_(1241-1249-VP)(1166-1170-DiscourseConnective) false
+dummy_(1241-1244-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1245-1249-VP)(1166-1170-DiscourseConnective) false
+dummy_(1245-1249-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1249-1250-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1251-1290-SBAR)(1166-1170-DiscourseConnective) false
+dummy_(1251-1256-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1257-1290-S)(1166-1170-DiscourseConnective) false
+dummy_(1257-1267-NP)(1166-1170-DiscourseConnective) false
+dummy_(1257-1260-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1261-1267-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1268-1290-VP)(1166-1170-DiscourseConnective) false
+dummy_(1268-1271-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1272-1290-VP)(1166-1170-DiscourseConnective) false
+dummy_(1272-1274-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1275-1290-VP)(1166-1170-DiscourseConnective) false
+dummy_(1275-1279-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1280-1290-ADVP)(1166-1170-DiscourseConnective) false
+dummy_(1280-1290-ConllToken)(1166-1170-DiscourseConnective) false
+dummy_(1290-1291-ConllToken)(1166-1170-DiscourseConnective) true
+
+dummy_(1198-1200-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1201-1249-VP)(1251-1256-DiscourseConnective) false
+dummy_(1201-1209-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1210-1249-NP)(1251-1256-DiscourseConnective) false
+dummy_(1210-1224-NP)(1251-1256-DiscourseConnective) false
+dummy_(1210-1213-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1214-1217-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1218-1224-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1225-1249-PP)(1251-1256-DiscourseConnective) false
+dummy_(1225-1227-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1228-1249-NP)(1251-1256-DiscourseConnective) false
+dummy_(1228-1235-NP)(1251-1256-DiscourseConnective) false
+dummy_(1228-1235-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1236-1249-SBAR)(1251-1256-DiscourseConnective) false
+dummy_(1236-1240-WHNP)(1251-1256-DiscourseConnective) false
+dummy_(1236-1240-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1241-1249-S)(1251-1256-DiscourseConnective) false
+dummy_(1241-1249-VP)(1251-1256-DiscourseConnective) false
+dummy_(1241-1244-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1245-1249-VP)(1251-1256-DiscourseConnective) false
+dummy_(1245-1249-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1257-1267-NP)(1251-1256-DiscourseConnective) false
+dummy_(1257-1260-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1261-1267-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1268-1290-VP)(1251-1256-DiscourseConnective) false
+dummy_(1268-1271-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1272-1290-VP)(1251-1256-DiscourseConnective) false
+dummy_(1272-1274-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1275-1290-VP)(1251-1256-DiscourseConnective) false
+dummy_(1275-1279-ConllToken)(1251-1256-DiscourseConnective) false
+dummy_(1280-1290-ADVP)(1251-1256-DiscourseConnective) false
+dummy_(1280-1290-ConllToken)(1251-1256-DiscourseConnective) false
+
+dummy_(1292-1452-ROOT)(1320-1322-DiscourseConnective) false
+dummy_(1292-1301-NP)(1320-1322-DiscourseConnective) false
+dummy_(1292-1296-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1297-1301-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1302-1451-VP)(1320-1322-DiscourseConnective) false
+dummy_(1302-1307-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1308-1451-VP)(1320-1322-DiscourseConnective) false
+dummy_(1308-1310-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1311-1451-VP)(1320-1322-DiscourseConnective) false
+dummy_(1311-1315-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1316-1319-PRT)(1320-1322-DiscourseConnective) false
+dummy_(1316-1319-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1320-1451-SBAR)(1320-1322-DiscourseConnective) false
+dummy_(1320-1322-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1323-1451-S)(1320-1322-DiscourseConnective) false
+dummy_(1323-1333-NP)(1320-1322-DiscourseConnective) false
+dummy_(1323-1326-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1327-1333-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1334-1451-VP)(1320-1322-DiscourseConnective) false
+dummy_(1334-1337-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1338-1451-VP)(1320-1322-DiscourseConnective) false
+dummy_(1338-1342-ConllToken)(1320-1322-DiscourseConnective) false
+dummy_(1342-1343-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1344-1451-S)(1320-1322-DiscourseConnective) true
+dummy_(1344-1451-VP)(1320-1322-DiscourseConnective) true
+dummy_(1344-1351-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1352-1386-NP)(1320-1322-DiscourseConnective) true
+dummy_(1352-1370-NP)(1320-1322-DiscourseConnective) true
+dummy_(1352-1355-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1356-1361-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1362-1370-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1371-1386-PP)(1320-1322-DiscourseConnective) true
+dummy_(1371-1374-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1375-1386-NP)(1320-1322-DiscourseConnective) true
+dummy_(1375-1378-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1379-1386-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1387-1451-PP)(1320-1322-DiscourseConnective) true
+dummy_(1387-1389-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1390-1451-NP)(1320-1322-DiscourseConnective) true
+dummy_(1390-1401-NP)(1320-1322-DiscourseConnective) true
+dummy_(1390-1401-QP)(1320-1322-DiscourseConnective) true
+dummy_(1390-1391-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1391-1393-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1394-1401-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1401-1402-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1403-1405-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1406-1418-NP)(1320-1322-DiscourseConnective) true
+dummy_(1406-1418-QP)(1320-1322-DiscourseConnective) true
+dummy_(1406-1407-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1407-1410-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1411-1418-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1419-1451-PP)(1320-1322-DiscourseConnective) true
+dummy_(1419-1428-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1429-1451-NP)(1320-1322-DiscourseConnective) true
+dummy_(1429-1437-NP)(1320-1322-DiscourseConnective) true
+dummy_(1429-1437-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1438-1451-PP)(1320-1322-DiscourseConnective) true
+dummy_(1438-1442-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1443-1451-NP)(1320-1322-DiscourseConnective) true
+dummy_(1443-1445-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1446-1451-ConllToken)(1320-1322-DiscourseConnective) true
+dummy_(1451-1452-ConllToken)(1320-1322-DiscourseConnective) true
+
+dummy_(1554-1564-NP)(1630-1633-DiscourseConnective) false
+dummy_(1554-1557-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1558-1564-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1565-1628-VP)(1630-1633-DiscourseConnective) false
+dummy_(1565-1568-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1569-1576-ADVP)(1630-1633-DiscourseConnective) false
+dummy_(1569-1576-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1577-1628-VP)(1630-1633-DiscourseConnective) false
+dummy_(1577-1582-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1583-1602-NP)(1630-1633-DiscourseConnective) false
+dummy_(1583-1602-QP)(1630-1633-DiscourseConnective) false
+dummy_(1583-1590-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1591-1592-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1592-1594-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1595-1602-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1603-1628-S)(1630-1633-DiscourseConnective) false
+dummy_(1603-1628-VP)(1630-1633-DiscourseConnective) false
+dummy_(1603-1610-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1611-1628-NP)(1630-1633-DiscourseConnective) false
+dummy_(1611-1613-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1614-1623-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1624-1628-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1634-1636-NP)(1630-1633-DiscourseConnective) false
+dummy_(1634-1636-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1637-1701-VP)(1630-1633-DiscourseConnective) false
+dummy_(1637-1639-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1640-1701-ADJP)(1630-1633-DiscourseConnective) false
+dummy_(1640-1646-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1647-1701-S)(1630-1633-DiscourseConnective) false
+dummy_(1647-1701-VP)(1630-1633-DiscourseConnective) false
+dummy_(1647-1649-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1650-1701-VP)(1630-1633-DiscourseConnective) false
+dummy_(1650-1654-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1655-1657-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1658-1663-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1664-1667-NP)(1630-1633-DiscourseConnective) false
+dummy_(1664-1667-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1668-1701-PP)(1630-1633-DiscourseConnective) false
+dummy_(1668-1670-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1671-1701-NP)(1630-1633-DiscourseConnective) false
+dummy_(1671-1679-NP)(1630-1633-DiscourseConnective) false
+dummy_(1671-1674-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1675-1679-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1680-1701-S)(1630-1633-DiscourseConnective) false
+dummy_(1680-1701-SBAR)(1630-1633-DiscourseConnective) false
+dummy_(1680-1691-NP)(1630-1633-DiscourseConnective) false
+dummy_(1680-1683-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1684-1691-ConllToken)(1630-1633-DiscourseConnective) false
+dummy_(1692-1701-VP)(1630-1633-DiscourseConnective) false
+dummy_(1692-1701-ConllToken)(1630-1633-DiscourseConnective) false
+
+dummy_(1705-1855-ROOT)(1802-1807-DiscourseConnective) false
+dummy_(1705-1733-PP)(1802-1807-DiscourseConnective) false
+dummy_(1705-1711-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1712-1733-NP)(1802-1807-DiscourseConnective) false
+dummy_(1712-1717-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1718-1725-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1726-1733-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1733-1743-PRN)(1802-1807-DiscourseConnective) true
+dummy_(1733-1734-ConllToken)(1802-1807-DiscourseConnective) true
+dummy_(1735-1742-S)(1802-1807-DiscourseConnective) true
+dummy_(1735-1737-NP)(1802-1807-DiscourseConnective) true
+dummy_(1735-1737-ConllToken)(1802-1807-DiscourseConnective) true
+dummy_(1738-1742-VP)(1802-1807-DiscourseConnective) true
+dummy_(1738-1742-ConllToken)(1802-1807-DiscourseConnective) true
+dummy_(1742-1743-ConllToken)(1802-1807-DiscourseConnective) true
+dummy_(1744-1751-NP)(1802-1807-DiscourseConnective) false
+dummy_(1744-1747-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1748-1751-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1752-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1752-1757-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1758-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1758-1760-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1761-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1761-1767-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1768-1854-S)(1802-1807-DiscourseConnective) false
+dummy_(1768-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1768-1770-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1771-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1771-1776-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1777-1801-NP)(1802-1807-DiscourseConnective) false
+dummy_(1777-1782-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1783-1789-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1790-1801-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1802-1854-SBAR)(1802-1807-DiscourseConnective) false
+dummy_(1802-1807-ConllToken)(1802-1807-DiscourseConnective) true
+dummy_(1808-1854-S)(1802-1807-DiscourseConnective) false
+dummy_(1808-1812-NP)(1802-1807-DiscourseConnective) false
+dummy_(1808-1812-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1813-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1813-1818-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1819-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1819-1821-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1822-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1822-1828-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1829-1854-PP)(1802-1807-DiscourseConnective) false
+dummy_(1829-1831-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1832-1854-S)(1802-1807-DiscourseConnective) false
+dummy_(1832-1854-VP)(1802-1807-DiscourseConnective) false
+dummy_(1832-1839-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1840-1854-NP)(1802-1807-DiscourseConnective) false
+dummy_(1840-1843-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1844-1847-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1848-1854-ConllToken)(1802-1807-DiscourseConnective) false
+dummy_(1854-1855-ConllToken)(1802-1807-DiscourseConnective) true
+
+dummy_(1857-1859-NP)(1879-1884-DiscourseConnective) false
+dummy_(1857-1859-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1860-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1860-1865-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1866-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1866-1870-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1871-1945-S)(1879-1884-DiscourseConnective) false
+dummy_(1871-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1871-1873-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1874-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1874-1878-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1879-1945-SBAR)(1879-1884-DiscourseConnective) false
+dummy_(1879-1884-ConllToken)(1879-1884-DiscourseConnective) true
+dummy_(1885-1945-S)(1879-1884-DiscourseConnective) false
+dummy_(1885-1887-NP)(1879-1884-DiscourseConnective) false
+dummy_(1885-1887-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1888-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1888-1892-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1893-1945-VP)(1879-1884-DiscourseConnective) false
+dummy_(1893-1902-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1903-1918-PP)(1879-1884-DiscourseConnective) false
+dummy_(1903-1905-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1906-1918-NP)(1879-1884-DiscourseConnective) false
+dummy_(1906-1911-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1912-1918-ConllToken)(1879-1884-DiscourseConnective) false
+dummy_(1919-1945-SBAR)(1879-1884-DiscourseConnective) true
+dummy_(1919-1925-ConllToken)(1879-1884-DiscourseConnective) true
+dummy_(1926-1945-S)(1879-1884-DiscourseConnective) true
+dummy_(1926-1928-NP)(1879-1884-DiscourseConnective) true
+dummy_(1926-1928-ConllToken)(1879-1884-DiscourseConnective) true
+dummy_(1929-1945-VP)(1879-1884-DiscourseConnective) true
+dummy_(1929-1932-ConllToken)(1879-1884-DiscourseConnective) true
+dummy_(1933-1945-VP)(1879-1884-DiscourseConnective) true
+dummy_(1933-1937-ConllToken)(1879-1884-DiscourseConnective) true
+dummy_(1938-1945-ADVP)(1879-1884-DiscourseConnective) true
+dummy_(1938-1945-ConllToken)(1879-1884-DiscourseConnective) true
+
+dummy_(1857-1859-NP)(1919-1925-DiscourseConnective) false
+dummy_(1857-1859-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1860-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1860-1865-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1866-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1866-1870-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1871-1945-S)(1919-1925-DiscourseConnective) false
+dummy_(1871-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1871-1873-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1874-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1874-1878-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1879-1945-SBAR)(1919-1925-DiscourseConnective) false
+dummy_(1879-1884-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1885-1945-S)(1919-1925-DiscourseConnective) false
+dummy_(1885-1887-NP)(1919-1925-DiscourseConnective) false
+dummy_(1885-1887-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1888-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1888-1892-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1893-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1893-1902-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1903-1918-PP)(1919-1925-DiscourseConnective) false
+dummy_(1903-1905-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1906-1918-NP)(1919-1925-DiscourseConnective) false
+dummy_(1906-1911-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1912-1918-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1919-1945-SBAR)(1919-1925-DiscourseConnective) false
+dummy_(1919-1925-ConllToken)(1919-1925-DiscourseConnective) true
+dummy_(1926-1945-S)(1919-1925-DiscourseConnective) false
+dummy_(1926-1928-NP)(1919-1925-DiscourseConnective) false
+dummy_(1926-1928-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1929-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1929-1932-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1933-1945-VP)(1919-1925-DiscourseConnective) false
+dummy_(1933-1937-ConllToken)(1919-1925-DiscourseConnective) false
+dummy_(1938-1945-ADVP)(1919-1925-DiscourseConnective) false
+dummy_(1938-1945-ConllToken)(1919-1925-DiscourseConnective) false
+
+dummy_(2027-2111-ROOT)(2112-2120-DiscourseConnective) false
+dummy_(2027-2034-NP)(2112-2120-DiscourseConnective) false
+dummy_(2027-2030-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2031-2034-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2035-2110-VP)(2112-2120-DiscourseConnective) false
+dummy_(2035-2039-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2040-2110-VP)(2112-2120-DiscourseConnective) false
+dummy_(2040-2045-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2046-2110-S)(2112-2120-DiscourseConnective) false
+dummy_(2046-2053-NP)(2112-2120-DiscourseConnective) false
+dummy_(2046-2049-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2050-2053-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2054-2110-VP)(2112-2120-DiscourseConnective) false
+dummy_(2054-2056-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2057-2110-VP)(2112-2120-DiscourseConnective) false
+dummy_(2057-2063-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2064-2081-PP)(2112-2120-DiscourseConnective) false
+dummy_(2064-2068-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2069-2081-NP)(2112-2120-DiscourseConnective) false
+dummy_(2069-2072-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2073-2081-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2082-2098-NP)(2112-2120-DiscourseConnective) false
+dummy_(2082-2098-QP)(2112-2120-DiscourseConnective) false
+dummy_(2082-2084-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2085-2087-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2088-2089-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2089-2090-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2091-2098-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2099-2110-PP)(2112-2120-DiscourseConnective) false
+dummy_(2099-2101-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2102-2110-NP)(2112-2120-DiscourseConnective) false
+dummy_(2102-2105-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2106-2110-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2110-2111-ConllToken)(2112-2120-DiscourseConnective) true
+dummy_(2112-2320-ROOT)(2112-2120-DiscourseConnective) false
+dummy_(2112-2120-ADVP)(2112-2120-DiscourseConnective) true
+dummy_(2112-2120-ConllToken)(2112-2120-DiscourseConnective) true
+dummy_(2120-2121-ConllToken)(2112-2120-DiscourseConnective) true
+dummy_(2122-2124-NP)(2112-2120-DiscourseConnective) false
+dummy_(2122-2124-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2125-2319-VP)(2112-2120-DiscourseConnective) false
+dummy_(2125-2129-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2130-2319-S)(2112-2120-DiscourseConnective) false
+dummy_(2130-2319-SBAR)(2112-2120-DiscourseConnective) false
+dummy_(2130-2184-S)(2112-2120-DiscourseConnective) false
+dummy_(2130-2157-NP)(2112-2120-DiscourseConnective) false
+dummy_(2130-2139-NP)(2112-2120-DiscourseConnective) false
+dummy_(2130-2133-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2134-2137-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2137-2139-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2140-2145-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2146-2157-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2158-2184-VP)(2112-2120-DiscourseConnective) false
+dummy_(2158-2161-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2162-2165-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2166-2184-VP)(2112-2120-DiscourseConnective) false
+dummy_(2166-2172-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2173-2184-NP)(2112-2120-DiscourseConnective) false
+dummy_(2173-2184-QP)(2112-2120-DiscourseConnective) false
+dummy_(2173-2174-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2174-2176-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2177-2184-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2184-2185-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2186-2189-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2190-2319-S)(2112-2120-DiscourseConnective) false
+dummy_(2190-2201-NP)(2112-2120-DiscourseConnective) false
+dummy_(2190-2194-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2195-2201-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2202-2319-VP)(2112-2120-DiscourseConnective) false
+dummy_(2202-2204-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2205-2319-VP)(2112-2120-DiscourseConnective) false
+dummy_(2205-2249-VP)(2112-2120-DiscourseConnective) false
+dummy_(2205-2212-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2213-2249-PP)(2112-2120-DiscourseConnective) false
+dummy_(2213-2218-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2219-2249-S)(2112-2120-DiscourseConnective) false
+dummy_(2219-2249-VP)(2112-2120-DiscourseConnective) false
+dummy_(2219-2228-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2229-2249-NP)(2112-2120-DiscourseConnective) false
+dummy_(2229-2234-NP)(2112-2120-DiscourseConnective) false
+dummy_(2229-2234-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2235-2238-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2239-2249-NP)(2112-2120-DiscourseConnective) false
+dummy_(2239-2244-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2245-2249-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2249-2250-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2251-2254-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2255-2274-VP)(2112-2120-DiscourseConnective) false
+dummy_(2255-2266-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2267-2274-PP)(2112-2120-DiscourseConnective) false
+dummy_(2267-2271-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2272-2274-NP)(2112-2120-DiscourseConnective) false
+dummy_(2272-2274-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2275-2319-NP)(2112-2120-DiscourseConnective) false
+dummy_(2275-2291-NP)(2112-2120-DiscourseConnective) false
+dummy_(2275-2278-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2279-2285-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2286-2291-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2292-2319-PP)(2112-2120-DiscourseConnective) false
+dummy_(2292-2294-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2295-2319-NP)(2112-2120-DiscourseConnective) false
+dummy_(2295-2305-NP)(2112-2120-DiscourseConnective) false
+dummy_(2295-2298-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2299-2305-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2306-2319-S)(2112-2120-DiscourseConnective) false
+dummy_(2306-2319-SBAR)(2112-2120-DiscourseConnective) false
+dummy_(2306-2313-NP)(2112-2120-DiscourseConnective) false
+dummy_(2306-2309-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2310-2313-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2314-2319-VP)(2112-2120-DiscourseConnective) false
+dummy_(2314-2319-ConllToken)(2112-2120-DiscourseConnective) false
+dummy_(2319-2320-ConllToken)(2112-2120-DiscourseConnective) true
+
+dummy_(2130-2157-NP)(2186-2189-DiscourseConnective) false
+dummy_(2130-2139-NP)(2186-2189-DiscourseConnective) false
+dummy_(2130-2133-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2134-2137-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2137-2139-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2140-2145-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2146-2157-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2158-2184-VP)(2186-2189-DiscourseConnective) false
+dummy_(2158-2161-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2162-2165-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2166-2184-VP)(2186-2189-DiscourseConnective) false
+dummy_(2166-2172-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2173-2184-NP)(2186-2189-DiscourseConnective) false
+dummy_(2173-2184-QP)(2186-2189-DiscourseConnective) false
+dummy_(2173-2174-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2174-2176-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2177-2184-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2190-2201-NP)(2186-2189-DiscourseConnective) false
+dummy_(2190-2194-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2195-2201-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2202-2319-VP)(2186-2189-DiscourseConnective) false
+dummy_(2202-2204-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2205-2319-VP)(2186-2189-DiscourseConnective) false
+dummy_(2205-2249-VP)(2186-2189-DiscourseConnective) false
+dummy_(2205-2212-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2213-2249-PP)(2186-2189-DiscourseConnective) false
+dummy_(2213-2218-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2219-2249-S)(2186-2189-DiscourseConnective) false
+dummy_(2219-2249-VP)(2186-2189-DiscourseConnective) false
+dummy_(2219-2228-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2229-2249-NP)(2186-2189-DiscourseConnective) false
+dummy_(2229-2234-NP)(2186-2189-DiscourseConnective) false
+dummy_(2229-2234-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2235-2238-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2239-2249-NP)(2186-2189-DiscourseConnective) false
+dummy_(2239-2244-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2245-2249-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2249-2250-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2251-2254-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2255-2274-VP)(2186-2189-DiscourseConnective) false
+dummy_(2255-2266-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2267-2274-PP)(2186-2189-DiscourseConnective) false
+dummy_(2267-2271-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2272-2274-NP)(2186-2189-DiscourseConnective) false
+dummy_(2272-2274-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2275-2319-NP)(2186-2189-DiscourseConnective) false
+dummy_(2275-2291-NP)(2186-2189-DiscourseConnective) false
+dummy_(2275-2278-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2279-2285-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2286-2291-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2292-2319-PP)(2186-2189-DiscourseConnective) false
+dummy_(2292-2294-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2295-2319-NP)(2186-2189-DiscourseConnective) false
+dummy_(2295-2305-NP)(2186-2189-DiscourseConnective) false
+dummy_(2295-2298-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2299-2305-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2306-2319-S)(2186-2189-DiscourseConnective) false
+dummy_(2306-2319-SBAR)(2186-2189-DiscourseConnective) false
+dummy_(2306-2313-NP)(2186-2189-DiscourseConnective) false
+dummy_(2306-2309-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2310-2313-ConllToken)(2186-2189-DiscourseConnective) false
+dummy_(2314-2319-VP)(2186-2189-DiscourseConnective) false
+dummy_(2314-2319-ConllToken)(2186-2189-DiscourseConnective) false
+
+dummy_(2130-2319-SBAR)(2213-2218-DiscourseConnective) false
+dummy_(2130-2184-S)(2213-2218-DiscourseConnective) true
+dummy_(2130-2157-NP)(2213-2218-DiscourseConnective) true
+dummy_(2130-2139-NP)(2213-2218-DiscourseConnective) true
+dummy_(2130-2133-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2134-2137-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2137-2139-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2140-2145-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2146-2157-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2158-2184-VP)(2213-2218-DiscourseConnective) true
+dummy_(2158-2161-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2162-2165-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2166-2184-VP)(2213-2218-DiscourseConnective) true
+dummy_(2166-2172-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2173-2184-NP)(2213-2218-DiscourseConnective) true
+dummy_(2173-2184-QP)(2213-2218-DiscourseConnective) true
+dummy_(2173-2174-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2174-2176-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2177-2184-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2184-2185-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2186-2189-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2190-2319-S)(2213-2218-DiscourseConnective) false
+dummy_(2190-2201-NP)(2213-2218-DiscourseConnective) false
+dummy_(2190-2194-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2195-2201-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2202-2319-VP)(2213-2218-DiscourseConnective) false
+dummy_(2202-2204-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2205-2319-VP)(2213-2218-DiscourseConnective) false
+dummy_(2205-2249-VP)(2213-2218-DiscourseConnective) false
+dummy_(2205-2212-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2213-2249-PP)(2213-2218-DiscourseConnective) false
+dummy_(2213-2218-ConllToken)(2213-2218-DiscourseConnective) true
+dummy_(2219-2249-S)(2213-2218-DiscourseConnective) false
+dummy_(2219-2249-VP)(2213-2218-DiscourseConnective) false
+dummy_(2219-2228-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2229-2249-NP)(2213-2218-DiscourseConnective) false
+dummy_(2229-2234-NP)(2213-2218-DiscourseConnective) false
+dummy_(2229-2234-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2235-2238-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2239-2249-NP)(2213-2218-DiscourseConnective) false
+dummy_(2239-2244-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2245-2249-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2249-2250-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2251-2254-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2255-2274-VP)(2213-2218-DiscourseConnective) false
+dummy_(2255-2266-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2267-2274-PP)(2213-2218-DiscourseConnective) false
+dummy_(2267-2271-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2272-2274-NP)(2213-2218-DiscourseConnective) false
+dummy_(2272-2274-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2275-2319-NP)(2213-2218-DiscourseConnective) false
+dummy_(2275-2291-NP)(2213-2218-DiscourseConnective) false
+dummy_(2275-2278-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2279-2285-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2286-2291-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2292-2319-PP)(2213-2218-DiscourseConnective) false
+dummy_(2292-2294-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2295-2319-NP)(2213-2218-DiscourseConnective) false
+dummy_(2295-2305-NP)(2213-2218-DiscourseConnective) false
+dummy_(2295-2298-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2299-2305-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2306-2319-S)(2213-2218-DiscourseConnective) false
+dummy_(2306-2319-SBAR)(2213-2218-DiscourseConnective) false
+dummy_(2306-2313-NP)(2213-2218-DiscourseConnective) false
+dummy_(2306-2309-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2310-2313-ConllToken)(2213-2218-DiscourseConnective) false
+dummy_(2314-2319-VP)(2213-2218-DiscourseConnective) false
+dummy_(2314-2319-ConllToken)(2213-2218-DiscourseConnective) false
+
+dummy_(2323-2326-ConllToken)(2323-2326-DiscourseConnective) true
+dummy_(2327-2335-NP)(2323-2326-DiscourseConnective) false
+dummy_(2327-2335-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2336-2380-VP)(2323-2326-DiscourseConnective) false
+dummy_(2336-2339-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2339-2342-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2343-2380-VP)(2323-2326-DiscourseConnective) false
+dummy_(2343-2353-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2354-2356-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2357-2363-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2364-2380-NP)(2323-2326-DiscourseConnective) false
+dummy_(2364-2368-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2369-2375-ConllToken)(2323-2326-DiscourseConnective) false
+dummy_(2376-2380-ConllToken)(2323-2326-DiscourseConnective) false
+
+dummy_(2323-2326-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2327-2335-NP)(2431-2434-DiscourseConnective) false
+dummy_(2327-2335-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2336-2380-VP)(2431-2434-DiscourseConnective) false
+dummy_(2336-2339-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2339-2342-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2343-2380-VP)(2431-2434-DiscourseConnective) false
+dummy_(2343-2353-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2354-2356-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2357-2363-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2364-2380-NP)(2431-2434-DiscourseConnective) false
+dummy_(2364-2368-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2369-2375-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2376-2380-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2472-2544-SBAR)(2431-2434-DiscourseConnective) false
+dummy_(2472-2495-NP)(2431-2434-DiscourseConnective) false
+dummy_(2472-2475-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2476-2479-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2480-2489-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2490-2495-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2496-2544-VP)(2431-2434-DiscourseConnective) false
+dummy_(2496-2499-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2500-2544-VP)(2431-2434-DiscourseConnective) false
+dummy_(2500-2504-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2505-2544-ADJP)(2431-2434-DiscourseConnective) false
+dummy_(2505-2511-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2512-2544-PP)(2431-2434-DiscourseConnective) false
+dummy_(2512-2514-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2515-2544-S)(2431-2434-DiscourseConnective) false
+dummy_(2515-2518-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2519-2544-VP)(2431-2434-DiscourseConnective) false
+dummy_(2519-2526-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2527-2544-S)(2431-2434-DiscourseConnective) false
+dummy_(2527-2535-NP)(2431-2434-DiscourseConnective) false
+dummy_(2527-2535-ConllToken)(2431-2434-DiscourseConnective) false
+dummy_(2536-2544-ADJP)(2431-2434-DiscourseConnective) false
+dummy_(2536-2544-ConllToken)(2431-2434-DiscourseConnective) false
+
+dummy_(2663-2777-ROOT)(2738-2740-DiscourseConnective) false
+dummy_(2663-2664-ConllToken)(2738-2740-DiscourseConnective) true
+dummy_(2664-2671-NP)(2738-2740-DiscourseConnective) false
+dummy_(2664-2667-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2668-2671-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2672-2775-VP)(2738-2740-DiscourseConnective) false
+dummy_(2672-2674-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2675-2775-VP)(2738-2740-DiscourseConnective) false
+dummy_(2675-2680-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2681-2775-S)(2738-2740-DiscourseConnective) false
+dummy_(2681-2775-VP)(2738-2740-DiscourseConnective) false
+dummy_(2681-2683-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2684-2775-VP)(2738-2740-DiscourseConnective) false
+dummy_(2684-2688-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2689-2737-S)(2738-2740-DiscourseConnective) false
+dummy_(2689-2737-VP)(2738-2740-DiscourseConnective) false
+dummy_(2689-2691-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2692-2737-VP)(2738-2740-DiscourseConnective) false
+dummy_(2692-2695-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2696-2725-NP)(2738-2740-DiscourseConnective) false
+dummy_(2696-2703-NP)(2738-2740-DiscourseConnective) false
+dummy_(2696-2697-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2698-2703-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2704-2725-PP)(2738-2740-DiscourseConnective) false
+dummy_(2704-2706-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2707-2725-NP)(2738-2740-DiscourseConnective) false
+dummy_(2707-2712-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2713-2725-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2726-2737-PP)(2738-2740-DiscourseConnective) false
+dummy_(2726-2728-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2729-2737-NP)(2738-2740-DiscourseConnective) false
+dummy_(2729-2732-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2733-2737-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2738-2775-SBAR)(2738-2740-DiscourseConnective) false
+dummy_(2738-2740-ConllToken)(2738-2740-DiscourseConnective) true
+dummy_(2741-2775-S)(2738-2740-DiscourseConnective) false
+dummy_(2741-2745-NP)(2738-2740-DiscourseConnective) false
+dummy_(2741-2745-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2746-2775-VP)(2738-2740-DiscourseConnective) false
+dummy_(2746-2750-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2751-2775-NP)(2738-2740-DiscourseConnective) false
+dummy_(2751-2760-NP)(2738-2740-DiscourseConnective) false
+dummy_(2751-2755-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2756-2760-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2761-2775-PP)(2738-2740-DiscourseConnective) false
+dummy_(2761-2763-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2764-2775-NP)(2738-2740-DiscourseConnective) false
+dummy_(2764-2775-ConllToken)(2738-2740-DiscourseConnective) false
+dummy_(2775-2776-ConllToken)(2738-2740-DiscourseConnective) true
+dummy_(2776-2777-ConllToken)(2738-2740-DiscourseConnective) true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

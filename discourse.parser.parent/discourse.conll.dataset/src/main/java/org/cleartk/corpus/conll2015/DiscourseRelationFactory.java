@@ -49,8 +49,6 @@ public class DiscourseRelationFactory {
 				arg1Tokens, 
 				arg2Tokens);
 		
-		discourseRelation.getDiscourseConnective();
-		
 		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(0))).isEqualTo(anExample.getArg1());
 		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(1))).isEqualTo(
 				DiscourseRelationExample.toString(anExample.getArg2()));

@@ -23,10 +23,10 @@ public class PreprocessedDataLoader implements ConllDataLoader{
 	}
 
 	@Override
-	public AnalysisEngineDescription getAnnotator() throws ResourceInitializationException {
+	public AnalysisEngineDescription getAnnotator(boolean addMultiSense) throws ResourceInitializationException {
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(AnalysisEngineFactory.createEngineDescription(DummyAnnontator.class));
-		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile()));
+		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile(), addMultiSense));
 		return builder.createAggregateDescription();
 	}
 

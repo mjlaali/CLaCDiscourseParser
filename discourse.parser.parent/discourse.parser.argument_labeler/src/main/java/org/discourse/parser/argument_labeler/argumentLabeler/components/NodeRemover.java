@@ -7,6 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.builder.CompareToBuilder;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
@@ -34,8 +37,22 @@ import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
+
+class AnnotationComparator implements Comparator<Annotation>{
+
+	@Override
+	public int compare(Annotation o1, Annotation o2) {
+		return new CompareToBuilder()
+				.append(o1.getBegin(), o2.getBegin())
+				.append(o2.getEnd(), o1.getEnd())
+				.append(o1.getClass().getName(), o2.getClass().getName())
+				.toComparison();
+	}
+	
+}
+
 public class NodeRemover implements SequenceClassifierAlgorithmFactory<String, DiscourseConnective, Annotation>{
-	Arg1Classifier arg1Classifier = new Arg1Classifier();
+	Arg2Classifier arg1Classifier = new Arg2Classifier();
 	Map<DiscourseConnective, Set<Token>> argumentTokens = new HashMap<>();
 	Map<Annotation, Collection<Token>> coveringTokens = new HashMap<>();
 	
@@ -70,12 +87,12 @@ public class NodeRemover implements SequenceClassifierAlgorithmFactory<String, D
 
 	@Override
 	public Function<DiscourseConnective, List<Annotation>> getInstanceExtractor(JCas aJCas) {
-		
+		init(aJCas);
 		return this::getSubAnnotations;
 	}
 	
 	private List<Annotation> getSubAnnotations(DiscourseConnective discourseConnective){
-		List<Annotation> candidates = new ArrayList<>();
+		Set<Annotation> candidates = new HashSet<>();
 		DiscourseRelation discourseRelation = discourseConnective.getDiscourseRelation();
 		for (int i = 0; i < 2; i++){
 			DiscourseArgument arg = discourseRelation.getArguments(i);
@@ -83,33 +100,45 @@ public class NodeRemover implements SequenceClassifierAlgorithmFactory<String, D
 			candidates.addAll(arg1Classifier.constituentCoveredTokens.get(constituent));
 			candidates.addAll(arg1Classifier.constituentChilderen.get(constituent));
 		}
-		return candidates;
+		ArrayList<Annotation> results = new ArrayList<>(candidates);
+		
+		Collections.sort(results, new AnnotationComparator());
+		return results;
 	}
+	
+	private String annotationToString(Annotation annotation){
+		return "(" + annotation.getBegin() + "-" + annotation.getEnd() + "-" + annotation.getClass().getSimpleName() + ")"; 
+	}
+
 
 	@Override
 	public BiFunction<List<Annotation>, DiscourseConnective, List<List<Feature>>> getFeatureExtractor(JCas jCas) {
-		BiFunction<Annotation, DiscourseConnective, Feature> dummyFeature = (cns, dc) -> new Feature("dummy", "" + cns.getBegin() + "-" + cns.getEnd() + "-" + dc.hashCode());
+		init(jCas);
+		BiFunction<Annotation, DiscourseConnective, Feature> dummyFeature = (cns, dc) -> new Feature("dummy", annotationToString(cns) + annotationToString(dc));
 		BiFunction<Annotation, DiscourseConnective, List<Feature>> features = multiBiFuncMap(dummyFeature);
 		return mapOneByOneTo(features);
 	}
 
 	@Override
 	public BiFunction<List<Annotation>, DiscourseConnective, List<String>> getLabelExtractor(JCas jCas) {
-		
+		init(jCas);
 		return this::getLabels;
 	}
 	
 	private List<String> getLabels(List<Annotation> annotations, DiscourseConnective discourseConnective){
-		return annotations.stream()
+		List<String> outcomes = annotations.stream()
 			.map((ann) -> coveringTokens.get(ann))
 			.map((tokens) -> new HashSet<Token>(tokens))
 			.map((tokens) -> tokens.removeAll(argumentTokens.get(discourseConnective)))
 			.map((changed) -> Boolean.toString(!changed))
 			.collect(Collectors.toList());
+		
+		return outcomes;
 	}
 
 	@Override
 	public SequenceClassifierConsumer<String, DiscourseConnective, Annotation> getLabeller(JCas jCas) {
+		init(jCas);
 		return this::setLabels;
 	}
 	
@@ -121,12 +150,20 @@ public class NodeRemover implements SequenceClassifierAlgorithmFactory<String, D
 			}
 		}
 		
+//		for (Token token: toRemove)
+//			System.out.println(token.getCoveredText());
 		
 		for (int i = 0; i < 2; i++){
 			DiscourseArgument arg = connective.getDiscourseRelation().getArguments(i);
+//			if (arg.getCoveredText().contains("talked to proponents of index arbitrage and told them to cool it"))
+//				System.out.println("NodeRemover.setLabels()");
 			List<Token> tokens = TokenListTools.convertToTokens(arg);
 			tokens.removeAll(toRemove);
-			TokenListTools.initTokenList(arg, tokens);
+			if (i == 0)
+				tokens.removeAll(TokenListTools.convertToTokens(connective.getDiscourseRelation().getArguments(1)));
+			tokens.removeAll(TokenListTools.convertToTokens(connective));
+			TokenListTools.initTokenList(arg, tokens, false); //if we set the offsets then index will be incorrect
+//			System.out.println(arg.getCoveredText());
 		}
 	}
 

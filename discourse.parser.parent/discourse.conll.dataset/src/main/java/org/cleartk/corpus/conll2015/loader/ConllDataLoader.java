@@ -5,7 +5,7 @@ import org.apache.uima.collection.CollectionReaderDescription;
 import org.apache.uima.resource.ResourceInitializationException;
 
 public interface ConllDataLoader {
-	public AnalysisEngineDescription getAnnotator() throws ResourceInitializationException;
+	public AnalysisEngineDescription getAnnotator(boolean addMultiSense) throws ResourceInitializationException;
 	public CollectionReaderDescription getReader() throws ResourceInitializationException;
 	
 }

@@ -57,7 +57,7 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE>
 				systemViewName = CAS.NAME_DEFAULT_SOFA;
 			if (defaultGoldClassifierOutput == null)
 				throw new ResourceInitializationException(PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT + " is null", null);
-			goldClassifier = new GoldClassifier<>(defaultGoldClassifierOutput);
+			goldClassifier = new GoldClassifier<>(defaultGoldClassifierOutput, algorithmFactory.getClass().getSimpleName());
 			writerFunc = goldClassifier;
 			classifierFunc = goldClassifier;
 		} else {

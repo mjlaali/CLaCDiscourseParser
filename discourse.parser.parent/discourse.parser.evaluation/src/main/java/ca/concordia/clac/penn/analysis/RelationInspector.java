@@ -183,6 +183,6 @@ public class RelationInspector extends JCasAnnotator_ImplBase{
 
 		ConllDatasetPath path = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		ConllDataLoader loader = ConllDataLoaderFactory.getInstance(path);
-		SimplePipeline.runPipeline(loader.getReader(), loader.getAnnotator(), getDescription(new File("outputs/analysis/argInspector.txt")));
+		SimplePipeline.runPipeline(loader.getReader(), loader.getAnnotator(false), getDescription(new File("outputs/analysis/argInspector.txt")));
 	}
 }

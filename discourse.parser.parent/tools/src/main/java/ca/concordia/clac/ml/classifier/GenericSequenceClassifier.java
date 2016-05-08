@@ -56,7 +56,7 @@ public class GenericSequenceClassifier<CLASSIFIER_OUTPUT, SEQUENCE_TYPE, INSTANC
 
 			if (defaultGoldClassifierOutput == null)
 				throw new ResourceInitializationException(GenericClassifierLabeller.PARAM_DEFAULT_GOLD_CLASSIFIER_OUTPUT + " is null", null);
-			goldSequenceClassifier = new GoldSequenceClassifier<>(defaultGoldClassifierOutput);
+			goldSequenceClassifier = new GoldSequenceClassifier<>(defaultGoldClassifierOutput, algorithmFactory.getClass().getSimpleName());
 			writerFunc = goldSequenceClassifier;
 			classifierFunc = goldSequenceClassifier;
 		} else {

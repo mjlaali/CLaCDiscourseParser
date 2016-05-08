@@ -12,10 +12,12 @@ import org.cleartk.ml.Instance;
 public class GoldClassifier<CLASSIFIER_OUTPUT> implements Consumer<Instance<CLASSIFIER_OUTPUT>>, Function<List<Feature>, CLASSIFIER_OUTPUT> {
 	private Map<List<Feature>, CLASSIFIER_OUTPUT> inventory;
 	private CLASSIFIER_OUTPUT defaultValue;
+	private String name;
 	
-	public GoldClassifier(CLASSIFIER_OUTPUT defaultValue){
+	public GoldClassifier(CLASSIFIER_OUTPUT defaultValue, String name){
 		this.defaultValue = defaultValue;
 		inventory = new HashMap<>();
+		this.name = name;
 	}
 	
 	@Override
@@ -28,7 +30,9 @@ public class GoldClassifier<CLASSIFIER_OUTPUT> implements Consumer<Instance<CLAS
 
 	@Override
 	public void accept(Instance<CLASSIFIER_OUTPUT> t) {
-		inventory.put(t.getFeatures(), t.getOutcome());
+		CLASSIFIER_OUTPUT prevOutcome = inventory.put(t.getFeatures(), t.getOutcome());
+		if (prevOutcome != null && !prevOutcome.equals(t.getOutcome()))
+			System.err.println("GoldClassifier.accept(): confilict for [" + name + "] with these features :" + t.getFeatures());
 	}
 
 	public void clear(){

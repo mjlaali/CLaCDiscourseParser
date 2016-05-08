@@ -12,10 +12,10 @@ import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
+import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
-import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 
 import ca.concordia.clac.uima.engines.CoreferenceToDependencyAnnotator;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
@@ -34,7 +34,7 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 	}
 	
 	@Override
-	public AnalysisEngineDescription getAnnotator() throws ResourceInitializationException {
+	public AnalysisEngineDescription getAnnotator(boolean addMultiSense) throws ResourceInitializationException {
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile()));
 		
@@ -53,7 +53,7 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 
 		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
 				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
-		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationNoSenseFile()));
+		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile(), addMultiSense));
 
 		return builder.createAggregateDescription();
 	}
@@ -68,14 +68,16 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 	}
 
 	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
-		File dataFld = new File("data/");
-		DatasetMode mode = DatasetMode.dev;
+//		File dataFld = new File("data/");
+//		DatasetMode mode = DatasetMode.trial;
+		File dataFld = new File("../discourse.parser.evaluation/data/test-data");
+		DatasetMode mode = DatasetMode.test;
 		
 		ConllDatasetPath path = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		ConllDataLoaderFactory.clean(path);
 		ConllDataLoader instance  = ConllDataLoaderFactory.getInstance(path);
 		
-		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator());
+		SimplePipeline.runPipeline(instance.getReader(), instance.getAnnotator(false));
 	}
 	
 

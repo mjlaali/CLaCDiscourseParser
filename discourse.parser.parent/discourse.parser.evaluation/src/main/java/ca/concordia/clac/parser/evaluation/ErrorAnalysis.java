@@ -37,13 +37,11 @@ import org.apache.uima.resource.ResourceInitializationException;
 import org.cleartk.corpus.conll2015.ConllDatasetPath;
 import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
-import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllJSONExporter;
 import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.corpus.conll2015.Tools;
 import org.cleartk.corpus.conll2015.loader.ConllDataLoader;
 import org.cleartk.corpus.conll2015.loader.ConllDataLoaderFactory;
-import org.cleartk.corpus.conll2015.loader.DummyAnnontator;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.discourse.type.TokenList;
@@ -248,17 +246,6 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		return firstSet.containsAll(secondSet) && secondSet.containsAll(firstSet);
 	}
 	
-	public static AnalysisEngineDescription getGoldPipeline(ConllDatasetPath dataset) throws ResourceInitializationException{
-		AggregateBuilder builder = new AggregateBuilder();
-		
-		AnalysisEngineDescription conllGoldJsonReader = 
-				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
-		
-		builder.add(conllGoldJsonReader);
-		
-		return builder.createAggregateDescription();
-	}
-
 	private static AnalysisEngineDescription getSystemPipeline(ConllDatasetPath dataset) throws ResourceInitializationException, MalformedURLException, URISyntaxException {
 		AggregateBuilder builder = new AggregateBuilder();
 
@@ -271,12 +258,15 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		return builder.createAggregateDescription();
 	}
 	private static void addAView(String aNewView, AggregateBuilder builder) throws ResourceInitializationException {
-		AnalysisEngineDescription createView = AnalysisEngineFactory.createEngineDescription(ViewCreatorAnnotator.class, 
+		AnalysisEngineDescription createView = AnalysisEngineFactory.createEngineDescription(
+				ViewCreatorAnnotator.class, 
 				ViewCreatorAnnotator.PARAM_VIEW_NAME, aNewView);
-		AnalysisEngineDescription viewTextCopier = AnalysisEngineFactory.createEngineDescription(ViewTextCopierAnnotator.class,
+		AnalysisEngineDescription viewTextCopier = AnalysisEngineFactory.createEngineDescription(
+				ViewTextCopierAnnotator.class,
 				ViewTextCopierAnnotator.PARAM_SOURCE_VIEW_NAME, CAS.NAME_DEFAULT_SOFA,
 				ViewTextCopierAnnotator.PARAM_DESTINATION_VIEW_NAME, aNewView);
-		AnalysisEngineDescription viewAnnotationCopier = AnalysisEngineFactory.createEngineDescription(ViewAnnotationCopier.class,
+		AnalysisEngineDescription viewAnnotationCopier = AnalysisEngineFactory.createEngineDescription(
+				ViewAnnotationCopier.class,
 				ViewAnnotationCopier.PARAM_SOURCE_VIEW_NAME, CAS.NAME_DEFAULT_SOFA,
 				ViewAnnotationCopier.PARAM_TARGET_VIEW_NAME, aNewView);
 		
@@ -306,19 +296,20 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	
 	public static void main(String[] args) throws URISyntaxException, UIMAException, IOException {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.dev);
+//		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("data/test-data"), DatasetMode.test);
 		ConllDataLoader loader = ConllDataLoaderFactory.getInstance(dataset);
 		
 		AggregateBuilder builder = new AggregateBuilder();
 		addAView(GOLD_VIEW, builder);
 		addAView(SYSTEM_VIEW, builder);
 
-		builder.add(getGoldPipeline(dataset), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
+		builder.add(loader.getAnnotator(false), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
 		builder.add(getSystemPipeline(dataset), CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
 		
 		File outputDir = new File("outputs/errorAnalysis");
 		builder.add(getDescription(outputDir));
 		
-		SimplePipeline.runPipeline(loader.getReader(), DummyAnnontator.getDescription(), builder.createAggregateDescription());
+		SimplePipeline.runPipeline(loader.getReader(), builder.createAggregateDescription());
 	}
 
 }
