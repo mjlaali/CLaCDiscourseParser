@@ -65,7 +65,7 @@ public class ComponentPipelineTest2 {
 
 		assertThat(testFeatures).isEqualTo(goldFeatures);
 		DiscourseRelation relation = JCasUtil.select(testView, DiscourseRelation.class).iterator().next();
-		assertThat(relation.getArguments(1).getCoveredText()).isEqualTo(example.getArg2()[0]);
+		assertThat(relation.getArguments(1).getCoveredText()).isEqualTo(example.getArg2()[0] + " before we can move forward");
 	}
 	
 	@Test
@@ -125,7 +125,7 @@ public class ComponentPipelineTest2 {
 
 		assertThat(testFeatures).isEqualTo(goldFeatures);
 		DiscourseRelation relation = JCasUtil.select(testView, DiscourseRelation.class).iterator().next();
-		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(example.getArg1() + " before we can move forward");
+		assertThat(TokenListTools.getTokenListText(relation.getArguments(0))).isEqualTo(example.getArg1());
 		assertThat(TokenListTools.getTokenListText(relation.getArguments(1))).isEqualTo(example.getArg2()[0]);
 	}
 	

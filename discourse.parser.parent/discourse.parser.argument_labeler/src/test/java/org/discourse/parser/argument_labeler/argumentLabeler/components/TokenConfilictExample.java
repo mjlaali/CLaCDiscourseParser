@@ -4,15 +4,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.cleartk.corpus.conll2015.DiscourseRelationExample;
-import org.json.JSONArray;
-import org.json.JSONException;
 
 public class TokenConfilictExample implements DiscourseRelationExample{
 	String text = "\"We would have to wait until we have collected on those assets before we can move forward,\" he said.";
 	String arg1 = "We would have to wait";
 	String[] arg2 = {"we have collected on those assets"};
 	String dc = "until";
-	String[] parseTrees = {"(ROOT (S (`` ``) (S (NP (PRP We)) (VP (MD would) (VP (VB have) (S (VP (TO to) (VP (VB wait) (SBAR (IN until) (S (NP (PRP we)) (VP (VBP have) (VP (VBN collected) (PP (IN on) (NP (DT those) (NNS assets)))))))))) (SBAR (IN before) (S (NP (PRP we)) (VP (MD can) (VP (VB move) (ADVP (RB forward))))))))) (, ,) ('' '') (NP (PRP he)) (VP (VBD said)) (. .)))"};
+	String[] parseTrees = {"( (S (`` ``) (S (NP (PRP We)) (VP (MD would) (VP (VB have) (S (VP (TO to) (VP (VB wait) (SBAR (IN until) (S (NP (PRP we)) (VP (VBP have) (VP (VBN collected) (PP (IN on) (NP (DT those) (NNS assets))) (SBAR (IN before) (S (NP (PRP we)) (VP (MD can) (VP (VB move) (ADVP (RB forward)))))))))))))))) (, ,) ('' '') (NP (PRP he)) (VP (VBD said)) (. .)) )"};
 	String sense = "Temporal.Asynchronous.Precedence";
 	String dependencies = "[[]]";
 
