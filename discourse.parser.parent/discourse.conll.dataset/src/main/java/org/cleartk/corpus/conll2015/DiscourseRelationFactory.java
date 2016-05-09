@@ -27,7 +27,8 @@ public class DiscourseRelationFactory {
 		new SyntaxReader().addSyntaxInformation(aJCas, anExample.getParseTree(), anExample.getDependencies());;
 		List<Token> tokens = new ArrayList<Token>(JCasUtil.select(aJCas, Token.class));
 		List<String> strTokens = tokens.stream().map(Token::getCoveredText).collect(Collectors.toList());
-		int dcIndex = strTokens.indexOf(anExample.getDiscourseConnective());
+		String dcText = anExample.getDiscourseConnective();
+		int dcIndex = dcText == null ? -1 : strTokens.indexOf(dcText);
 		int begin;
 		
 		begin = text.indexOf(anExample.getArg1());
@@ -44,15 +45,19 @@ public class DiscourseRelationFactory {
 		}
 		
 		DiscourseRelation discourseRelation = new DiscourseRelationFactory().makeDiscourseRelation(aJCas, 
-				RelationType.Explicit, anExample.getSense(), anExample.getDiscourseConnective(), 
-				Collections.singletonList(tokens.get(dcIndex)), 
+				dcText != null ? RelationType.Explicit : RelationType.Implicit, 
+				anExample.getSense(), dcText, 
+				dcText != null ? Collections.singletonList(tokens.get(dcIndex)) : null, 
 				arg1Tokens, 
 				arg2Tokens);
 		
 		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(0))).isEqualTo(anExample.getArg1());
 		assertThat(TokenListTools.getTokenListText(discourseRelation.getArguments(1))).isEqualTo(
 				DiscourseRelationExample.toString(anExample.getArg2()));
-		assertThat(TokenListTools.getTokenListText(discourseRelation.getDiscourseConnective())).isEqualTo(anExample.getDiscourseConnective());
+		if (dcText != null)
+			assertThat(TokenListTools.getTokenListText(discourseRelation.getDiscourseConnective())).isEqualTo(dcText);
+		else
+			assertThat(discourseRelation.getDiscourseConnective()).isNull();
 		return discourseRelation;
 	}
 	

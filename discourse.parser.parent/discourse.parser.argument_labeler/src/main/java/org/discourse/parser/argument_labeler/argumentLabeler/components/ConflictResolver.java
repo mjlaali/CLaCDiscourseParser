@@ -26,6 +26,7 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 import org.discourse.parser.argument_labeler.argumentLabeler.NodeArgType;
 
 import ca.concordia.clac.ml.classifier.SequenceClassifierConsumer;
@@ -56,6 +57,8 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 				System.err.println("ConflictResolver.getSubAnnotations(): TODO");
 				continue;
 			}
+			while (!Arg2Classifier.isValid(constituent))
+				constituent = (Constituent) constituent.getParent();
 			Set<Annotation> annotaionSet = new HashSet<>();
 			annotaionSet.addAll(mapToTokenList.get(constituent));
 			annotaionSet.addAll(constituentChilderen.get(constituent));
@@ -204,6 +207,9 @@ public class ConflictResolver extends BaseClassifier<String, DiscourseConnective
 	}
 
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
-		return StringSequenceClassifier.getWriterDescription(ConflictResolver.class, MalletCrfStringOutcomeDataWriter.class, outputDirectory);
+		return StringSequenceClassifier.getViterbiWriterDescription(ConflictResolver.class,
+				WekaStringOutcomeDataWriter.class, outputDirectory);
+
+//		return StringSequenceClassifier.getWriterDescription(ConflictResolver.class, MalletCrfStringOutcomeDataWriter.class, outputDirectory);
 	}
 }

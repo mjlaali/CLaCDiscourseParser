@@ -62,6 +62,7 @@ public abstract class BaseClassifier<OUTCOME, SEQUENCE extends Annotation, INSTA
 		this.initialize = initialize;
 	}
 	
+	protected Annotation ann;
 	protected void init(JCas jCas){
 		this.jcas = jCas;
 		connectiveCoveringSentence.clear();
@@ -78,6 +79,8 @@ public abstract class BaseClassifier<OUTCOME, SEQUENCE extends Annotation, INSTA
 		mapToTokenSet.clear();
 		JCasUtil.indexCovered(jCas, Constituent.class, Token.class).forEach(
 				(cns, tokens) -> {
+					if (cns.getCoveredText().equals("believe the position we've taken is reasonable"))
+						this.ann = cns;
 					mapToTokenList.put(cns, new ArrayList<>(tokens));
 					mapToTokenSet.put(cns, new HashSet<>(tokens));
 				});

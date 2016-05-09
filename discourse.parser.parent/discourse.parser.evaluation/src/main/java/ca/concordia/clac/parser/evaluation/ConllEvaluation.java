@@ -18,6 +18,7 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllJSONExporter;
 import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
+import org.cleartk.corpus.conll2015.loader.LoaderPlusAnnotator;
 import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSegmenter;
 import org.discourse.parser.implicit.NoRelationAnnotator;
 
@@ -74,17 +75,10 @@ public class ConllEvaluation {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File(inputDataset), mode);
 		if (dataset == null)
 			throw new RuntimeException("The mode is not correct: " + mode);
-		
-		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
-				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
-				TextReader.PARAM_LANGUAGE, "en",
-				TextReader.PARAM_PATTERNS, "*");
-		AnalysisEngineDescription conllSyntaxJsonReader = 
-				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
-		AnalysisEngineDescription dcDisambiguator = new DiscourseConnectiveDisambiguator().getDCDisambiguator(CAS.NAME_DEFAULT_SOFA);
+		LoaderPlusAnnotator loader = new LoaderPlusAnnotator(dataset, outputDirectory);
 		
-		AnalysisEngineDescription argumentLabeler = ArgumentSegmenter.getClassifierDescription();
+		AnalysisEngineDescription parser = new CLaCParser().getParser();
 		
 		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());
 		
@@ -93,10 +87,9 @@ public class ConllEvaluation {
 				
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
-		SimplePipeline.runPipeline(reader,
-				conllSyntaxJsonReader, 
-				dcDisambiguator, 
-				argumentLabeler,
+		SimplePipeline.runPipeline(loader.getReader(),
+				loader.getPreprocessor().createAggregateDescription(), 
+				parser, 
 				jsonExporter,
 				noRelDetector, 
 				noRelExporter

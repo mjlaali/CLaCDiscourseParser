@@ -35,6 +35,16 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 	
 	@Override
 	public AnalysisEngineDescription getAnnotator(boolean addMultiSense) throws ResourceInitializationException {
+		AggregateBuilder builder = getPreprocessor();
+
+		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
+				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
+		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile(), addMultiSense));
+
+		return builder.createAggregateDescription();
+	}
+
+	public AggregateBuilder getPreprocessor() throws ResourceInitializationException {
 		AggregateBuilder builder = new AggregateBuilder();
 		builder.add(ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile()));
 		
@@ -50,12 +60,7 @@ public class LoaderPlusAnnotator implements ConllDataLoader{
 		
 		AnalysisEngineDescription corefrenceToDependency = CoreferenceToDependencyAnnotator.getDescription();
 		builder.add(corefrenceToDependency);
-
-		builder.add(AnalysisEngineFactory.createEngineDescription(XmiWriter.class, 
-				XmiWriter.PARAM_TARGET_LOCATION, outputFolder));
-		builder.add(ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile(), addMultiSense));
-
-		return builder.createAggregateDescription();
+		return builder;
 	}
 
 	@Override

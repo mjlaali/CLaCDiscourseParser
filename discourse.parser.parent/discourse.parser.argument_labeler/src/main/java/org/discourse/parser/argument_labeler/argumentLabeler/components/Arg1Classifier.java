@@ -21,6 +21,7 @@ import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.ml.Feature;
 import org.cleartk.ml.mallet.MalletCrfStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.StringSequenceClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -75,7 +76,10 @@ public class Arg1Classifier extends Arg2Classifier{
 	}
 	
 	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
-		return StringSequenceClassifier.getWriterDescription(Arg1Classifier.class, MalletCrfStringOutcomeDataWriter.class, outputDirectory);
+		return StringSequenceClassifier.getViterbiWriterDescription(Arg1Classifier.class,
+				WekaStringOutcomeDataWriter.class, outputDirectory);
+
+//		return StringSequenceClassifier.getWriterDescription(Arg1Classifier.class, MalletCrfStringOutcomeDataWriter.class, outputDirectory);
 	}
 
 }
