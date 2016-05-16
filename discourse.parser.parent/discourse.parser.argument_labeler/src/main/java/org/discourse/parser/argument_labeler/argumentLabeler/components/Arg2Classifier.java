@@ -72,8 +72,6 @@ public class Arg2Classifier extends BaseClassifier<String, DiscourseConnective, 
 		case "ROOT":
 		case "S":
 		case "SBAR":
-		case "VP":
-		case "SINV":
 			return true;
 		default:
 			break;
