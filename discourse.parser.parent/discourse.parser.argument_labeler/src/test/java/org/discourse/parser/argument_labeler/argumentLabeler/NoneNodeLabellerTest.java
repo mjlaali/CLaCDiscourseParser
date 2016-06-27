@@ -111,17 +111,16 @@ public class NoneNodeLabellerTest{
 					.collect(Collectors.joining("-")))
 			.collect(Collectors.toList());
 		
-//		System.out.println(strFeatures.stream().collect(Collectors.joining("\n")));
+		System.out.println(strFeatures.stream().collect(Collectors.joining("\n")));
 		String[] goldFeatures = new String[]{
-				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:S->NP-VP>-<grandParentPattern:S->S-,-CC-S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
-				 
-				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:SBAR>",
-				"<nodeHead:the>-<consType:DT>-<position:left>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:NN>",
-				"<nodeHead:impression>-<consType:NN>-<position:middle>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:DT>-<rightSibling:null>",
-				"<nodeHead:got>-<consType:SBAR>-<position:middle>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:NP>-<rightSibling:null>",
-				"<nodeHead:got>-<consType:S>-<position:middle>-<parentPattern:SBAR->S>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
-				"<nodeHead:i>-<consType:NP>-<position:middle>-<parentPattern:S->NP-VP>-<grandParentPattern:SBAR->S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>",
-				"<nodeHead:i>-<consType:PRP>-<position:middle>-<parentPattern:NP->PRP>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:S->NP-VP>-<grandParentPattern:S->S-,-CC-S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:impression>-<consType:NP>-<position:left>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:SBAR>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:the>-<consType:DT>-<position:left>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:NN>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:impression>-<consType:NN>-<position:middle>-<parentPattern:NP->DT-NN>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:DT>-<rightSibling:null>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:got>-<consType:SBAR>-<position:middle>-<parentPattern:NP->NP-SBAR>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:NP>-<rightSibling:null>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:got>-<consType:S>-<position:middle>-<parentPattern:SBAR->S>-<grandParentPattern:NP->NP-SBAR>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:i>-<consType:NP>-<position:middle>-<parentPattern:S->NP-VP>-<grandParentPattern:SBAR->S>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:VP>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>",
+				"<nodeHead:i>-<consType:PRP>-<position:middle>-<parentPattern:NP->PRP>-<grandParentPattern:S->NP-VP>-<argumentType:Arg1>-<leftSibling:null>-<rightSibling:null>-<CON-LStr:but>-<CON-POS:true>-<leftPOS:,>-<leftText:,>-<rightPOS:PRP>-<rightText:they>"
 		};
 				
 		assertThat(strFeatures).containsExactly(goldFeatures);

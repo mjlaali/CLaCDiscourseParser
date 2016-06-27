@@ -16,7 +16,7 @@ import org.apache.uima.jcas.JCas;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
 
 public class Tools {
-	public static final String SCORER_DIR = "data/validator";
+	public static final String SCORER_DIR = "data/conll16st";
 	public static final String SCORER_PY_FILE = "scorer.py";
 	
 	public static String getDocName(JCas aJCas) throws AnalysisEngineProcessException {

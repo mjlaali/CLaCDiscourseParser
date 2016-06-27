@@ -1,1 +1,1 @@
-../discourse.conll.dataset/data/conll16st/scorer.py ../discourse.conll.dataset/data/conll2016-dataset/conll16st-en-zh-dev-train_LDC2016E50/conll16st-en-01-12-16-dev/relations.json outputs/dev/output.json
+python2.7 ../discourse.conll.dataset/data/conll16st/scorer.py ../discourse.conll.dataset/data/conll2016-dataset/conll16st-en-zh-dev-train_LDC2016E50/conll16st-en-01-12-16-dev/relations.json outputs/dev/output.json
