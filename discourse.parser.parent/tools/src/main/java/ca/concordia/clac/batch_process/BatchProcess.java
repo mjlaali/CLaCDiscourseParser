@@ -24,18 +24,96 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
+import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CAS;
+import org.apache.uima.collection.CollectionProcessingEngine;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.collection.EntityProcessStatus;
+import org.apache.uima.collection.StatusCallbackListener;
+import org.apache.uima.collection.metadata.CpeDescriptorException;
+import org.apache.uima.fit.cpe.CpeBuilder;
 import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
-import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.xml.sax.SAXException;
 
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
 
+class StatusCallbackListenerImpl
+implements StatusCallbackListener
+{
+
+	private final List<Exception> exceptions = new ArrayList<Exception>();
+
+	private boolean processing = true;
+
+	@Override
+	public void entityProcessComplete(CAS arg0, EntityProcessStatus arg1)
+	{
+		if (arg1.isException()) {
+			for (Exception e : arg1.getExceptions()) {
+				exceptions.add(e);
+			}
+		}
+	}
+
+	@Override
+	public void aborted()
+	{
+		synchronized (this) {
+			if (processing) {
+				processing = false;
+				notify();
+			}
+		}
+	}
+
+	@Override
+	public void batchProcessComplete()
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void collectionProcessComplete()
+	{
+		synchronized (this) {
+			if (processing) {
+				processing = false;
+				notify();
+			}
+		}
+	}
+
+	@Override
+	public void initializationComplete()
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void paused()
+	{
+		// Do nothing
+	}
+
+	@Override
+	public void resumed()
+	{
+		// Do nothing
+	}
+	
+	public boolean isProcessing() {
+		return processing;
+	}
+	
+	public List<Exception> getExceptions() {
+		return exceptions;
+	}
+}
 
 public class BatchProcess implements Serializable{
 	private static final long serialVersionUID = -2440614205167347514L;
@@ -49,17 +127,20 @@ public class BatchProcess implements Serializable{
 	private final CollectionReaderDescription inputReaderDescription;
 	private final File outputDir;
 	private File temp;
+	private int threadCount = 1;
+
+
 
 	public static CollectionReaderDescription getXmiReader(File inputDir) throws ResourceInitializationException{
 		return CollectionReaderFactory.createReaderDescription(XmiReader.class, 
 				XmiReader.PARAM_SOURCE_LOCATION, inputDir, 
 				XmiReader.PARAM_PATTERNS, new String[]{"*.xmi"});	
 	}
-	
+
 	public BatchProcess(File inputDir, File outputDir) throws ResourceInitializationException{
 		this(inputDir, outputDir, "en", "*.txt");
 	}
-	
+
 	public BatchProcess(File inputDir, File outputDir, String lang, String... patterns) throws ResourceInitializationException{
 		this(CollectionReaderFactory.createReaderDescription(TextReader.class,
 				TextReader.PARAM_SOURCE_LOCATION, inputDir,
@@ -67,7 +148,7 @@ public class BatchProcess implements Serializable{
 				TextReader.PARAM_PATTERNS, patterns), outputDir);
 	}
 
-	
+
 	public BatchProcess(CollectionReaderDescription inputReaderDescription, File outDir) {
 		this.inputReaderDescription = inputReaderDescription;
 		this.outputDir = outDir;
@@ -92,24 +173,50 @@ public class BatchProcess implements Serializable{
 		}
 		enginesList.addAll(Arrays.asList(engines));
 	}
-	
+
 	public void addProcess(String name, String viewName, AnalysisEngineDescription... engines) throws ResourceInitializationException{
 		AggregateBuilder aggregate = new AggregateBuilder();
 		for (AnalysisEngineDescription engine: engines)
 			aggregate.add(engine, CAS.NAME_DEFAULT_SOFA, viewName);
-		
+
 		addProcess(name, aggregate.createAggregateDescription());
 	}
-	
-	public void run() throws UIMAException, IOException{
+
+	public void run() throws UIMAException, IOException, SAXException, CpeDescriptorException{
 		for (String processName: processInOrder){
 			logger.info(String.format("Start processing %s ...", processName));
 
 			List<AnalysisEngineDescription> engines = new ArrayList<>(processeEngines.get(processName));
 			engines.add(getWriter(processName));
 
-			SimplePipeline.runPipeline(getReader(processName), 
+			CollectionReaderDescription reader = getReader(processName);
+			AnalysisEngineDescription allEngine = AnalysisEngineFactory.createEngineDescription(
 					engines.toArray(new AnalysisEngineDescription[engines.size()]));
+
+			CpeBuilder builder=new CpeBuilder();
+			builder.setReader(reader);
+			builder.setAnalysisEngine(allEngine);
+			builder.setMaxProcessingUnitThreadCount(threadCount);
+
+			StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
+			builder.createCpe(status);
+
+			CollectionProcessingEngine engine = builder.createCpe(status);
+			engine.process();
+			try {
+				synchronized (status) {
+					while (status.isProcessing()) {
+						status.wait();
+					}
+				}
+			}
+			catch (InterruptedException e) {
+				// Do nothing
+			}
+
+			if (status.getExceptions().size() > 0) {
+				throw new AnalysisEngineProcessException(status.getExceptions().get(0));
+			}
 			logger.info(String.format("Processing %s done!", processName));
 		}
 
@@ -192,5 +299,9 @@ public class BatchProcess implements Serializable{
 	@Override
 	public boolean equals(Object obj) {
 		return EqualsBuilder.reflectionEquals(this, obj);
+	}
+	
+	public void setThreadCount(int threadCount) {
+		this.threadCount = threadCount;
 	}
 }

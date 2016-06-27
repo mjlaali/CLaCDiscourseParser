@@ -10,6 +10,7 @@ import java.util.Collection;
 import org.apache.commons.io.FileUtils;
 import org.apache.uima.UIMAException;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
+import org.apache.uima.collection.metadata.CpeDescriptorException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
@@ -19,6 +20,7 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
@@ -94,7 +96,7 @@ public class BatchProcessTest {
 	}
 	
 	@Test
-	public void whenAddingWithTheSameNameThenEnginesAreConcatinating() throws FileNotFoundException, IOException, ClassNotFoundException, UIMAException{
+	public void whenAddingWithTheSameNameThenEnginesAreConcatinating() throws FileNotFoundException, IOException, ClassNotFoundException, UIMAException, SAXException, CpeDescriptorException{
 		BatchProcess toRun = new BatchProcess(inputDir, outputDir);
 		toRun.addProcess("test", AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class));
 		toRun.addProcess("test", AnalysisEngineFactory.createEngineDescription(OpenNlpPosTagger.class));
@@ -112,8 +114,9 @@ public class BatchProcessTest {
 		CasIOUtil.readJCas(aJCas, aFile);
 		return aJCas;
 	}
+	
 	@Test
-	public void whenAbruptThenNextTimeContinued() throws UIMAException, IOException, ClassNotFoundException{
+	public void whenAbruptThenNextTimeContinued() throws UIMAException, IOException, ClassNotFoundException, SAXException, CpeDescriptorException{
 		BatchProcess faulty = new BatchProcess(inputDir, outputDir);
 		faulty.addProcess("faultyEngine", AnalysisEngineFactory.createEngineDescription(FaultyAnalysisEngine.class, 
 				FaultyAnalysisEngine.FAILED_IDX_PARAM, 1));
@@ -130,6 +133,25 @@ public class BatchProcessTest {
 			faulty = BatchProcess.load(outputDir);
 			faulty.run();
 		}
+	}
+	
+	@Test
+	public void whenUseMultiThreadThenTimeIsReduced() throws UIMAException, IOException, SAXException, CpeDescriptorException{
+		BatchProcess slowPipe = new BatchProcess(inputDir, outputDir);
+		
+		slowPipe.addProcess("slowEngine", AnalysisEngineFactory.createEngineDescription(SlowEngine.class));
+		slowPipe.setThreadCount(1);
+		long start = System.currentTimeMillis();
+		slowPipe.run();
+		long end = System.currentTimeMillis();
+		assertThat(end - start).isGreaterThan(2000);
+		
+		slowPipe.clean();
+		slowPipe.setThreadCount(2);
+		start = System.currentTimeMillis();
+		slowPipe.run();
+		end = System.currentTimeMillis();
+		assertThat(end - start).isLessThan(2000);
 	}
 	
 }

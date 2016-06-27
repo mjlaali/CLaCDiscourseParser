@@ -9,6 +9,7 @@ import org.apache.uima.UIMAException;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.collection.CollectionReader;
 import org.apache.uima.collection.CollectionReaderDescription;
+import org.apache.uima.collection.metadata.CpeDescriptorException;
 import org.apache.uima.fit.component.ViewTextCopierAnnotator;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
@@ -17,6 +18,7 @@ import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import ca.concordia.clac.batch_process.BatchProcess;
 import de.tudarmstadt.ukp.dkpro.core.api.metadata.type.DocumentMetaData;
@@ -88,7 +90,7 @@ public class ViewAnnotationCopierTest {
 	}
 
 	@Test
-	public void givenACasAfterCopingAnnotationsWhenSavingThenNullPointerExceptionDoesNotThrow() throws UIMAException, IOException{
+	public void givenACasAfterCopingAnnotationsWhenSavingThenNullPointerExceptionDoesNotThrow() throws UIMAException, IOException, SAXException, CpeDescriptorException{
 		String targetView = "GOLD_VIEW";
 
 		BatchProcess batchProcess;

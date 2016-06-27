@@ -18,8 +18,6 @@ import org.discourse.parser.argument_labeler.argumentLabeler.type.ArgumentTreeNo
 import org.junit.Before;
 
 public class SentArg1ExampleTest {
-	private NoneNodeLabeller algorithmFactory = new NoneNodeLabeller();
-	
 	private JCas aJCas;
 	private DiscourseRelation discourseRelation;
 	private ArgumentLabelerAlgorithmFactory argumentLabelerAlgorithmFactory = new ArgumentLabelerAlgorithmFactory();
