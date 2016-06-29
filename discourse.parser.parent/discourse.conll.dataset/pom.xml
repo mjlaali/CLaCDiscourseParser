@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>clac.concordia.ca</groupId>
 		<artifactId>discourse.parser.parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 
 
