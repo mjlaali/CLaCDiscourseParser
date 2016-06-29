@@ -28,8 +28,6 @@ import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.collection.CollectionProcessingEngine;
 import org.apache.uima.collection.CollectionReaderDescription;
-import org.apache.uima.collection.EntityProcessStatus;
-import org.apache.uima.collection.StatusCallbackListener;
 import org.apache.uima.collection.metadata.CpeDescriptorException;
 import org.apache.uima.fit.cpe.CpeBuilder;
 import org.apache.uima.fit.factory.AggregateBuilder;
@@ -41,79 +39,6 @@ import org.xml.sax.SAXException;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
-
-class StatusCallbackListenerImpl
-implements StatusCallbackListener
-{
-
-	private final List<Exception> exceptions = new ArrayList<Exception>();
-
-	private boolean processing = true;
-
-	@Override
-	public void entityProcessComplete(CAS arg0, EntityProcessStatus arg1)
-	{
-		if (arg1.isException()) {
-			for (Exception e : arg1.getExceptions()) {
-				exceptions.add(e);
-			}
-		}
-	}
-
-	@Override
-	public void aborted()
-	{
-		synchronized (this) {
-			if (processing) {
-				processing = false;
-				notify();
-			}
-		}
-	}
-
-	@Override
-	public void batchProcessComplete()
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void collectionProcessComplete()
-	{
-		synchronized (this) {
-			if (processing) {
-				processing = false;
-				notify();
-			}
-		}
-	}
-
-	@Override
-	public void initializationComplete()
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void paused()
-	{
-		// Do nothing
-	}
-
-	@Override
-	public void resumed()
-	{
-		// Do nothing
-	}
-	
-	public boolean isProcessing() {
-		return processing;
-	}
-	
-	public List<Exception> getExceptions() {
-		return exceptions;
-	}
-}
 
 public class BatchProcess implements Serializable{
 	private static final long serialVersionUID = -2440614205167347514L;
@@ -199,8 +124,6 @@ public class BatchProcess implements Serializable{
 			builder.setMaxProcessingUnitThreadCount(threadCount);
 
 			StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
-			builder.createCpe(status);
-
 			CollectionProcessingEngine engine = builder.createCpe(status);
 			engine.process();
 			try {
