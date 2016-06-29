@@ -30,7 +30,7 @@ public class Tools {
 	}
 
 	public static LinkedList<String> runScorer(String goldAnnotation, String systemOutput) throws IOException {
-		ProcessBuilder pb = new ProcessBuilder("python", SCORER_PY_FILE, 
+		ProcessBuilder pb = new ProcessBuilder("python2.7", SCORER_PY_FILE, 
 				new File(goldAnnotation).getAbsolutePath(), new File(systemOutput).getAbsolutePath());
 		pb.directory(new File(SCORER_DIR));
 		Process p = pb.start();
