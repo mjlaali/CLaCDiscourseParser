@@ -3,8 +3,8 @@ package org.cleartk.corpus.conll2015;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
@@ -25,9 +25,6 @@ public class DiscourseRelationFactory {
 		aJCas.setDocumentText(anExample.getText());
 		String text = aJCas.getDocumentText(); 
 		new SyntaxReader().addSyntaxInformation(aJCas, anExample.getParseTree(), anExample.getDependencies());;
-		List<Token> tokens = new ArrayList<Token>(JCasUtil.select(aJCas, Token.class));
-		List<String> strTokens = tokens.stream().map(Token::getCoveredText).collect(Collectors.toList());
-		int dcIndex = strTokens.indexOf(anExample.getDiscourseConnective());
 		int begin;
 		
 		begin = text.indexOf(anExample.getArg1());
@@ -43,9 +40,13 @@ public class DiscourseRelationFactory {
 			arg2Tokens.addAll(JCasUtil.selectCovered(aJCas, Token.class, begin, begin + arg2Part.length()));
 		}
 		
+		int dcBegin = find(aJCas, anExample.getDiscourseConnective());
+		if (dcBegin == -1)
+			throw new RuntimeException(String.format("The DC <%s> is not found in the document text: %s", anExample.getDiscourseConnective(), aJCas.getDocumentText()));
+		int dcEnd = dcBegin + anExample.getDiscourseConnective().length();
 		DiscourseRelation discourseRelation = new DiscourseRelationFactory().makeDiscourseRelation(aJCas, 
 				RelationType.Explicit, anExample.getSense(), anExample.getDiscourseConnective(), 
-				Collections.singletonList(tokens.get(dcIndex)), 
+				new ArrayList<>(JCasUtil.selectCovered(aJCas, Token.class, dcBegin, dcEnd)), 
 				arg1Tokens, 
 				arg2Tokens);
 		
@@ -58,6 +59,26 @@ public class DiscourseRelationFactory {
 		return discourseRelation;
 	}
 	
+	private int find(JCas aJCas, String discourseConnective) {
+		Set<Integer> tokenBegins = 	JCasUtil.select(aJCas, Token.class).stream()
+			.map(Token::getBegin).collect(Collectors.toSet());
+
+		Set<Integer> tokenEnds = 	JCasUtil.select(aJCas, Token.class).stream()
+				.map(Token::getEnd).collect(Collectors.toSet());
+		
+		int start = 0;
+		String text = aJCas.getDocumentText();
+		while (start < text.length()){
+			start = text.indexOf(discourseConnective);
+			if (tokenBegins.contains(start) && tokenEnds.contains(start + discourseConnective.length()))
+				return start;
+			if (start < 0)
+				return -1;
+			start = start + discourseConnective.length();
+		}
+		return -1;
+	}
+
 	public DiscourseRelation makeSimpleRelation(JCas aJCas, String arg1, String arg2, String dc){
 		String text = aJCas.getDocumentText();
 		int idxArg1 = text.indexOf(arg1);
