@@ -34,6 +34,7 @@ import org.apache.uima.fit.factory.AggregateBuilder;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.apache.uima.util.InvalidXMLException;
 import org.xml.sax.SAXException;
 
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
@@ -118,29 +119,37 @@ public class BatchProcess implements Serializable{
 			AnalysisEngineDescription allEngine = AnalysisEngineFactory.createEngineDescription(
 					engines.toArray(new AnalysisEngineDescription[engines.size()]));
 
-			CpeBuilder builder=new CpeBuilder();
-			builder.setReader(reader);
-			builder.setAnalysisEngine(allEngine);
-			builder.setMaxProcessingUnitThreadCount(threadCount);
+			enginesProcess(reader, allEngine);
 
-			StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
-			CollectionProcessingEngine engine = builder.createCpe(status);
-			engine.process();
-			try {
-				synchronized (status) {
-					while (status.isProcessing()) {
-						status.wait();
-					}
+			logger.info(String.format("Processing %s done!", processName));
+		}
+
+	}
+
+	private void enginesProcess(CollectionReaderDescription reader,
+			AnalysisEngineDescription allEngine) throws IOException, SAXException, CpeDescriptorException,
+					InvalidXMLException, ResourceInitializationException, AnalysisEngineProcessException {
+		CpeBuilder builder=new CpeBuilder();
+		builder.setReader(reader);
+		builder.setAnalysisEngine(allEngine);
+		builder.setMaxProcessingUnitThreadCount(threadCount);
+
+		StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
+		CollectionProcessingEngine engine = builder.createCpe(status);
+		engine.process();
+		try {
+			synchronized (status) {
+				while (status.isProcessing()) {
+					status.wait();
 				}
 			}
-			catch (InterruptedException e) {
-				// Do nothing
-			}
-
-			if (status.getExceptions().size() > 0) {
-				throw new AnalysisEngineProcessException(status.getExceptions().get(0));
-			}
-			logger.info(String.format("Processing %s done!", processName));
+		}
+		catch (InterruptedException e) {
+			// Do nothing
+		}
+		
+		if (status.getExceptions().size() > 0) {
+			throw new AnalysisEngineProcessException(status.getExceptions().get(0));
 		}
 
 	}
