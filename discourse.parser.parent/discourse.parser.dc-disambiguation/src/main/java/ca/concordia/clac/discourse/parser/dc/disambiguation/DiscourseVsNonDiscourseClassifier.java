@@ -17,8 +17,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -41,7 +44,7 @@ import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
+import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
@@ -51,8 +54,52 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
+class CombineFeature<T> implements Function<T, List<Feature>>{
+	private String[][] patterns;
+	private Function<T, List<Feature>> featurExtractors;
+	public CombineFeature(Function<T, List<Feature>> featurExtractors, String[][] patterns) {
+		this.patterns = patterns;
+		this.featurExtractors = featurExtractors;
+	}
+
+	@Override
+	public List<Feature> apply(T t) {
+		List<Feature> features = new ArrayList<>(featurExtractors.apply(t));
+		Map<String, Feature> fNameToFeature = new HashMap<>();
+		
+		for (Feature f: features){
+			fNameToFeature.put(f.getName(), f);
+		}
+		
+		for (String[] pattern: patterns){
+			String combositFeatureName = "";
+			String combositFeatureValue = "";
+			for (String fName: pattern){
+				if (combositFeatureName.length() != 0){
+					combositFeatureName += "-";
+					combositFeatureValue += "-";
+				}
+				
+				combositFeatureName += fName;
+				Feature feature = fNameToFeature.get(fName);
+				if (feature == null){
+					combositFeatureValue += "null"; 
+				} else
+					combositFeatureValue += feature.getValue().toString();
+			}
+			features.add(new Feature(combositFeatureName, combositFeatureValue));
+		}
+		return features;
+	}
+	
+}
 
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
+	private static final String SELF_CAT = "selfCat";
+	private static final String RIGHT_TEXT = "rightText";
+	private static final String RIGHT_POS = "rightPOS";
+	private static final String LEFT_TEXT = "leftText";
+	private static final String LEFT_POS = "leftPOS";
 	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
 
@@ -100,14 +147,14 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		Function<DiscourseConnective, List<Feature>> contextFeature = dummyFunc(DiscourseConnective.class).andThen(
 				multiMap(getLeft(Token.class).andThen(
 							multiMap(
-									getConstituentType().andThen(makeFeature("leftPOS")),
-									getText().andThen(makeFeature("leftText"))
+									getConstituentType().andThen(makeFeature(LEFT_POS)),
+									getText().andThen(makeFeature(LEFT_TEXT))
 									)
 							),
 						getRight(Token.class).andThen(
 							multiMap(
-									getConstituentType().andThen(makeFeature("rightPOS")),
-									getText().andThen(makeFeature("rightText"))
+									getConstituentType().andThen(makeFeature(RIGHT_POS)),
+									getText().andThen(makeFeature(RIGHT_TEXT))
 									)
 							)
 						)
@@ -115,7 +162,9 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 		
 		Function<DiscourseConnective, List<Feature>> allFeatuers = multiMap(textFeatures, contextFeature).andThen(flatMap(Feature.class));
 		
+		
 		return allFeatuers;
+			
 	}
 
 	@Override
@@ -124,16 +173,23 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				getPathFromRoot(DiscourseConnective.class).andThen(
 				getLast(Constituent.class).andThen(
 				multiMap(
-						getConstituentType().andThen(makeFeature("selfCat")),
+						getConstituentType().andThen(makeFeature(SELF_CAT)),
 						getParent().andThen(getConstituentType()).andThen(makeFeature("selfCatParent")),
 						getLeftSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatLeftSibling")),
 						getRightSibling().andThen(getConstituentType()).andThen(makeFeature("selfCatRightSibling"))
 						)));
 				
-
-		return Arrays.asList(
-				getDiscourseConnectiveFeatures(), 
-				pathFeatures);
+		Function<DiscourseConnective, List<Feature>> singleFeatures = multiMap(pathFeatures, getDiscourseConnectiveFeatures()).andThen(flatMap(Feature.class));
+		
+		Function<DiscourseConnective, List<Feature>> allFeatures = new CombineFeature<>(singleFeatures, new String[][]{
+			{CONN_LStr, LEFT_TEXT}, 
+			{CONN_LStr, RIGHT_TEXT}, 
+			{SELF_CAT, LEFT_POS}, 
+			{SELF_CAT, RIGHT_POS}, 
+			
+		});
+		
+		return Arrays.asList(allFeatures);
 	}
 
 	@Override
@@ -163,7 +219,8 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException, MalformedURLException{
 		return StringClassifierLabeller.getWriterDescription(
 				DiscourseVsNonDiscourseClassifier.class,
-				WekaStringOutcomeDataWriter.class, 
+				MaxentStringOutcomeDataWriter.class,
+//				WekaStringOutcomeDataWriter.class, 
 				outputFld, 
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName()
