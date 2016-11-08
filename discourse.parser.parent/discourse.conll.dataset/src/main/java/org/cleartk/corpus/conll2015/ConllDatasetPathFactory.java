@@ -12,13 +12,17 @@ public class ConllDatasetPathFactory {
 		
 		switch (mode) {
 		case train:
-			baseFld = new File(conllDatasetBase, "conll16st-en-01-12-16-train/");
+			baseFld = new File(conllDatasetBase, "conll16st-en-03-29-16-train/");
 			break;
 
 		case dev:
-			baseFld = new File(conllDatasetBase, "conll16st-en-01-12-16-dev/");
+			baseFld = new File(conllDatasetBase, "conll16st-en-03-29-16-dev/");
 			break;
-		
+
+		case gold_test:
+			baseFld = new File(conllDatasetBase, "conll16st-en-03-29-16-test/");
+			break;
+
 		case test:
 			baseFld = dataFld;
 			break;
