@@ -57,10 +57,7 @@ public class FeatureExtractors{
 	@SafeVarargs
 	public static <T, R> Function<T, List<R>> multiMap(Function<? super T, R>... mapFunctions){
 		return (t) -> {
-			if (t == null)
-				return Collections.emptyList();
-			else 
-			return Stream.of(mapFunctions).map((f) ->  Optional.of(t).map(f).orElse(null))
+			return Stream.of(mapFunctions).map((f) -> f.apply(t))
 				.collect(Collectors.toList());
 		};
 	}
@@ -88,11 +85,11 @@ public class FeatureExtractors{
 	}
 	
 	public static <T extends Annotation> Function<T, String> getText(){
-		return (ann) -> ann.getCoveredText();
+		return (ann) -> ann != null ? ann.getCoveredText() : null;
 	}
 
 	public static <T extends Annotation> Function<T, String> getText(Class<T> cls){
-		return (ann) -> ann.getCoveredText();
+		return (ann) -> ann != null ? ann.getCoveredText() : null;
 	}
 	
 	public static <T, R> Function<T, R> getFunction(Function<T, R> f){
