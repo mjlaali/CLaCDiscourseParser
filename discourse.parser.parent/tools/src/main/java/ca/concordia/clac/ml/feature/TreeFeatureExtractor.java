@@ -153,7 +153,7 @@ public class TreeFeatureExtractor {
 
 	public static Function<Annotation, List<Annotation>> getSiblings(){
 		return (cons) -> {
-			return Optional.of(cons).map(getParent())
+			return Optional.ofNullable(cons).map(getParent())
 					.map(getChilderen())
 					.orElse(Collections.emptyList());
 		};
