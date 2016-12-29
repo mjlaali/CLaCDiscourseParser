@@ -108,6 +108,10 @@ public class DiscourseVsNonDiscourseClassifierTest {
 				, new Feature("leftPOS", "CC")
 				, new Feature("leftText", "and")
 				, new Feature("rightPOS", "VBP")
-				, new Feature("rightText", "are"));
+				, new Feature("rightText", "are")
+				, new Feature("CON-LStr-leftText", "so-and")
+				, new Feature("CON-LStr-rightText", "so-are")
+				, new Feature("selfCat-rightPOS", "ADVP-VBP")
+				, new Feature("selfCat-leftPOS", "ADVP-CC"));
 	}
 }

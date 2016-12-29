@@ -181,15 +181,15 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				
 		Function<DiscourseConnective, List<Feature>> singleFeatures = multiMap(pathFeatures, getDiscourseConnectiveFeatures()).andThen(flatMap(Feature.class));
 		
-		Function<DiscourseConnective, List<Feature>> allFeatures = new CombineFeature<>(singleFeatures, new String[][]{
-			{CONN_LStr, LEFT_TEXT}, 
-			{CONN_LStr, RIGHT_TEXT}, 
-			{SELF_CAT, LEFT_POS}, 
-			{SELF_CAT, RIGHT_POS}, 
-			
-		});
+//		singleFeatures = new CombineFeature<>(singleFeatures, new String[][]{
+//			{CONN_LStr, LEFT_TEXT}, 
+//			{CONN_LStr, RIGHT_TEXT}, 
+//			{SELF_CAT, LEFT_POS}, 
+//			{SELF_CAT, RIGHT_POS}, 
+//			
+//		});
 		
-		return Arrays.asList(allFeatures);
+		return Arrays.asList(singleFeatures);
 	}
 
 	@Override
