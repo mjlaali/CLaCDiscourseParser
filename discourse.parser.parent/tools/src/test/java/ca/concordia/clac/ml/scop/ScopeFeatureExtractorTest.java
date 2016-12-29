@@ -27,14 +27,14 @@ public class ScopeFeatureExtractorTest {
 	
 	
 	@Test
-	public void givenAnEmptyListWhenCallingGetLastAndMultipleFeaturesThenTheFeaturesIsEmpty(){
+	public void givenAnEmptyListWhenCallingGetLastAndMultipleFeaturesThenTheFeaturesValueIsNull(){
 		List<String> list = new ArrayList<>();
 		
 		Function<List<String>, List<Feature>> featureExtractor = getLast(String.class).andThen(multiMap(
 				getFunction(String::toLowerCase, String.class, String.class).andThen(makeFeature("lower")), 
 				getFunction(String::toUpperCase, String.class, String.class).andThen(makeFeature("uper"))));
 		List<Feature> feature = featureExtractor.apply(list);
-		assertThat(feature).isEmpty();;
+		assertThat(feature).containsOnly(new Feature("lower", "null"), new Feature("uper", "null"));
 	}
 	
 	

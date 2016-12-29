@@ -3,6 +3,8 @@ package ca.concordia.clac.uima.engines;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -146,6 +148,17 @@ public class LookupInstanceExtractor<T extends Annotation> implements Initializa
 			return false;
 		}
 		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Class<T> getAnnotationType() {
+		Type[] genericInterfaces = annotationFactory.getClass().getGenericInterfaces();
+		for (Type t: genericInterfaces){
+			if (t.getTypeName().startsWith(AnnotationFactory.class.getName())){
+				return (Class<T>) ((ParameterizedType) t).getActualTypeArguments()[0]; 
+			}
+		}
+		return null;
 	}
 
 	@Override

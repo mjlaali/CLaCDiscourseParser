@@ -101,7 +101,7 @@ public class FeatureExtractors{
 	}
 	
 	public static <T, R> Function<T, R> getFunction(Function<T, R> f, Class<T> clsT, Class<R> clsR){
-		return f;
+		return (t) -> t == null ? null : f.apply(t);
 	}
 
 	public static <T> Function<T, T> dummyFunc(Class<T> cls){
