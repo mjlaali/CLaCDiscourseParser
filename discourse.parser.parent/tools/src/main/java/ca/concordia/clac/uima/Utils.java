@@ -18,7 +18,7 @@ public class Utils {
 				boolean toExit = false;
 				while (!toExit){
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 						Progress[] progresses = reader.getProgress();
 						for (Progress progess: progresses){
 							System.out.println(progess.getCompleted() + "/" + progess.getTotal());

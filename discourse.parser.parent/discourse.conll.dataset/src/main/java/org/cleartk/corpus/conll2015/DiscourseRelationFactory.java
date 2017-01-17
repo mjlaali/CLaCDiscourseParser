@@ -44,7 +44,7 @@ public class DiscourseRelationFactory {
 		if (dcBegin == -1)
 			throw new RuntimeException(String.format("The DC <%s> is not found in the document text: %s", anExample.getDiscourseConnective(), aJCas.getDocumentText()));
 		int dcEnd = dcBegin + anExample.getDiscourseConnective().length();
-		DiscourseRelation discourseRelation = new DiscourseRelationFactory().makeDiscourseRelation(aJCas, 
+		DiscourseRelation discourseRelation = makeDiscourseRelation(aJCas, 
 				RelationType.Explicit, anExample.getSense(), anExample.getDiscourseConnective(), 
 				new ArrayList<>(JCasUtil.selectCovered(aJCas, Token.class, dcBegin, dcEnd)), 
 				arg1Tokens, 

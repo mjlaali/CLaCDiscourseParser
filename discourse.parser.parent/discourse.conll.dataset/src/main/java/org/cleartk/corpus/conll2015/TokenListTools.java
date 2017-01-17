@@ -18,7 +18,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 public class TokenListTools {
 	public static Function<Character, Boolean> isWhiteSpace = Character::isWhitespace;
 
-	public static void initTokenList(TokenList tokenList, List<Token> tokens) {
+	public static TokenList initTokenList(TokenList tokenList, List<Token> tokens) {
 		int begin = Integer.MAX_VALUE; 
 		int end = -1;
 		for (Token token: tokens){
@@ -40,6 +40,7 @@ public class TokenListTools {
 	    FSCollectionFactory.fillArrayFS(tokenList.getTokens(), tokens);
 	    tokenList.setBegin(begin);
 	    tokenList.setEnd(end);
+	    return tokenList;
 	}
 
 	public static String getTokenListText(TokenList tokenList){
