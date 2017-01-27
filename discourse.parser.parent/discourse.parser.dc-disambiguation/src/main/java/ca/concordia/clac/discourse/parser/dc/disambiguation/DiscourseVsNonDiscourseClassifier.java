@@ -95,20 +95,20 @@ class CombineFeature<T> implements Function<T, List<Feature>>{
 }
 
 public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
-	private static final String SELF_CAT = "selfCat";
-	private static final String RIGHT_TEXT = "rightText";
-	private static final String RIGHT_POS = "rightPOS";
-	private static final String LEFT_TEXT = "leftText";
-	private static final String LEFT_POS = "leftPOS";
+	public static final String SELF_CAT = "selfCat";
+	public static final String RIGHT_TEXT = "rightText";
+	public static final String RIGHT_POS = "rightPOS";
+	public static final String LEFT_TEXT = "leftText";
+	public static final String LEFT_POS = "leftPOS";
 	public static final String PACKAGE_DIR = "discourse-vs-nondiscourse/";
 	public static final String DC_HEAD_LIST_FILE = "dcHeadList.txt";
-
 	public static final String CONN_LStr = "CON-LStr";
-
+	
 	private LookupInstanceExtractor<DiscourseConnective> lookupInstanceExtractor = new LookupInstanceExtractor<>();
 
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
+		ClassifierAlgorithmFactory.super.initialize(context);
 		lookupInstanceExtractor.initialize(context);
 	}
 
