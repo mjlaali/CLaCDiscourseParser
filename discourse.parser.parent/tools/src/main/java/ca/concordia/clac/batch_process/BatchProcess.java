@@ -135,11 +135,16 @@ public class BatchProcess implements Serializable{
 		builder.setMaxProcessingUnitThreadCount(threadCount);
 
 		StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
-		CollectionProcessingEngine engine = builder.createCpe(status);
+		CollectionProcessingEngine engine = builder.createCpe(status); 
 		engine.process();
 		try {
 			synchronized (status) {
+				int cnt = 0;
 				while (status.isProcessing()) {
+					if (status.getCompletedEntityCnt() != cnt){
+						cnt = status.getCompletedEntityCnt();
+						logger.info("Completed Files: " + cnt);
+					}
 					status.wait();
 				}
 			}
