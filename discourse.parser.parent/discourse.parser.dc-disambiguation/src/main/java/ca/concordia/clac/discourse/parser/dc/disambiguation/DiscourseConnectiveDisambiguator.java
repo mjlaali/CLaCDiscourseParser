@@ -74,7 +74,8 @@ public class DiscourseConnectiveDisambiguator {
 	
 	private AnalysisEngineDescription getWriter(File dir) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(XmiWriter.class
-				, XmiWriter.PARAM_TARGET_LOCATION, dir.getAbsolutePath());
+				, XmiWriter.PARAM_TARGET_LOCATION, dir.getAbsolutePath()
+				, XmiWriter.PARAM_OVERWRITE, true);
 	}
 	
 	public void parse(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{

@@ -21,6 +21,7 @@ import org.cleartk.corpus.conll2015.ConllDatasetPath.DatasetMode;
 import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.tudarmstadt.ukp.dkpro.core.api.coref.type.CoreferenceChain;
@@ -33,7 +34,7 @@ import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordParser;
 import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordSegmenter;
 import edu.stanford.nlp.dcoref.Constants;
 
-
+@Ignore
 public class TestCoreferenceResolution {
 
 	@Test
@@ -93,7 +94,7 @@ public class TestCoreferenceResolution {
 
 //        String aText = "Kemper also blasted the Big Board for ignoring the interests of individual and institutional holders. \"The New York Stock Exchange has vested interests\" in its big member securities firms \"that cloud its objectivity,\" Mr. Timbers said.";
 //        String aText = "But the RTC also requires \"working\" capital to maintain the bad assets of thrifts that are sold, until the assets can be sold separately.";
-        String aText = "We would have to wait until we have collected on those assets";
+        String aText = "We would have to wait until we have collected on those assets.";
 //        String aText = "John bought a car. He is very happy with it.";
         // Set up a simple example
         JCas jcas = engine.newJCas();
