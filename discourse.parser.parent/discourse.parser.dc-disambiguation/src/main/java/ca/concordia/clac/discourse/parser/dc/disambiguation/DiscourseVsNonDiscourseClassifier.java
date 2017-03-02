@@ -13,7 +13,6 @@ import static ca.concordia.clac.ml.feature.TreeFeatureExtractor.getRightSibling;
 import static ca.concordia.clac.ml.scop.ScopeFeatureExtractor.getLast;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -27,7 +26,6 @@ import java.util.function.Function;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.collection.CollectionReaderDescription;
@@ -44,7 +42,7 @@ import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.ml.Feature;
-import org.cleartk.ml.opennlp.maxent.MaxentStringOutcomeDataWriter;
+import org.cleartk.ml.weka.WekaStringOutcomeDataWriter;
 
 import ca.concordia.clac.ml.classifier.ClassifierAlgorithmFactory;
 import ca.concordia.clac.ml.classifier.InstanceExtractor;
@@ -219,8 +217,8 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	public static AnalysisEngineDescription getWriterDescription(File dcList, File outputFld) throws ResourceInitializationException, MalformedURLException{
 		return StringClassifierLabeller.getWriterDescription(
 				DiscourseVsNonDiscourseClassifier.class,
-				MaxentStringOutcomeDataWriter.class,
-//				WekaStringOutcomeDataWriter.class, 
+//				MaxentStringOutcomeDataWriter.class,
+				WekaStringOutcomeDataWriter.class, 
 				outputFld, 
 				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dcList.toURI().toURL().toString(),
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, DiscourseAnnotationFactory.class.getName()
@@ -237,7 +235,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 
-	public static void main(String[] args) throws ResourceInitializationException, UIMAException, IOException {
+	public static void main(String[] args) throws Exception {
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
