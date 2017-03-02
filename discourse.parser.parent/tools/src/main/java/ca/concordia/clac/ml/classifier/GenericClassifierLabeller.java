@@ -68,36 +68,32 @@ public class GenericClassifierLabeller<CLASSIFIER_OUTPUT, INSTANCE_TYPE>
 		genericClassifier.process(aJCas);
 	}
 	
+	public static Object[] mergeParams(Object[] first, Object... second){
+		List<Object> params = new ArrayList<>(Arrays.asList(first));
+		params.addAll(Arrays.asList(second));
+		return params.toArray(new Object[params.size()]);
+	}
+	
 	public static <CLASSIFIER_OUTPUT, INSTANCE_TYPE> AnalysisEngineDescription getWriterDescription(
 			Class<? extends ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE>> classifierAlgorithmFactoryCls,
 					@SuppressWarnings("rawtypes") Class<? extends DataWriter> dataWriterCls, File outputDirectory, Object... otherParams) throws ResourceInitializationException{
-		List<Object> params = new ArrayList<>();
-		params.addAll(Arrays.asList(
+		Object[] params = mergeParams(otherParams, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, classifierAlgorithmFactoryCls.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, true, 
 				DefaultDataWriterFactory.PARAM_DATA_WRITER_CLASS_NAME, dataWriterCls.getName(),
-				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputDirectory) 
-				);
-		params.addAll(Arrays.asList(otherParams));
+				DefaultDataWriterFactory.PARAM_OUTPUT_DIRECTORY, outputDirectory); 
 
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class,
-				params.toArray(new Object[params.size()])
-				);
+		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, params);
 	}
 
 	public static <CLASSIFIER_OUTPUT, INSTANCE_TYPE> AnalysisEngineDescription getClassifierDescription(
 			Class<? extends ClassifierAlgorithmFactory<CLASSIFIER_OUTPUT, INSTANCE_TYPE>> classifierAlgorithmFactoryCls, URL modelUrl, Object... otherParams) throws ResourceInitializationException{
-		List<Object> params = new ArrayList<>();
-		params.addAll(Arrays.asList(
+		Object[] params = mergeParams(otherParams, 
 				GenericClassifierLabeller.PARAM_LABELER_CLS_NAME, classifierAlgorithmFactoryCls.getName(), 
 				CleartkAnnotator.PARAM_IS_TRAINING, false, 
 				GenericClassifierLabeller.PARAM_PARALLEL_CLASSIFICATION, false,
-				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelUrl)
-				);
-		params.addAll(Arrays.asList(otherParams));
+				GenericJarClassifierFactory.PARAM_CLASSIFIER_JAR_PATH, modelUrl);
 
-		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, 
-				params.toArray(new Object[params.size()])
-				);
+		return AnalysisEngineFactory.createEngineDescription(StringClassifierLabeller.class, params);
 	}
 }
