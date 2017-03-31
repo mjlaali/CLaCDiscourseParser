@@ -2,6 +2,7 @@ package ca.concordia.clac.uima.engines;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -19,10 +20,13 @@ public class LookupInstanceAnnotator<T extends Annotation> extends JCasAnnotator
 
 	private LookupInstanceExtractor<T> lookupInstanceExtractor = new LookupInstanceExtractor<>();
 
-	public static <T extends Annotation> AnalysisEngineDescription getDescription(File dictFile, Class<? extends AnnotationFactory<T>> annotaitonFactory) 
+	public static <T extends Annotation> AnalysisEngineDescription getDescription(File dictFile, Class<? extends AnnotationFactory<T>> annotaitonFactory) throws ResourceInitializationException, MalformedURLException{
+		return getDescription(dictFile.toURI().toURL(), annotaitonFactory);
+	}
+	public static <T extends Annotation> AnalysisEngineDescription getDescription(URL dictFile, Class<? extends AnnotationFactory<T>> annotaitonFactory) 
 			throws ResourceInitializationException, MalformedURLException {
 		return AnalysisEngineFactory.createEngineDescription(LookupInstanceAnnotator.class, 
-				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dictFile.toURI().toURL().toString(),
+				LookupInstanceExtractor.PARAM_LOOKUP_FILE_URL, dictFile.toString(),
 				LookupInstanceExtractor.PARAM_ANNOTATION_FACTORY_CLASS_NAME, annotaitonFactory.getName()
 				);
 	}

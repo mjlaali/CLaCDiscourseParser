@@ -19,10 +19,14 @@ public class ConllDatasetPathFactory {
 			baseFld = new File(conllDatasetBase, "conll16st-en-03-29-16-dev/");
 			break;
 
-		case gold_test:
+		case pdtb_test:
 			baseFld = new File(conllDatasetBase, "conll16st-en-03-29-16-test/");
 			break;
 
+		case blind_test:
+			baseFld = new File(conllDatasetBase, "conll15st-en-03-29-16-blind-test/");
+			break;
+			
 		case test:
 			baseFld = dataFld;
 			break;

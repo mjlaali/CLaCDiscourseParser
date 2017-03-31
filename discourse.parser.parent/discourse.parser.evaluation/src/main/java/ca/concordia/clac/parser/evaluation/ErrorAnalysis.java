@@ -1,13 +1,15 @@
 package ca.concordia.clac.parser.evaluation;
- 
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +48,8 @@ import org.cleartk.corpus.conll2015.Tools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.discourse.type.TokenList;
+import org.cleartk.discourse_parsing.module.dcAnnotator.DCEvaluator;
+import org.cleartk.eval.EvaluationConstants;
 
 import ca.concordia.clac.uima.engines.ViewAnnotationCopier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -56,23 +60,23 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	public static enum ErrorType{
 		IncorrectSense, DCNotIdentified, ParallelDC, ConnectiveIsNotDC, Arg1, Arg2, TotalRelationCnt, Correct, TotalIdentified
 	}
-	
-	public static final String GOLD_VIEW = "goldView";
-	public static final String SYSTEM_VIEW = "systemView";
-	
+
+	public static final String GOLD_VIEW = EvaluationConstants.GOLD_VIEW;
+	public static final String SYSTEM_VIEW = EvaluationConstants.SYSTEM_VIEW;
+
 	public static final String PARAM_OUTPUT_DIR = "outputDir";
-	
+
 	@ConfigurationParameter(name = PARAM_OUTPUT_DIR)
 	private File outputDir;
 
 	private Map<ErrorType, Integer> errorCount = new HashMap<>();
 	private Map<String, Integer> parallelDCCoung = new HashMap<>();
 	private Map<String, Map<String, Integer>> confusionMatrix = new TreeMap<>();
-	
+
 	public static AnalysisEngineDescription getDescription(File outputDir) throws ResourceInitializationException{
 		return AnalysisEngineFactory.createEngineDescription(ErrorAnalysis.class, PARAM_OUTPUT_DIR, outputDir);
 	}
-	
+
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 		super.initialize(context);
@@ -82,20 +86,20 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 			} catch (IOException e) {
 				throw new ResourceInitializationException(e);
 			}
-		
+
 		for (ErrorType errorType: ErrorType.values()){
 			errorCount.put(errorType, 0);
 		}
 
 		outputDir.mkdirs();
 	}
-	
+
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		try {
-			
+
 			JCas goldView = aJCas.getView(GOLD_VIEW);
-			
+
 			JCas systemView = aJCas.getView(SYSTEM_VIEW);
 			evaluateExplicitRelations(goldView, systemView);
 		} catch (CASException e) {
@@ -106,23 +110,23 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	private void evaluateExplicitRelations(JCas goldView, JCas systemView) throws AnalysisEngineProcessException {
 		Set<DiscourseConnective> goldConnectives = new HashSet<>(JCasUtil.select(goldView, DiscourseConnective.class));
 		Set<DiscourseConnective> systemConnectives = new HashSet<>(JCasUtil.select(systemView, DiscourseConnective.class));
-		
+
 		errorCount.put(ErrorType.TotalRelationCnt, errorCount.get(ErrorType.TotalRelationCnt) + goldConnectives.size());
 		errorCount.put(ErrorType.TotalIdentified, errorCount.get(ErrorType.TotalIdentified) + systemConnectives.size());
-		
+
 		List<Pair<DiscourseConnective, DiscourseConnective>> incorrectRelations = new ArrayList<>();
 		List<DiscourseConnective> notDetected = new ArrayList<>();
 		List<DiscourseConnective> invalidConnectives = new ArrayList<>();
-		
+
 		for (DiscourseConnective aGoldConnective: goldConnectives){
 			List<DiscourseConnective> alignedSystemConnectives = findMatchedSystemDC(aGoldConnective, systemView);
 			if (alignedSystemConnectives.isEmpty()){
 				addError(ErrorType.DCNotIdentified);
 				notDetected.add(aGoldConnective);
 			}
-			
+
 			systemConnectives.removeAll(alignedSystemConnectives);
-			
+
 			for (DiscourseConnective aSystemConnective: alignedSystemConnectives){
 				if (!areSameRelation(aGoldConnective, aSystemConnective)){
 					incorrectRelations.add(new Pair<DiscourseConnective, DiscourseConnective>(aGoldConnective, aSystemConnective));
@@ -130,10 +134,10 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 					addError(ErrorType.Correct);
 			}
 		}
-		
+
 		invalidConnectives.addAll(systemConnectives);
 		errorCount.put(ErrorType.ConnectiveIsNotDC, errorCount.get(ErrorType.ConnectiveIsNotDC) + systemConnectives.size());
-		
+
 		try {
 			report(Tools.getDocName(systemView), incorrectRelations, notDetected, invalidConnectives);
 		} catch (FileNotFoundException e) {
@@ -141,24 +145,24 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		}
 	}
 
-	
+
 
 	private void report(String docName, List<Pair<DiscourseConnective, DiscourseConnective>> incorrectRelations,
 			List<DiscourseConnective> notDetected, List<DiscourseConnective> invalidConnectives) throws FileNotFoundException {
 		PrintStream dcErrors = new PrintStream(new File(outputDir, docName + "-dc.txt"));
-		
+
 		dcErrors.println("Not Detected:\n=========================\n");
 		notDetected.stream().map(ErrorAnalysis::relationToString).forEach(dcErrors::println);
 		dcErrors.println("\n\nInvalid Connectives:\n=========================\n");
 		invalidConnectives.stream().map(TokenListTools::getTokenListText).forEach(dcErrors::println);
-		
+
 		dcErrors.close();
-		
+
 		PrintStream relationErrors = new PrintStream(new File(outputDir, docName + "-relations.txt"));
 		incorrectRelations.stream().map(ErrorAnalysis::pairRelationToString).forEach(relationErrors::println);
 		relationErrors.close();
 	}
-	
+
 	private static String pairRelationToString(Pair<DiscourseConnective, DiscourseConnective> pair){
 		return relationToString(pair.getFirst()) + "\n\n" + relationToString(pair.getSecond()) + "\n\n===================\n\n";
 	}
@@ -172,16 +176,16 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 				relation.getSense(),
 				TokenListTools.getTokenListText(relation.getDiscourseConnective()));
 	}
-	
+
 	private List<DiscourseConnective> findMatchedSystemDC(DiscourseConnective aGoldConnective,
 			JCas systemView) {
 		int coverdToken = JCasUtil.selectCovered(systemView, Token.class, aGoldConnective.getBegin(), aGoldConnective.getEnd()).size();
-		
+
 		if (coverdToken != aGoldConnective.getTokens().size()){	//this is a parallel discourse connective
 			addError(ErrorType.ParallelDC);
 			String parallelDc = TokenListTools.getTokenListText(aGoldConnective);
-//			parallelDc += "<>" + aGoldConnective.getCoveredText();
-//			parallelDc += "[" + coverdToken + "<>" + aGoldConnective.getTokens().size() + "]";
+			//			parallelDc += "<>" + aGoldConnective.getCoveredText();
+			//			parallelDc += "[" + coverdToken + "<>" + aGoldConnective.getTokens().size() + "]";
 			Integer cnt = parallelDCCoung.get(parallelDc);
 			if (cnt == null){
 				parallelDCCoung.put(parallelDc, 1);
@@ -189,7 +193,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 				parallelDCCoung.put(parallelDc, cnt + 1);
 			return Collections.emptyList();
 		}
-		
+
 		List<DiscourseConnective> covering = JCasUtil.selectCovering(systemView, DiscourseConnective.class, aGoldConnective.getBegin(), aGoldConnective.getEnd());
 		return covering;
 	}
@@ -197,31 +201,31 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	private void addError(ErrorType errorType){
 		errorCount.put(errorType, errorCount.get(errorType) + 1);
 	}
-	
+
 	private boolean areSameRelation(DiscourseConnective aGoldConnective, DiscourseConnective aSystemConnective) {
 		DiscourseRelation goldRelation = aGoldConnective.getDiscourseRelation();
 		DiscourseRelation systemRelation = aSystemConnective.getDiscourseRelation();
-		
+
 		boolean result = true;
 		if (!isEqualTokenList(goldRelation.getArguments(0), systemRelation.getArguments(0))){
 			addError(ErrorType.Arg1);
 			result = false;
 		}
-		
+
 		if (!isEqualTokenList(goldRelation.getArguments(1), systemRelation.getArguments(1))){
 			addError(ErrorType.Arg2);
 			result = false;
 		}
-		
+
 		addToConfusionMatrix(goldRelation.getSense(), systemRelation.getSense());
 		if (!goldRelation.getSense().equals(systemRelation.getSense())){
 			addError(ErrorType.IncorrectSense);
 			result = false;
 		}
-				
+
 		return result;
 	}
-	
+
 	private void addToConfusionMatrix(String gold, String system) {
 		Map<String, Integer> outputs = confusionMatrix.get(gold);
 		if (outputs == null){
@@ -231,7 +235,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 			if (!confusionMatrix.containsKey(system))
 				confusionMatrix.put(system, new TreeMap<>());
 		}
-		
+
 		Integer cnt = outputs.get(system);
 		if (cnt == null)
 			outputs.put(system, 1);
@@ -242,24 +246,24 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	private static boolean isEqualTokenList(TokenList first, TokenList second){
 		List<Token> firstTokens = TokenListTools.convertToTokens(first);
 		List<Token> secondTokens = TokenListTools.convertToTokens(second);
-		
+
 		HashSet<Integer> firstSet = firstTokens.stream().map(Token::getBegin).collect(Collectors.toCollection(HashSet::new));
 		HashSet<Integer> secondSet = secondTokens.stream().map(Token::getBegin).collect(Collectors.toCollection(HashSet::new));
 		return firstSet.containsAll(secondSet) && secondSet.containsAll(firstSet);
 	}
-	
+
 	public static AnalysisEngineDescription getGoldPipeline(ConllDatasetPath dataset) throws ResourceInitializationException{
 		AggregateBuilder builder = new AggregateBuilder();
-		
+
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
-		
+
 		builder.add(conllSyntaxJsonReader);
 		builder.add(conllGoldJsonReader);
-		
+
 		return builder.createAggregateDescription();
 	}
 
@@ -269,11 +273,11 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		AnalysisEngineDescription conllSyntaxJsonReader = 
 				ConllSyntaxGoldAnnotator.getDescription(dataset.getParsesJSonFile());
 
-		AnalysisEngineDescription conllGoldJsonReader = new CLaCParser().getParser();
+		AnalysisEngineDescription clacParser = new CLaCParser().getParser();
 
 		builder.add(conllSyntaxJsonReader);
-		builder.add(conllGoldJsonReader);
-		
+		builder.add(clacParser);
+
 		return builder.createAggregateDescription();
 	}
 	private static void addAView(String aNewView, AggregateBuilder builder) throws ResourceInitializationException {
@@ -285,53 +289,64 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		AnalysisEngineDescription viewAnnotationCopier = AnalysisEngineFactory.createEngineDescription(ViewAnnotationCopier.class,
 				ViewAnnotationCopier.PARAM_SOURCE_VIEW_NAME, CAS.NAME_DEFAULT_SOFA,
 				ViewAnnotationCopier.PARAM_TARGET_VIEW_NAME, aNewView);
-		
+
 		builder.add(createView);
 		builder.add(viewTextCopier);
 		builder.add(viewAnnotationCopier);
 	}
-	
+
 	@Override
 	public void collectionProcessComplete() throws AnalysisEngineProcessException {
 		super.collectionProcessComplete();
 		try {
 			PrintStream summary = new PrintStream(new File(outputDir, "summary.txt"));
 			errorCount.forEach((type, cnt) -> summary.println(type.toString() + ":\t" + cnt));
-			
+
 			summary.println("====Parallel DC=====");
 			parallelDCCoung.forEach((type, cnt) -> summary.println(type + ":\t" + cnt));
-			
+
 			summary.println("====Confusion Matrix=====");
 			DSPrinter.printTable("Confusion Matrix", confusionMatrix.entrySet(), summary);
-			
+
 			summary.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} 
 	}
-	
-	public static void main(String[] args) throws URISyntaxException, UIMAException, IOException {
-		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.dev);
-		
-		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
-				TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
-				TextReader.PARAM_LANGUAGE, "en",
-				TextReader.PARAM_PATTERNS, "wsj_*");
-		
-		AggregateBuilder builder = new AggregateBuilder();
-		
-		addAView(GOLD_VIEW, builder);
-		addAView(SYSTEM_VIEW, builder);
 
-		
-		
-		builder.add(getGoldPipeline(dataset), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
-		builder.add(getSystemPipeline(dataset), CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
-		
-		File outputDir = new File("outputs/errorAnalysis");
-		builder.add(getDescription(outputDir));
-		
-		SimplePipeline.runPipeline(reader, builder.createAggregateDescription());
+	public static void main(String[] args) throws URISyntaxException, UIMAException, IOException {
+		for (DatasetMode m: new DatasetMode[]{DatasetMode.blind_test, DatasetMode.dev, DatasetMode.pdtb_test}){
+			ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), m);
+
+			File outputDir = new File(new File("outputs/errorAnalysis-" + DateFormat.getDateInstance().format(new Date())), "" + m);
+			
+			if (outputDir.exists())
+				FileUtils.deleteDirectory(outputDir);
+			outputDir.mkdirs();
+
+
+			CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
+					TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
+					TextReader.PARAM_LANGUAGE, "en",
+					TextReader.PARAM_PATTERNS, "w*");
+
+			AggregateBuilder builder = new AggregateBuilder();
+
+			addAView(GOLD_VIEW, builder);
+			addAView(SYSTEM_VIEW, builder);
+
+			builder.add(getGoldPipeline(dataset), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
+			builder.add(getSystemPipeline(dataset), CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
+
+			builder.add(DCEvaluator.getDescription(
+					new File(outputDir, "summary/dc-performance.txt").getAbsolutePath(), 
+					new File("../discourse.parser.dc-disambiguation/src/main/resources/clacParser/model/dcHeadList.txt").getAbsolutePath())
+					, CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
+
+			builder.add(getDescription(new File(outputDir, "files")));
+
+			SimplePipeline.runPipeline(reader, builder.createAggregateDescription());
+		}
 	}
 
 }

@@ -5,7 +5,7 @@ import java.io.File;
 public class ConllDatasetPath {
 	
 	public static enum DatasetMode{
-		trial, train, dev, test, gold_test
+		trial, train, dev, test, pdtb_test, blind_test
 	}
 
 	File rawDirectory;
