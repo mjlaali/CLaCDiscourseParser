@@ -14,6 +14,7 @@ import org.apache.uima.jcas.JCas;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import ca.concordia.clac.uima.engines.Tools;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ConllJSONExporterTest {

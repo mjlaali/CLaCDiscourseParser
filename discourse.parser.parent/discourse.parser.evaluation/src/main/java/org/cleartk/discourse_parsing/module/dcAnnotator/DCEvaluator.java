@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
@@ -15,13 +14,11 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.uima.UIMAException;
 import org.apache.uima.UimaContext;
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.cas.CAS;
 import org.apache.uima.cas.CASException;
-import org.apache.uima.collection.metadata.CpeDescriptorException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
@@ -33,9 +30,7 @@ import org.cleartk.corpus.conll2015.TokenListTools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.eval.EvaluationConstants;
 import org.cleartk.eval.util.ConfusionMatrix;
-import org.xml.sax.SAXException;
 
-import com.google.gson.JsonSyntaxException;
 import com.lexicalscope.jewel.cli.Option;
 
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
@@ -43,6 +38,7 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 public class DCEvaluator extends JCasAnnotator_ImplBase{
 	private static final String PARAM_REPORT_FILE = "reportFile";
 	private static final String PARAM_DC_HEAD_FILE = "dcHeadsFile";
+	private static final String PARAM_INCLUDE_SENSE = "includeSense";
 	
 	public static final String NO_CLASS = "null";
 	@ConfigurationParameter(
@@ -57,6 +53,11 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 			mandatory = false)
 	private String dcHeadsFile;
 	
+	@ConfigurationParameter(
+			name = PARAM_INCLUDE_SENSE,
+			description = "include sense in the evaluation.",
+			mandatory = false)
+	private boolean includeSense;
 	private PrintStream output;
 	private ConfusionMatrix<String> confusionMatrix;
 	private Map<String, String> dcToHead;
@@ -68,9 +69,14 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 	}
 	
 	public static AnalysisEngineDescription getDescription(String outputFile, String headFile) throws ResourceInitializationException {
-		return AnalysisEngineFactory.createEngineDescription(DCEvaluator.class 
-				, PARAM_REPORT_FILE, outputFile
-				, PARAM_DC_HEAD_FILE, headFile
+		return getDescription(new File(outputFile), headFile, false);
+	}
+	
+	public static AnalysisEngineDescription getDescription(File outputFile, String headFile, boolean includeSense) throws ResourceInitializationException {
+		return AnalysisEngineFactory.createEngineDescription(DCEvaluator.class, 
+				PARAM_REPORT_FILE, outputFile, 
+				PARAM_DC_HEAD_FILE, headFile,
+				PARAM_INCLUDE_SENSE, includeSense
 				);
 	}
 
@@ -194,6 +200,10 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 				}
 			}
 			
+			if (includeSense){
+				dcString += "-" + anEntry.getValue().getSense();
+			}
+			
 			heads.put(startPosition, dcString);
 		}
 		
@@ -245,7 +255,7 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 
 	}
 	
-	public static void main(String[] args) throws UIMAException, JsonSyntaxException, IOException, URISyntaxException, SAXException, CpeDescriptorException{
+	public static void main(String[] args) throws Exception{
 //		Options options = CliFactory.parseArguments(Options.class, args);
 //		
 //		File model = options.getModelFile();

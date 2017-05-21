@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.json.JsonHierarchicalStreamDriver;
 
+import ca.concordia.clac.uima.engines.Tools;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 class ConllTokenList{

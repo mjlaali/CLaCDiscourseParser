@@ -1,4 +1,4 @@
-package org.cleartk.corpus.conll2015;
+package ca.concordia.clac.uima.engines;
 
 import java.io.BufferedReader;
 import java.io.File;

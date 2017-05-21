@@ -44,13 +44,13 @@ import org.cleartk.corpus.conll2015.ConllDatasetPathFactory;
 import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.corpus.conll2015.TokenListTools;
-import org.cleartk.corpus.conll2015.Tools;
 import org.cleartk.discourse.type.DiscourseConnective;
 import org.cleartk.discourse.type.DiscourseRelation;
 import org.cleartk.discourse.type.TokenList;
 import org.cleartk.discourse_parsing.module.dcAnnotator.DCEvaluator;
 import org.cleartk.eval.EvaluationConstants;
 
+import ca.concordia.clac.uima.engines.Tools;
 import ca.concordia.clac.uima.engines.ViewAnnotationCopier;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;

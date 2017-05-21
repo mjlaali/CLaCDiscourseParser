@@ -20,6 +20,7 @@ import org.cleartk.ml.jar.JarClassifierBuilder;
 import com.lexicalscope.jewel.cli.CliFactory;
 import com.lexicalscope.jewel.cli.Option;
 
+import ca.concordia.clac.uima.engines.XMLGenerator;
 import de.tudarmstadt.ukp.dkpro.core.berkeleyparser.BerkeleyParser;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 import de.tudarmstadt.ukp.dkpro.core.io.xmi.XmiWriter;
@@ -89,7 +90,8 @@ public class DiscourseConnectiveDisambiguator {
 				getPosTagger(), 
 				getSyntacticParser(),
 				getParser(CAS.NAME_DEFAULT_SOFA), 
-				getWriter(output)
+				getWriter(output),
+				XMLGenerator.getDescription(output, "", true, "DiscourseConnective")
 						);
 	}
 	
