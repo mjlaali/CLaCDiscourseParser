@@ -69,10 +69,10 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 	}
 	
 	public static AnalysisEngineDescription getDescription(String outputFile, String headFile) throws ResourceInitializationException {
-		return getDescription(new File(outputFile), headFile, false);
+		return getDescription(new File(outputFile), new File(headFile), false);
 	}
 	
-	public static AnalysisEngineDescription getDescription(File outputFile, String headFile, boolean includeSense) throws ResourceInitializationException {
+	public static AnalysisEngineDescription getDescription(File outputFile, File headFile, boolean includeSense) throws ResourceInitializationException {
 		return AnalysisEngineFactory.createEngineDescription(DCEvaluator.class, 
 				PARAM_REPORT_FILE, outputFile, 
 				PARAM_DC_HEAD_FILE, headFile,
@@ -256,17 +256,6 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 	}
 	
 	public static void main(String[] args) throws Exception{
-//		Options options = CliFactory.parseArguments(Options.class, args);
-//		
-//		File model = options.getModelFile();
-//		File outputDir = options.getOutputDir();
-//		File reportFile = new File(outputDir, "report.txt");
-//		
-//		BatchProcess batchProcess = new FDTBPipelineFactory().getInstance(outputDir, false);
-//		batchProcess.addProcess("Discourse Parser", FrConnectiveClassifier.getClassifierDescription(model.toURI().toURL()), DCEvaluator.getDescription(reportFile));
-//		
-//		batchProcess.run();
-//		System.out.println(FileUtils.readFileToString(reportFile));
 	}
 	
 }

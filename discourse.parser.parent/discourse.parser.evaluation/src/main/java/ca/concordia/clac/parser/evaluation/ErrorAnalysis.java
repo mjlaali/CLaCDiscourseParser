@@ -315,37 +315,40 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	}
 
 	public static void main(String[] args) throws URISyntaxException, UIMAException, IOException {
-		for (DatasetMode m: new DatasetMode[]{DatasetMode.blind_test, DatasetMode.dev, DatasetMode.pdtb_test}){
-			ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), m);
+		for (boolean includeSense: new boolean[]{true, false}){
+			for (DatasetMode m: new DatasetMode[]{DatasetMode.blind_test, DatasetMode.dev, DatasetMode.pdtb_test}){
+				ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), m);
 
-			File outputDir = new File(new File("outputs/errorAnalysis-" + DateFormat.getDateInstance().format(new Date())), "" + m);
-			
-			if (outputDir.exists())
-				FileUtils.deleteDirectory(outputDir);
-			outputDir.mkdirs();
+				File outputDir = new File(new File("outputs/errorAnalysis-" + DateFormat.getDateInstance().format(new Date())), "" + m + "-include-sense-" + includeSense);
+
+				if (outputDir.exists())
+					FileUtils.deleteDirectory(outputDir);
+				outputDir.mkdirs();
 
 
-			CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
-					TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
-					TextReader.PARAM_LANGUAGE, "en",
-					TextReader.PARAM_PATTERNS, "w*");
+				CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
+						TextReader.PARAM_SOURCE_LOCATION, dataset.getRawDirectory(), 
+						TextReader.PARAM_LANGUAGE, "en",
+						TextReader.PARAM_PATTERNS, "w*");
 
-			AggregateBuilder builder = new AggregateBuilder();
+				AggregateBuilder builder = new AggregateBuilder();
 
-			addAView(GOLD_VIEW, builder);
-			addAView(SYSTEM_VIEW, builder);
+				addAView(GOLD_VIEW, builder);
+				addAView(SYSTEM_VIEW, builder);
 
-			builder.add(getGoldPipeline(dataset), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
-			builder.add(getSystemPipeline(dataset), CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
+				builder.add(getGoldPipeline(dataset), CAS.NAME_DEFAULT_SOFA, GOLD_VIEW);
+				builder.add(getSystemPipeline(dataset), CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
 
-			builder.add(DCEvaluator.getDescription(
-					new File(outputDir, "summary/dc-performance.txt").getAbsolutePath(), 
-					new File("../discourse.parser.dc-disambiguation/src/main/resources/clacParser/model/dcHeadList.txt").getAbsolutePath())
-					, CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
+				builder.add(DCEvaluator.getDescription(
+						new File(outputDir, "summary/dc-performance.txt"), 
+						new File("../discourse.parser.dc-disambiguation/src/main/resources/clacParser/model/dcHeadList.txt"),
+						includeSense)
+						, CAS.NAME_DEFAULT_SOFA, SYSTEM_VIEW);
 
-			builder.add(getDescription(new File(outputDir, "files")));
+//				builder.add(getDescription(new File(outputDir, "files")));
 
-			SimplePipeline.runPipeline(reader, builder.createAggregateDescription());
+				SimplePipeline.runPipeline(reader, builder.createAggregateDescription());
+			}
 		}
 	}
 

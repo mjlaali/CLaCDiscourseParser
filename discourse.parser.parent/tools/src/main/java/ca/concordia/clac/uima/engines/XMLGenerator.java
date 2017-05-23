@@ -148,7 +148,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		PrintWriter output;
 		if (outputFolder != null){
 			try {
-				output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFolder, getFileName(aJCas))), StandardCharsets.UTF_8));
+				output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFolder, getFileName(aJCas) + ".xml")), StandardCharsets.UTF_8));
 			} catch (FileNotFoundException e) {
 				throw new AnalysisEngineProcessException(e);
 			}

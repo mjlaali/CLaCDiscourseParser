@@ -22,9 +22,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseConnectiveDisambiguator;
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseSenseLabeler;
-import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseVsNonDiscourseClassifier;
 import de.tudarmstadt.ukp.dkpro.core.api.resources.CompressionUtils;
 
 
@@ -72,12 +69,22 @@ public class DiscourseConnectiveDisambiguatorTest {
 		
 		File dir = new File(getClass().getClassLoader().getResource(name).getFile());
 		File output = new File(new File("outputs"), getClass().getSimpleName());
+		FileUtils.deleteDirectory(output);
+		
 		disambiguator.parse(dir, output);
 		
-		assertThat(output.listFiles()).hasSize(2);
+		assertThat(output.listFiles()).hasSize(3);
+		
+		File xmiFile = null;
+		for (File aFile: output.listFiles()){
+			if (aFile.getName().endsWith("xmi"))
+				xmiFile = aFile;
+		}
+		if (xmiFile == null)
+			throw new RuntimeException("Cannot find xmi file!");
 		
 		JCas jCas = JCasFactory.createJCas();
-		InputStream is = CompressionUtils.getInputStream(output.getAbsolutePath(), new FileInputStream(output.listFiles()[0]));
+		InputStream is = CompressionUtils.getInputStream(output.getAbsolutePath(), new FileInputStream(xmiFile));
 		XmiCasDeserializer.deserialize(is, jCas.getCas(), false);
 		
 		DiscourseConnective connective = JCasUtil.selectByIndex(jCas, DiscourseConnective.class, 0);

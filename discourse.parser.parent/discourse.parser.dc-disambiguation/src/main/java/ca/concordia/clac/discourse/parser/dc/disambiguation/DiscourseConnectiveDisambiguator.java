@@ -80,10 +80,11 @@ public class DiscourseConnectiveDisambiguator {
 	}
 	
 	public void parse(File dir, File output) throws ResourceInitializationException, UIMAException, IOException, URISyntaxException{
+		System.out.println("DiscourseConnectiveDisambiguator.parse(): parsing " + dir.getAbsolutePath() + "...");
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
 				TextReader.PARAM_SOURCE_LOCATION, dir, 
 				TextReader.PARAM_LANGUAGE, "en",
-				TextReader.PARAM_PATTERNS, "*.txt");
+				TextReader.PARAM_PATTERNS, "*");
 		
 		SimplePipeline.runPipeline(reader,
 				getTokenizer(), 
@@ -114,6 +115,7 @@ public class DiscourseConnectiveDisambiguator {
 			if (d.isDirectory())
 				parse(d, new File(output, d.getName()));
 		}
+		parse(dir, output);
 	}
 	
 	public void train() throws Exception{
@@ -150,9 +152,13 @@ public class DiscourseConnectiveDisambiguator {
 		Options options = CliFactory.parseArguments(Options.class, args);
 		
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File(options.getModel()));
-		if (options.getInputDataset() == null)
+		if (options.getInputDataset() == null){
+			System.out.println("DiscourseConnectiveDisambiguator.main(): Start training...");
 			disambiguator.train();
-		else
-			disambiguator.parseSubdirectory(new File(options.getInputDataset()), new File(options.getOutputDir()));
+			System.out.println("DiscourseConnectiveDisambiguator.main(): Done!");
+		} else {
+			System.out.println("DiscourseConnectiveDisambiguator.main(): Start parsing...");
+			disambiguator.parse(new File(options.getInputDataset()), new File(options.getOutputDir()));
+		}
 	}
 }

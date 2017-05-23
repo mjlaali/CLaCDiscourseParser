@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -39,6 +42,15 @@ import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String, DiscourseConnective>{
 	public static final String PACKAGE_DIR = "discourse-sense-labeler/";
+	public static final Set<String> validSenses = new HashSet<>(Arrays.asList("Comparison.Concession", "Comparison.Contrast", 
+			"Contingency.Cause.Reason", "Contingency.Cause.Result", "Contingency.Condition", "Expansion.Alternative", 
+			"Expansion.Alternative.Chosen alternative", "Expansion.Conjunction", "Expansion.Exception", "Expansion.Instantiation",
+			"Expansion.Restatement", "Temporal.Asynchronous.Precedence", "Temporal.Asynchronous.Succession", "Temporal.Synchrony"));
+	
+	public static final List<String> frequentSense = Arrays.asList("Comparison.Contrast", "Contingency.Condition", 
+			"Expansion.Conjunction", "Temporal.Synchrony", "Temporal.Asynchronous.Succession");
+	
+	
 
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
@@ -56,7 +68,27 @@ public class DiscourseSenseLabeler implements ClassifierAlgorithmFactory<String,
 
 	@Override
 	public Function<DiscourseConnective, String> getLabelExtractor(JCas aJCas) {
-		return (dc) -> dc.getSense();
+		return (dc) -> {
+			String sense = dc.getSense();
+			if (validSenses.contains(sense))
+				return sense;
+			
+			for (String aSense: frequentSense){
+				if (sense.contains(aSense) || aSense.contains(sense)){
+					return aSense;
+				}
+			}
+			
+//			String category = sense.substring(0, sense.indexOf('.'));
+//			for (String aSense: frequentSense){
+//				if (aSense.contains(category)){
+//					return aSense;
+//				}
+//			}
+			
+			System.err.println("DiscourseSenseLabeler.getLabelExtractor(): Not a valid sense = " + sense);
+			return sense;
+		};
 	}
 
 	@Override
