@@ -36,6 +36,7 @@ import com.lexicalscope.jewel.cli.Option;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 public class DCEvaluator extends JCasAnnotator_ImplBase{
+	private static final String SEPARATOR = "-";
 	private static final String PARAM_REPORT_FILE = "reportFile";
 	private static final String PARAM_DC_HEAD_FILE = "dcHeadsFile";
 	private static final String PARAM_INCLUDE_SENSE = "includeSense";
@@ -112,18 +113,45 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 	public void collectionProcessComplete()
 			throws AnalysisEngineProcessException {
 		super.collectionProcessComplete();
+		
+		printConfusionMatrix(confusionMatrix);
+		
+		if (includeSense){
+			ConfusionMatrix<String> withoutSense = new ConfusionMatrix<>();
+			for (String actual: confusionMatrix.getClasses())
+				for (String predicted: confusionMatrix.getClasses()){
+					String predictedTrimed = trimSense(predicted);
+					int count = confusionMatrix.getCount(actual, predicted);
+					if (!predicted.equals("null") && !actual.equals(predicted)) {
+						predictedTrimed += "-false";
+						if (count > 0)
+							System.out.println(actual + ", " + predicted + "=" + count );
+					}
+					withoutSense.add(trimSense(actual), predictedTrimed, count);
+				}
+			output.println();
+			output.println("==========WITHOUT SENSE==============");
+			printConfusionMatrix(withoutSense);
+		}
+		output.close();
+	}
+
+	private void printConfusionMatrix(ConfusionMatrix<String> confusionMatrix) {
+		if (confusionMatrix.getClasses().size() == 0)
+			return;
+		
 		int sumTotal = 0, sumSystem = 0, sumCorrect = 0;
 		Set<String> classes = new TreeSet<>(confusionMatrix.getClasses());
+		
 		if (dcToHead != null)
 			classes.addAll(dcToHead.values());
-		
 		for (String cls: classes){
 			if (cls.equals(NO_CLASS)){	//NO_CLASS is a custom class that was defined and is only added to it when either gold or system contain an annotation but not the other one.
 				continue;
 			}
 			
 			int total = confusionMatrix.getActualTotal(cls);
-			int system = confusionMatrix.getPredictedTotal(cls);
+			int system = confusionMatrix.getPredictedTotal(cls) + confusionMatrix.getPredictedTotal(cls + "-false");
 			int correct = confusionMatrix.getCount(cls, cls);
 			
 			printToOutput(cls, total, system, correct);
@@ -135,7 +163,6 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 		output.println();
 		output.println();
 		printToOutput("Average", sumTotal, sumSystem, sumCorrect);
-		output.close();
 	}
 
 	boolean isFirst = true;
@@ -201,13 +228,20 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 			}
 			
 			if (includeSense){
-				dcString += "-" + anEntry.getValue().getSense();
+				dcString += SEPARATOR + anEntry.getValue().getSense();
 			}
 			
 			heads.put(startPosition, dcString);
 		}
 		
 		return heads;
+	}
+	
+	private String trimSense(String dcWithSense){
+		int endOfDc = dcWithSense.indexOf(SEPARATOR);
+		if (endOfDc == -1)
+			return dcWithSense;
+		return dcWithSense.substring(0, endOfDc);
 	}
 
 	private void fillConfusionMatrix(

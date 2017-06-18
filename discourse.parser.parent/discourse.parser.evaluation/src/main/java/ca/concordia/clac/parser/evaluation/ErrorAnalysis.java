@@ -99,7 +99,7 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 		try {
 
 			JCas goldView = aJCas.getView(GOLD_VIEW);
-
+			
 			JCas systemView = aJCas.getView(SYSTEM_VIEW);
 			evaluateExplicitRelations(goldView, systemView);
 		} catch (CASException e) {
@@ -315,8 +315,8 @@ public class ErrorAnalysis extends JCasAnnotator_ImplBase {
 	}
 
 	public static void main(String[] args) throws URISyntaxException, UIMAException, IOException {
-		for (boolean includeSense: new boolean[]{true, false}){
-			for (DatasetMode m: new DatasetMode[]{DatasetMode.blind_test, DatasetMode.dev, DatasetMode.pdtb_test}){
+		for (boolean includeSense: new boolean[]{true/*, false*/}){
+			for (DatasetMode m: new DatasetMode[]{DatasetMode.blind_test/*, DatasetMode.dev, DatasetMode.pdtb_test*/}){
 				ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), m);
 
 				File outputDir = new File(new File("outputs/errorAnalysis-" + DateFormat.getDateInstance().format(new Date())), "" + m + "-include-sense-" + includeSense);
