@@ -122,8 +122,8 @@ public class DiscourseConnectiveDisambiguator {
 		File[] packageDirs = new File[]{
 				new File(discourseVsNonDiscoursePackage.getFile()), 
 				new File(senseLabelerPackage.getFile())};
-		for (File packageDir: packageDirs){
-			JarClassifierBuilder.trainAndPackage(packageDir, "weka.classifiers.trees.J48", "-C 0.25 -M 2");
+		for (File packageDir: packageDirs){			 
+			JarClassifierBuilder.trainAndPackage(packageDir, "weka.classifiers.trees.RandomForest", "-P 100 -I 100 -num-slots 10 -K 0 -M 1.0 -V 0.001 -S 1");
 		}
 	}
 	
