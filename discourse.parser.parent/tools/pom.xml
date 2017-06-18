@@ -18,8 +18,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>nz.ac.waikato.cms.weka</groupId>
-			<artifactId>weka-dev</artifactId>
-			<version>3.7.11</version>
+			<artifactId>weka-stable</artifactId>
+			<version>3.8.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -52,13 +52,9 @@
 			<version>${cleartk.version}</version>
 			<scope>test</scope>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>org.cleartk</groupId>
-			<artifactId>cleartk-opennlp-tools</artifactId>
-			<version>${cleartk.version}</version>
-			<scope>test</scope>
-		</dependency>
- -->		<dependency>
+		<!-- <dependency> <groupId>org.cleartk</groupId> <artifactId>cleartk-opennlp-tools</artifactId> 
+			<version>${cleartk.version}</version> <scope>test</scope> </dependency> -->
+		<dependency>
 			<groupId>org.cleartk</groupId>
 			<artifactId>cleartk-token</artifactId>
 			<version>${cleartk.version}</version>
