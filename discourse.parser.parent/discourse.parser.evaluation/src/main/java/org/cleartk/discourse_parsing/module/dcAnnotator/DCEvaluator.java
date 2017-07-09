@@ -146,7 +146,7 @@ public class DCEvaluator extends JCasAnnotator_ImplBase{
 		if (dcToHead != null)
 			classes.addAll(dcToHead.values());
 		for (String cls: classes){
-			if (cls.equals(NO_CLASS)){	//NO_CLASS is a custom class that was defined and is only added to it when either gold or system contain an annotation but not the other one.
+			if (cls.equals(NO_CLASS) || cls.contains("-false")){	//NO_CLASS is a custom class that was defined and is only added to it when either gold or system contain an annotation but not the other one.
 				continue;
 			}
 			

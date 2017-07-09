@@ -45,7 +45,7 @@ public class DiscourseConnectiveDisambiguatorTest {
 		DiscourseVsNonDiscourseClassifier.main(new String[0]);
 		DiscourseSenseLabeler.main(new String[0]);
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(resourceDir);
-		disambiguator.train();
+		disambiguator.train(new String[]{"weka.classifiers.trees.J48", "-C 0.25 -M 2"});
 	}
 	
 	@Ignore

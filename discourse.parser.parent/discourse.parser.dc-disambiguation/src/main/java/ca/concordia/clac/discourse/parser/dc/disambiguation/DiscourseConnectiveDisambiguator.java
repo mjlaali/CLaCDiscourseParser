@@ -118,12 +118,13 @@ public class DiscourseConnectiveDisambiguator {
 		parse(dir, output);
 	}
 	
-	public void train() throws Exception{
+	public void train(String[] configs) throws Exception{
 		File[] packageDirs = new File[]{
 				new File(discourseVsNonDiscoursePackage.getFile()), 
 				new File(senseLabelerPackage.getFile())};
+		
 		for (File packageDir: packageDirs){			 
-			JarClassifierBuilder.trainAndPackage(packageDir, "weka.classifiers.trees.RandomForest", "-P 100 -I 100 -num-slots 10 -K 0 -M 1.0 -V 0.001 -S 1");
+			JarClassifierBuilder.trainAndPackage(packageDir, configs);
 		}
 	}
 	
@@ -147,6 +148,15 @@ public class DiscourseConnectiveDisambiguator {
 				longName = "outputDir",
 				description = "Specify the output directory to stores extracted texts")
 		public String getOutputDir();
+
+		@Option(
+				defaultToNull = true,
+				shortName = "c",
+				longName = "The configuration for the classifier",
+				description = "Specify the configuration for the classifier (e.g. Weka Classifier)")
+		public String getConfig();
+
+//		"weka.classifiers.trees.RandomForest", "-P 100 -I 100 -num-slots 10 -K 0 -M 1.0 -V 0.001 -S 1"		
 	}
 	public static void main(String[] args) throws Exception {
 		Options options = CliFactory.parseArguments(Options.class, args);
@@ -154,11 +164,29 @@ public class DiscourseConnectiveDisambiguator {
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File(options.getModel()));
 		if (options.getInputDataset() == null){
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Start training...");
-			disambiguator.train();
+			String config = options.getConfig();
+			String[] parsedConfigs = null;
+			if (config != null){
+				if (config.startsWith("weka"))
+					parsedConfigs = parseWekaConfigs(config);
+				else 
+					parsedConfigs = new String[]{config};
+			}
+			disambiguator.train(parsedConfigs);
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Done!");
 		} else {
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Start parsing...");
 			disambiguator.parse(new File(options.getInputDataset()), new File(options.getOutputDir()));
 		}
+	}
+
+	private static String[] parseWekaConfigs(String config) {
+		int clsNameEnd = config.indexOf(' ');
+		if (clsNameEnd == -1)
+			return new String[]{config};
+		
+		String clsName = config.substring(0, clsNameEnd);
+		String clsParams = config.substring(clsNameEnd + 1);
+		return new String[]{clsName, clsParams};
 	}
 }

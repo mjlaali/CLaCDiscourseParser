@@ -134,7 +134,7 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 	}
 
 	public static Function<DiscourseConnective, List<Feature>> getDiscourseConnectiveFeatures(){
-		Function<String, String> toLowerCase = String::toLowerCase;
+		Function<String, String> toLowerCase = (str) -> str != null ? str.toLowerCase() : null;
 		Function<String, Boolean> isAllLowerCase = StringUtils::isAllLowerCase;
 		
 		Function<DiscourseConnective, List<Feature>> textFeatures = dummyFunc(DiscourseConnective.class).andThen(getText()).andThen(multiMap(
@@ -146,13 +146,13 @@ public class DiscourseVsNonDiscourseClassifier implements ClassifierAlgorithmFac
 				multiMap(getLeft(Token.class).andThen(
 							multiMap(
 									getConstituentType().andThen(makeFeature(LEFT_POS)),
-									getText().andThen(makeFeature(LEFT_TEXT))
+									getText().andThen(toLowerCase).andThen(makeFeature(LEFT_TEXT))
 									)
 							),
 						getRight(Token.class).andThen(
 							multiMap(
 									getConstituentType().andThen(makeFeature(RIGHT_POS)),
-									getText().andThen(makeFeature(RIGHT_TEXT))
+									getText().andThen(toLowerCase).andThen(makeFeature(RIGHT_TEXT))
 									)
 							)
 						)
