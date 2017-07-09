@@ -32,7 +32,7 @@ public class ConllDatasetPathFactory {
 			break;
 			
 		case trial:
-			baseFld = new File(dataFld, "conll16st/tutorial/conll16st-en-01-12-16-trial");
+			baseFld = new File(dataFld, "conll16st-en-01-12-16-trial");
 			break;
 		default:
 			return null;
