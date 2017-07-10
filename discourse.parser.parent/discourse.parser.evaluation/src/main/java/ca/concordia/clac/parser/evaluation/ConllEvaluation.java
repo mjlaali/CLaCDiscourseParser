@@ -41,7 +41,7 @@ public class ConllEvaluation {
 				defaultToNull = true,
 				shortName = "m",
 				longName = "mode", 
-				description = "Specify the mode {dev, trial, test}")
+				description = "Specify the mode {dev, trial, test, pdtb_test, blind_test}")
 		public String getMode();
 		
 		@Option(
