@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -65,49 +66,49 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 
 	@ConfigurationParameter(name=PARAM_CREATE_SHORT_NAME)
 	private boolean createShortName;
-	
+
 	@ConfigurationParameter(name=PARAM_OUTPUT_TYPES)
 	private String[] outputTypes;
-	
+
 	private List<String> outputTypesInOrder;
 	private Set<String> validTypes;
-	
+
 	@ConfigurationParameter(name=PARAM_OUTPUT_FILE_POSTFIX)
 	private String postfix;
-	
+
 	@ConfigurationParameter(name=PARAM_SUPER_INDEXED_ANNOTATION_NAME, mandatory = false)
 	private String superIndexedAnnotationName;
 	@ConfigurationParameter(name=PARAM_INDEXED_ANNOTATION_NAME, mandatory = false)
 	private String indexedAnnotationName;
-	
-	
+
+
 	private Class<? extends Annotation> superIndexedAnnotation;
 	private Class<? extends Annotation> indexedAnnotation;
-	
-    private DocumentBuilder build;
-    private Transformer trans;
-    
-    private Map<Integer, Integer> indexes = new HashMap<>();
-    private Map<Integer, List<Annotation>> startIndex = new HashMap<>();
-    private Map<Integer, List<Annotation>> endIndex  = new HashMap<>();
-    private Map<FeatureStructure, Integer> annotationToIdx = new HashMap<>();
-    private int fileIdx = 0;
 
-    public static AnalysisEngineDescription getDescription(File outputFolder, String postfix, Class<? extends Annotation> superIndexedAnnationClass, 
-    		Class<? extends Annotation> indexedAnnationClass, boolean createShortName, String... types) throws ResourceInitializationException {
-    	
+	private DocumentBuilder build;
+	private Transformer trans;
+
+	private Map<Integer, Integer> indexes = new HashMap<>();
+	private Map<Integer, List<Annotation>> startIndex = new HashMap<>();
+	private Map<Integer, List<Annotation>> endIndex  = new HashMap<>();
+	private Map<FeatureStructure, Integer> annotationToIdx = new HashMap<>();
+	private int fileIdx = 0;
+
+	public static AnalysisEngineDescription getDescription(File outputFolder, String postfix, Class<? extends Annotation> superIndexedAnnationClass, 
+			Class<? extends Annotation> indexedAnnationClass, boolean createShortName, String... types) throws ResourceInitializationException {
+
 		String indexedAnnotaitonName = indexedAnnationClass != null ? indexedAnnationClass.getName() : null;
 		String superIndexedAnnotaitonName = superIndexedAnnationClass != null ? superIndexedAnnationClass.getName() : null;
 		return AnalysisEngineFactory.createEngineDescription(XMLGenerator.class, 
 				PARAM_OUTPUT_DIRECTORY, outputFolder == null ? null : outputFolder.getAbsolutePath(), 
-				PARAM_CREATE_SHORT_NAME, createShortName, 
-				PARAM_OUTPUT_FILE_POSTFIX, postfix,
-				PARAM_SUPER_INDEXED_ANNOTATION_NAME, superIndexedAnnotaitonName,
-				PARAM_INDEXED_ANNOTATION_NAME, indexedAnnotaitonName,
-				PARAM_OUTPUT_TYPES, types);
-    	
-    }
-    
+						PARAM_CREATE_SHORT_NAME, createShortName, 
+						PARAM_OUTPUT_FILE_POSTFIX, postfix,
+						PARAM_SUPER_INDEXED_ANNOTATION_NAME, superIndexedAnnotaitonName,
+						PARAM_INDEXED_ANNOTATION_NAME, indexedAnnotaitonName,
+						PARAM_OUTPUT_TYPES, types);
+
+	}
+
 	public static AnalysisEngineDescription getDescription(File outputFolder, String postfix, boolean createShortName, String... types) throws ResourceInitializationException {
 		return getDescription(outputFolder, postfix, null, null, createShortName, types);
 	}
@@ -116,33 +117,33 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	@Override
 	public void initialize(UimaContext context) throws ResourceInitializationException {
 		super.initialize(context);
-		
+
 		validTypes = new HashSet<>(Arrays.asList(outputTypes));
 		outputTypesInOrder = Arrays.asList(outputTypes);
 		DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
 		try {
 			build = dFact.newDocumentBuilder();
-	        TransformerFactory tFact = TransformerFactory.newInstance();
-	        trans = tFact.newTransformer();
-	        
-	        if (outputFolder != null)
-	        	outputFolder.mkdir();
-	        
-	        if (superIndexedAnnotationName != null)
-	        	superIndexedAnnotation = (Class<? extends Annotation>) Class.forName(superIndexedAnnotationName);
-	        if (indexedAnnotationName != null)
-	        	indexedAnnotation =  (Class<? extends Annotation>) Class.forName(indexedAnnotationName);
-	        
+			TransformerFactory tFact = TransformerFactory.newInstance();
+			trans = tFact.newTransformer();
+
+			if (outputFolder != null)
+				outputFolder.mkdir();
+
+			if (superIndexedAnnotationName != null)
+				superIndexedAnnotation = (Class<? extends Annotation>) Class.forName(superIndexedAnnotationName);
+			if (indexedAnnotationName != null)
+				indexedAnnotation =  (Class<? extends Annotation>) Class.forName(indexedAnnotationName);
+
 		} catch (ParserConfigurationException | TransformerConfigurationException | ClassNotFoundException e) {
 			throw new ResourceInitializationException(e);
 		}
 	}
-	
+
 	private String convertToString(Annotation ann){
 		return createShortName ? ann.getType().getShortName() : ann.getType().getName();
-		
+
 	}
-	
+
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException {
 		PrintWriter output;
@@ -157,75 +158,79 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 			output = new PrintWriter(System.out);
 		}
 
-        Document doc = build.newDocument();
-        Element current = doc.createElement(ROOT_ELEMENTE);
-        doc.appendChild(current);
-        buildAnnotationsIndexe(aJCas);
-        setIndexes(aJCas);
-        
-        String docText = aJCas.getDocumentText();
-        LinkedList<Element> elementStack = new LinkedList<>();
-        LinkedList<Annotation> annotationStack = new LinkedList<>();
+		Document doc = build.newDocument();
+		Element current = doc.createElement(ROOT_ELEMENTE);
+		doc.appendChild(current);
+		buildAnnotationsIndexe(aJCas);
+		setIndexes(aJCas);
 
-        int prev = 0;
-        for (int i = 0; i < docText.length(); i++){
-        	List<Annotation> startAnnotaitons = startIndex.get(i);
-        	List<Annotation> endAnnotaitons = endIndex.get(i);
-        	
-        	if (startAnnotaitons != null || endAnnotaitons != null){
-        		if (prev != i){
-        			Text textNode = doc.createTextNode(getText(docText, prev, i));
-        			prev = i;
-        			current.appendChild(textNode);
-        		}
-        		
-        		if (endAnnotaitons != null)
+		String docText = aJCas.getDocumentText();
+		LinkedList<Element> elementStack = new LinkedList<>();
+		LinkedList<Annotation> annotationStack = new LinkedList<>();
+
+		int prev = 0;
+		for (int i = 0; i < docText.length(); i++){
+			List<Annotation> startAnnotaitons = startIndex.get(i);
+			List<Annotation> endAnnotaitons = endIndex.get(i);
+
+			if (startAnnotaitons != null || endAnnotaitons != null){
+				if (prev != i){
+					Text textNode = doc.createTextNode(getText(docText, prev, i));
+					prev = i;
+					current.appendChild(textNode);
+				}
+
+				if (endAnnotaitons != null)
 					for (Annotation ann: endAnnotaitons) {
 						if (ann.getBegin() == ann.getEnd())
 							continue;
 						if (current != null && !current.getTagName().equals(convertToString(ann))){
 							saveXML(output, doc);
 							throw new AnalysisEngineProcessException(
-									new RuntimeException(String.format("Cannot create an xml from the document, expecting to close %s = `%s`, but %s is closed", 
-											current.getTagName(), annotationStack.pop().getCoveredText() ,convertToString(ann))));
+									new RuntimeException(String.format("Cannot create an xml from the document, expecting to close %s = `%s`, but %s is closed. "
+											+ "Stack content: xml elements\n%s\n\nannotation stack\n%s", 
+											current.getTagName(), annotationStack.pop().getCoveredText(), convertToString(ann), 
+											elementStack.stream().map(Element::getTagName).collect(Collectors.joining("\n")), 
+											annotationStack.stream().map(a -> convertToString(a)).collect(Collectors.joining("\n")
+													))));
 						}
 						current = elementStack.pop();
 						annotationStack.pop();
 					}
-        		
-        		if (startAnnotaitons != null)
-            		for (Annotation ann: startAnnotaitons){
-            			Element child = createAnElement(doc, ann);
-            			current.appendChild(child);
-            			if (ann.getBegin() != ann.getEnd()){
-            				elementStack.push(current);
-            				annotationStack.push(ann);
-                			current = child;
-            			}
-            			
-            		}
-        	}	
-        }
+
+				if (startAnnotaitons != null)
+					for (Annotation ann: startAnnotaitons){
+						Element child = createAnElement(doc, ann);
+						current.appendChild(child);
+						if (ann.getBegin() != ann.getEnd()){
+							elementStack.push(current);
+							annotationStack.push(ann);
+							current = child;
+						}
+
+					}
+			}	
+		}
 
 		Text textNode = doc.createTextNode(getText(docText, prev, docText.length()));
 
-        current.appendChild(textNode);
-        
-        saveXML(output, doc);
+		current.appendChild(textNode);
+
+		saveXML(output, doc);
 	}
 
 	private void setIndexes(JCas aJCas) {
 		if (superIndexedAnnotation == null || indexedAnnotation == null)
 			return;
-		
+
 		indexes.clear();
 		Map<String, Integer> annToEnd = new HashMap<>();
 		Map<String, Integer> annCnt = new HashMap<>();
-		
+
 		Map<? extends Annotation, ?> indexCovered = JCasUtil.indexCovered(aJCas, superIndexedAnnotation, indexedAnnotation);
 		for (Entry<? extends Annotation, ?> anEntry: indexCovered.entrySet()){
 			Collection<?> targetAnnotations = (Collection<?>) anEntry.getValue();
-			
+
 			annToEnd.clear();
 			annCnt.clear();
 			for (Object obj: targetAnnotations){
@@ -246,7 +251,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 				}
 			}
 		}
-		
+
 	}
 
 	private String getText(String docText, int start, int end) {
@@ -259,16 +264,16 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 				sb.append("</sub>");
 			}
 		}
-		
+
 		return sb.toString();
 	}
 
 	private void saveXML(PrintWriter output, Document doc) throws AnalysisEngineProcessException {
 		StreamResult result = new StreamResult(output);
-        DOMSource source = new DOMSource(doc);
-        try {
+		DOMSource source = new DOMSource(doc);
+		try {
 			trans.transform(source, result);
-			
+
 		} catch (TransformerException e) {
 			throw new AnalysisEngineProcessException(e);
 		} finally {
@@ -293,7 +298,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 
 	private Element createAnElement(Document doc, Annotation ann) {
 		Element anElement = doc.createElement(convertToString(ann));
-		
+
 		anElement.setAttribute("annotation_id", getId(ann));
 		for (Feature feature: ann.getType().getFeatures()){
 			switch (feature.getShortName()) {
@@ -311,7 +316,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		}
 		return anElement;
 	}
-	
+
 	private String convertToString(Annotation toBePrinted, Feature feature) {
 		if (feature.getRange().isArray()){
 			FSArray array = (FSArray) toBePrinted.getFeatureValue(feature);
@@ -349,7 +354,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		annotations = filter(annotations); 
 		ListMultimap<Integer, Annotation> tempStartIndex = ArrayListMultimap.create();
 		ListMultimap<Integer, Annotation> tempEndIndex = ArrayListMultimap.create();
-		
+
 		for (Annotation annotation: annotations){
 			tempStartIndex.put(annotation.getBegin(), annotation);
 			tempEndIndex.put(annotation.getEnd(), annotation);
@@ -372,18 +377,18 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		};
 		createAnIndex(tempEndIndex, endIndex, comparatorStart);
 	}
-	
+
 	public int compareTwoAnnotation(Annotation a, Annotation b){
 		int idxa = outputTypesInOrder.indexOf(convertToString(a));
 		int idxb = outputTypesInOrder.indexOf(convertToString(b));
-		
+
 		if (idxa == -1 || idxb == -1){
 			return convertToString(a).compareTo(convertToString(b));
 		} 
-		
+
 		if (idxa < idxb)
 			return -1;
-		
+
 		if (idxa > idxb)
 			return +1;
 		return 0;
@@ -392,14 +397,14 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	private Collection<Annotation> filter(Collection<Annotation> annotations) {
 		if (outputTypes.length == 0)
 			return annotations;
-		
+
 		List<Annotation> filtered = new ArrayList<>();
 		for (Annotation ann: annotations){
 			if (validTypes.contains(convertToString(ann))){
 				filtered.add(ann);
 			}
 		}
-		
+
 		return filtered;
 	}
 
