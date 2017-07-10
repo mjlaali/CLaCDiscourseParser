@@ -61,7 +61,7 @@ public class ConnectiveRelationExtractor extends JCasAnnotator_ImplBase{
 	
 	public static void main(String[] args) throws UIMAException, IOException {
 		File dataFld = new File("../discourse.conll.dataset/data");
-		DatasetMode mode = DatasetMode.gold_test;
+		DatasetMode mode = DatasetMode.train;
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(dataFld, mode);
 		
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
