@@ -140,8 +140,16 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	}
 
 	private String convertToString(Annotation ann){
+		if (ann == null)
+			return "null";
 		return createShortName ? ann.getType().getShortName() : ann.getType().getName();
 
+	}
+	
+	private static boolean isEqual(Annotation a, Annotation b){
+		if (a.getClass().equals(b.getClass()) && a.getBegin() == b.getBegin() && a.getEnd() == b.getEnd())
+			return true;
+		return false;
 	}
 
 	@Override
@@ -149,7 +157,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		PrintWriter output;
 		if (outputFolder != null){
 			try {
-				output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFolder, getFileName(aJCas) + ".xml")), StandardCharsets.UTF_8));
+				output = new PrintWriter(new OutputStreamWriter(new FileOutputStream(new File(outputFolder, getFileName(aJCas))), StandardCharsets.UTF_8));
 			} catch (FileNotFoundException e) {
 				throw new AnalysisEngineProcessException(e);
 			}
@@ -159,53 +167,69 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		}
 
 		Document doc = build.newDocument();
-		Element current = doc.createElement(ROOT_ELEMENTE);
-		doc.appendChild(current);
+		Element root = doc.createElement(ROOT_ELEMENTE);
+		doc.appendChild(root);
 		buildAnnotationsIndexe(aJCas);
 		setIndexes(aJCas);
 
 		String docText = aJCas.getDocumentText();
 		LinkedList<Element> elementStack = new LinkedList<>();
 		LinkedList<Annotation> annotationStack = new LinkedList<>();
+		
+		elementStack.push(root);annotationStack.push(null);
+		
+		Set<Annotation> invalidAnnotaitons = new HashSet<>();
 
 		int prev = 0;
 		for (int i = 0; i < docText.length(); i++){
+			//get annotations that start or end at the current positions.
 			List<Annotation> startAnnotaitons = startIndex.get(i);
 			List<Annotation> endAnnotaitons = endIndex.get(i);
 
-			if (startAnnotaitons != null || endAnnotaitons != null){
-				if (prev != i){
+			if (startAnnotaitons != null || endAnnotaitons != null){	//if there are annotations that are opened/closed here we need to change the xml structure to add/close nodes.
+				if (prev != i){	//lets first put all the text into xml
 					Text textNode = doc.createTextNode(getText(docText, prev, i));
 					prev = i;
-					current.appendChild(textNode);
+					elementStack.peekFirst().appendChild(textNode);
 				}
 
-				if (endAnnotaitons != null)
+				if (endAnnotaitons != null)	//we need to process annotations that are ended here first before opening a new annotation here.
 					for (Annotation ann: endAnnotaitons) {
+						if (invalidAnnotaitons.remove(ann))
+							continue;
 						if (ann.getBegin() == ann.getEnd())
 							continue;
-						if (current != null && !current.getTagName().equals(convertToString(ann))){
+						if (annotationStack.peekFirst() != null && !isEqual(annotationStack.peekFirst(), ann)){
 							saveXML(output, doc);
 							throw new AnalysisEngineProcessException(
-									new RuntimeException(String.format("Cannot create an xml from the document, expecting to close %s = `%s`, but %s is closed. "
-											+ "Stack content: xml elements\n%s\n\nannotation stack\n%s", 
-											current.getTagName(), annotationStack.pop().getCoveredText(), convertToString(ann), 
-											elementStack.stream().map(Element::getTagName).collect(Collectors.joining("\n")), 
-											annotationStack.stream().map(a -> convertToString(a)).collect(Collectors.joining("\n")
-													))));
+									new RuntimeException(String.format("Cannot create an xml from the document, expecting to close %s = `%s`, but %s = `%s` is closed. "
+											+ "Stack content:\n%s", 
+											convertToString(annotationStack.peekFirst()), annotationStack.peekFirst().getCoveredText(), 
+											convertToString(ann), ann.getCoveredText(), 
+											annotationStack.stream().map(a -> convertToString(a)).collect(Collectors.joining("\n"))
+													)));
 						}
-						current = elementStack.pop();
+						elementStack.pop();
 						annotationStack.pop();
 					}
 
 				if (startAnnotaitons != null)
 					for (Annotation ann: startAnnotaitons){
-						Element child = createAnElement(doc, ann);
-						current.appendChild(child);
-						if (ann.getBegin() != ann.getEnd()){
-							elementStack.push(current);
-							annotationStack.push(ann);
-							current = child;
+						if (ann.getBegin() != ann.getEnd()){	//annotations with zero length will be ignored
+							if (annotationStack.peekFirst() != null && ann.getEnd() > annotationStack.peekFirst().getEnd()){	//this annotation is an invalid annotation
+								System.err.println(String.format("XMLGenerator.process(): This annotation is an invalid anntation as it does not fit to its parent:"
+										+ "Parent = %s:\n%s\nChild = %s:%s", 
+										convertToString(annotationStack.peekFirst()), 
+										annotationStack.peekFirst().getCoveredText(),
+										convertToString(ann), 
+										ann.getCoveredText()));
+								invalidAnnotaitons.add(ann);
+							} else {
+								Element child = createAnElement(doc, ann);
+								elementStack.peekFirst().appendChild(child);
+								elementStack.push(child);
+								annotationStack.push(ann);
+							}
 						}
 
 					}
@@ -214,7 +238,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 
 		Text textNode = doc.createTextNode(getText(docText, prev, docText.length()));
 
-		current.appendChild(textNode);
+		elementStack.pop().appendChild(textNode);
 
 		saveXML(output, doc);
 	}
