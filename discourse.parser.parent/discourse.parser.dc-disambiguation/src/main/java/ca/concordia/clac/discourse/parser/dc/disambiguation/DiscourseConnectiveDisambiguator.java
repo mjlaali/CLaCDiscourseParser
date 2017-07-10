@@ -118,7 +118,7 @@ public class DiscourseConnectiveDisambiguator {
 		parse(dir, output);
 	}
 	
-	public void train(String[] configs) throws Exception{
+	public void train(String configs) throws Exception{
 		File[] packageDirs = new File[]{
 				new File(discourseVsNonDiscoursePackage.getFile()), 
 				new File(senseLabelerPackage.getFile())};
@@ -164,29 +164,12 @@ public class DiscourseConnectiveDisambiguator {
 		DiscourseConnectiveDisambiguator disambiguator = new DiscourseConnectiveDisambiguator(new File(options.getModel()));
 		if (options.getInputDataset() == null){
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Start training...");
-			String config = options.getConfig();
-			String[] parsedConfigs = null;
-			if (config != null){
-				if (config.startsWith("weka"))
-					parsedConfigs = parseWekaConfigs(config);
-				else 
-					parsedConfigs = new String[]{config};
-			}
-			disambiguator.train(parsedConfigs);
+	
+			disambiguator.train(options.getConfig());
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Done!");
 		} else {
 			System.out.println("DiscourseConnectiveDisambiguator.main(): Start parsing...");
 			disambiguator.parse(new File(options.getInputDataset()), new File(options.getOutputDir()));
 		}
-	}
-
-	private static String[] parseWekaConfigs(String config) {
-		int clsNameEnd = config.indexOf(' ');
-		if (clsNameEnd == -1)
-			return new String[]{config};
-		
-		String clsName = config.substring(0, clsNameEnd);
-		String clsParams = config.substring(clsNameEnd + 1);
-		return new String[]{clsName, clsParams};
 	}
 }

@@ -18,6 +18,9 @@ import org.cleartk.corpus.conll2015.ConllDiscourseGoldAnnotator;
 import org.cleartk.corpus.conll2015.ConllSyntaxGoldAnnotator;
 import org.cleartk.ml.jar.Train;
 
+import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.Option;
+
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 
 public class ArgumentSequenceLabeler {
@@ -27,15 +30,14 @@ public class ArgumentSequenceLabeler {
 	public static final String SEQUENCE_TAGGER = "sequenceTagger";
 	public static final String NONE_NODE_TAGGER = "noneNodeTagger";
 	
-	public static AnalysisEngineDescription getWriterDescription(File outputDirectory) throws ResourceInitializationException{
+	public static AnalysisEngineDescription getWriterDescription(File outputDirectory, boolean malletForArgs, boolean malletForNonNode) throws ResourceInitializationException{
 		AggregateBuilder aggregateBuilder = new AggregateBuilder();
-		boolean usingMallet;
-		usingMallet = true;
+		
 		aggregateBuilder.add(ArgumentLabelerAlgorithmFactory.getWriterDescription(
-				new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath(), usingMallet));
-		usingMallet = false;
+				new File(outputDirectory, SEQUENCE_TAGGER).getAbsolutePath(), malletForArgs));
+
 		aggregateBuilder.add(NoneNodeLabeller.getWriterDescription(
-				new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath(), usingMallet));
+				new File(outputDirectory, NONE_NODE_TAGGER).getAbsolutePath(), malletForNonNode));
 		return aggregateBuilder.createAggregateDescription();
 	}
 
@@ -55,8 +57,37 @@ public class ArgumentSequenceLabeler {
 	}
 	
 	
+	public interface Options{
+		@Option(
+				shortName = "a",
+				longName = "malletArgument", 
+				description = "Specify if the model use mallet")
+		public Boolean isMalletForArgs();
+
+		@Option(
+				shortName = "n",
+				longName = "malletNoneNode", 
+				description = "Specify if the model use mallet")
+		public Boolean isMalletForNone();
+
+		@Option(
+				shortName = "o",
+				longName = "outputDir",
+				description = "Specify the output directory to stores extracted texts")
+		public String getOutputDir();
+
+		@Option(
+				defaultToNull = true,
+				shortName = "c",
+				longName = "The configuration for the classifier",
+				description = "Specify the configuration for the classifier (e.g. Weka Classifier)")
+		public String getConfig();
+	}
+	
 	public static void main(String[] args) throws Exception {
-		new File("outputs/patterns.txt").delete();
+		Options options = CliFactory.parseArguments(Options.class, args);
+		
+//		new File("outputs/patterns.txt").delete();
 		ConllDatasetPath dataset = new ConllDatasetPathFactory().makeADataset2016(new File("../discourse.conll.dataset/data"), DatasetMode.train);
 
 		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
@@ -69,18 +100,34 @@ public class ArgumentSequenceLabeler {
 		AnalysisEngineDescription conllGoldJsonReader = 
 				ConllDiscourseGoldAnnotator.getDescription(dataset.getRelationsJSonFile());
 
-		File outputDirectory = new File(new File("outputs/resources"), PACKAGE_DIR);
+		File outputDirectory = new File(new File(options.getOutputDir()), PACKAGE_DIR);
+		getWriterDescription(outputDirectory, options.isMalletForArgs(), options.isMalletForNone());
 		if (outputDirectory.exists())
 			FileUtils.deleteDirectory(outputDirectory);
 		SimplePipeline.runPipeline(reader,
 				conllSyntaxJsonReader, 
 				conllGoldJsonReader, 
-				getWriterDescription(outputDirectory)
+				getWriterDescription(outputDirectory, options.isMalletForArgs(), options.isMalletForNone())
 				);
 
 		for (File aComponent: outputDirectory.listFiles()){
+			
 			System.out.println("ArgumentSequenceLabeler.main(): training " + aComponent.getName());
-			Train.main(aComponent);
+			String[] configs = new String[]{};
+			switch (aComponent.getName()) {
+			case SEQUENCE_TAGGER:
+				if (!options.isMalletForArgs())
+					configs = new String[]{options.getConfig()};
+				break;
+
+			case NONE_NODE_TAGGER:
+				if (!options.isMalletForNone())
+					configs = new String[]{options.getConfig()};
+				break;
+			default:
+				throw new RuntimeException("This directory was not configured, you need to update this part of the code");
+			}
+			Train.main(aComponent, configs);
 		}
 	}
 
