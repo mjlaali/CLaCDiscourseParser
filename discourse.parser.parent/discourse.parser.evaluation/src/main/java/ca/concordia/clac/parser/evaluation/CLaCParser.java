@@ -5,27 +5,27 @@ import static org.apache.uima.fit.factory.AnalysisEngineFactory.createEngineDesc
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.util.Date;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.cas.CAS;
-import org.apache.uima.collection.CollectionProcessingEngine;
 import org.apache.uima.collection.CollectionReaderDescription;
-import org.apache.uima.fit.cpe.CpeBuilder;
 import org.apache.uima.fit.factory.AggregateBuilder;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.CollectionReaderFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
 import org.apache.uima.resource.ResourceInitializationException;
+import org.cleartk.corpus.conll2015.ConllJSONExporter;
+import org.cleartk.corpus.conll2015.ConllJSonGoldExporter;
 import org.discourse.parser.argument_labeler.argumentLabeler.ArgumentSequenceLabeler;
+import org.discourse.parser.implicit.NoRelationAnnotator;
 
-import ca.concordia.clac.batch_process.StatusCallbackListenerImpl;
+import com.lexicalscope.jewel.cli.CliFactory;
+import com.lexicalscope.jewel.cli.Option;
+
 import ca.concordia.clac.discourse.parser.dc.disambiguation.DiscourseConnectiveDisambiguator;
 import de.tudarmstadt.ukp.dkpro.core.berkeleyparser.BerkeleyParser;
 import de.tudarmstadt.ukp.dkpro.core.io.text.TextReader;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpPosTagger;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
-import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordParser;
-import de.tudarmstadt.ukp.dkpro.core.stanfordnlp.StanfordSegmenter;
 
 public class CLaCParser {
 
@@ -53,48 +53,53 @@ public class CLaCParser {
 
 		return builder.createAggregateDescription();
 	}
+	
+	
+	public interface Options{
+		@Option(
+				defaultToNull = true,
+				shortName = "i",
+				longName = "inputDataset", 
+				description = "Specify the input directory")
+		public String getInputDataset();
+		
+		@Option(
+				shortName = "o",
+				longName = "outputDir",
+				description = "Specify the output directory to stores extracted texts")
+		public String getOutputDir();
+	}
 
 	public static void main(String[] args) throws Exception {
-		File inputDir = new File("outputs/texts");
-		//		File outputDir = new File("");
-		long start = new Date().getTime();
-		int threadCount = 8;
+		Options options = CliFactory.parseArguments(Options.class, args);
 
-		CollectionReaderDescription reader = CollectionReaderFactory.createReaderDescription(TextReader.class,
-				TextReader.PARAM_SOURCE_LOCATION, inputDir,
-				TextReader.PARAM_LANGUAGE, "en", 
+		String inputDirectory = options.getInputDataset();
+		String outputDirectory = options.getOutputDir();
+		CollectionReaderDescription reader;
+		AnalysisEngineDescription pipeline;
+
+		reader = CollectionReaderFactory.createReaderDescription(TextReader.class, 
+				TextReader.PARAM_SOURCE_LOCATION, inputDirectory, 
+				TextReader.PARAM_LANGUAGE, "en",
 				TextReader.PARAM_PATTERNS, "*");
+		AggregateBuilder builder = new AggregateBuilder();
 
-		CpeBuilder builder=new CpeBuilder();
-		builder.setReader(reader);
-		AnalysisEngineDescription seg = AnalysisEngineFactory.createEngineDescription(StanfordSegmenter.class);
-		AnalysisEngineDescription parse = AnalysisEngineFactory.createEngineDescription(StanfordParser.class);
-		builder.setAnalysisEngine(AnalysisEngineFactory.createEngineDescription(
-				seg, parse
-				//				TerminalOutputWriter.getDescription(null)
-				));
-		builder.setMaxProcessingUnitThreadCount(threadCount);
+		//add parser
+		builder.add(new CLaCParser().getStandaloneParser());
+		
+		AnalysisEngineDescription jsonExporter = ConllJSONExporter.getDescription(new File(outputDirectory, "output.json").getAbsolutePath());		
+		AnalysisEngineDescription noRelDetector = NoRelationAnnotator.getDescription();
+		AnalysisEngineDescription noRelExporter = ConllJSonGoldExporter.getDescription(new File(outputDirectory, "no-relation.json"), "Explicit");
 
-		StatusCallbackListenerImpl status = new StatusCallbackListenerImpl();
-		CollectionProcessingEngine engine = builder.createCpe(status);
-		engine.process();
-		try {
-			synchronized (status) {
-				while (status.isProcessing()) {
-					status.wait();
-				}
-			}
-		}
-		catch (InterruptedException e) {
-			// Do nothing
-		}
 
-		if (status.getExceptions().size() > 0) {
-			throw status.getExceptions().get(0);
-		}
+		//add console writer
+		pipeline = builder.createAggregateDescription();
 
-		long end = new Date().getTime();
-		System.out.println("CLaCParser.main() " + (end - start));
-
+		SimplePipeline.runPipeline(
+				reader, 
+				pipeline,
+				jsonExporter,
+				noRelDetector, 
+				noRelExporter);
 	}
 }

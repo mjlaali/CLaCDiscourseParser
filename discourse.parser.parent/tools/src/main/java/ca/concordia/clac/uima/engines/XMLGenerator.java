@@ -55,7 +55,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	public static final String PARAM_OUTPUT_DIRECTORY = "outputFolder";
 	public static final String PARAM_CREATE_SHORT_NAME = "createShortName";
 	public static final String PARAM_OUTPUT_TYPES = "outputTypes";
-	public static final String PARAM_OUTPUT_FILE_POSTFIX = "postfix";
+	public static final String PARAM_OUTPUT_FILE_SUFFIX = "postfix";
 	public static final String PARAM_SUPER_INDEXED_ANNOTATION_NAME = "superIndexedAnnotationName";
 	public static final String PARAM_INDEXED_ANNOTATION_NAME = "indexedAnnotationName";
 
@@ -73,7 +73,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	private List<String> outputTypesInOrder;
 	private Set<String> validTypes;
 
-	@ConfigurationParameter(name=PARAM_OUTPUT_FILE_POSTFIX)
+	@ConfigurationParameter(name=PARAM_OUTPUT_FILE_SUFFIX)
 	private String postfix;
 
 	@ConfigurationParameter(name=PARAM_SUPER_INDEXED_ANNOTATION_NAME, mandatory = false)
@@ -94,7 +94,18 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 	private Map<FeatureStructure, Integer> annotationToIdx = new HashMap<>();
 	private int fileIdx = 0;
 
-	public static AnalysisEngineDescription getDescription(File outputFolder, String postfix, Class<? extends Annotation> superIndexedAnnationClass, 
+	/**
+	 * 
+	 * @param outputFolder: an output folder or null if the output is the terminal.
+	 * @param suffix: suffix for the files if the inputs are a set of file in the outputFolder
+	 * @param superIndexedAnnationClass
+	 * @param indexedAnnationClass
+	 * @param createShortName
+	 * @param types
+	 * @return
+	 * @throws ResourceInitializationException
+	 */
+	public static AnalysisEngineDescription getDescription(File outputFolder, String suffix, Class<? extends Annotation> superIndexedAnnationClass, 
 			Class<? extends Annotation> indexedAnnationClass, boolean createShortName, String... types) throws ResourceInitializationException {
 
 		String indexedAnnotaitonName = indexedAnnationClass != null ? indexedAnnationClass.getName() : null;
@@ -102,7 +113,7 @@ public class XMLGenerator extends JCasAnnotator_ImplBase{
 		return AnalysisEngineFactory.createEngineDescription(XMLGenerator.class, 
 				PARAM_OUTPUT_DIRECTORY, outputFolder == null ? null : outputFolder.getAbsolutePath(), 
 						PARAM_CREATE_SHORT_NAME, createShortName, 
-						PARAM_OUTPUT_FILE_POSTFIX, postfix,
+						PARAM_OUTPUT_FILE_SUFFIX, suffix,
 						PARAM_SUPER_INDEXED_ANNOTATION_NAME, superIndexedAnnotaitonName,
 						PARAM_INDEXED_ANNOTATION_NAME, indexedAnnotaitonName,
 						PARAM_OUTPUT_TYPES, types);

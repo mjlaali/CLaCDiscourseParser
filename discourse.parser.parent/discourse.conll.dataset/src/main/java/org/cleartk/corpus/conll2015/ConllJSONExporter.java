@@ -31,16 +31,16 @@ import ca.concordia.clac.uima.engines.Tools;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 
 class ConllTokenList{
-	public ConllTokenList(int[] tokens) {
+	public ConllTokenList(Object[] tokens) {
 		this.TokenList = tokens;
 	}
 
-	int[] TokenList;
+	Object[] TokenList;
 }
 
 class ConllDiscourseRelation{
 	String DocID;
-	Integer ID;
+	int ID;
 	String Type;
 	String[] Sense = new String[1];
 	String discourseConnectiveText;
@@ -109,14 +109,6 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 			String line = convertToJSon(discourseRelation, aJCas);
 			jsonFile.println(line);
 			jsonFile.flush();
-//			try {
-//				JSONObject jsonObject = getJSONObject(discourseRelation, aJCas);
-//				jsonObject.write(jsonFile);
-//				jsonFile.println();
-//				jsonFile.flush();
-//			} catch (JSONException e) {
-//				e.printStackTrace();
-//			}
 		}
 	}
 	
@@ -148,13 +140,23 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 
 	
 	private ConllTokenList ids(List<Token> tokens) {
-		int[] ides = new int[tokens.size()];
+		Object[] ides = new Object[tokens.size()];
 		for (int i = 0; i < tokens.size(); i++){
-			ConllToken token = (ConllToken) tokens.get(i);
-			ides[i] = token.getDocumentOffset();
+			ides[i] = getDocOffset(tokens.get(i));
 		}
 		
 		return new ConllTokenList(ides);
+	}
+
+	private Object getDocOffset(Token t) {
+		Object docOffset = null;
+		if (t instanceof ConllToken){
+			ConllToken token = (ConllToken) t;
+			docOffset = token.getDocumentOffset();
+		} else {
+			docOffset = new int[]{t.getBegin(), t.getEnd()};
+		}
+		return docOffset;
 	}
 
 	@SuppressWarnings("unused")
@@ -191,10 +193,9 @@ public class ConllJSONExporter extends JCasAnnotator_ImplBase{
 	private JSONObject getJSONObject(List<Token> tokens) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
 
-		List<Integer> wordIds = new ArrayList<Integer>();
+		List<Object> wordIds = new ArrayList<Object>();
 		for (int i = 0; i < tokens.size(); i++){
-			ConllToken token = (ConllToken) tokens.get(i);
-			wordIds.add(token.getDocumentOffset());
+			wordIds.add(getDocOffset(tokens.get(i)));
 		}
 		JSONArray jsonArray = new JSONArray(wordIds);
 		
